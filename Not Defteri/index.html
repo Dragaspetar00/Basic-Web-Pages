@@ -7,15 +7,32 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4a90e2"/>
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
-<body>
+<body class="light-theme">
     <div class="container">
-        <h1>📝 Not Defteri</h1>
+        <header>
+            <h1>📝 Not Defteri</h1>
+            <button id="themeToggle">🌙</button>
+        </header>
 
         <div class="input-group">
             <input type="text" id="taskInput" placeholder="Yeni görev ekle..." autofocus>
+            <select id="categorySelect">
+                <option value="Genel">Genel</option>
+                <option value="İş">İş</option>
+                <option value="Kişisel">Kişisel</option>
+                <option value="Alışveriş">Alışveriş</option>
+                <option value="Sağlık">Sağlık</option>
+            </select>
+            <input type="datetime-local" id="reminderTime">
             <button id="addBtn">Ekle</button>
+        </div>
+
+        <div class="tools">
+            <input type="text" id="searchInput" placeholder="Görev ara...">
+            <label for="imageUpload" class="upload-btn">📷 Resim Ekle</label>
+            <input type="file" id="imageUpload" accept="image/*" hidden>
         </div>
 
         <ul id="taskList"></ul>
