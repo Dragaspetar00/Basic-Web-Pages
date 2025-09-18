@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Dijital Saat ve Tarih</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background 0.5s ease;
+            color: #fff;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        .clock-container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+            max-width: 90%;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        body.dark-mode .clock-container {
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .time {
+            font-size: 3.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+
+        .date {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 25px;
+            word-wrap: break-word;
+        }
+
+        .toggle-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .toggle-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        body.dark-mode .toggle-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ddd;
+        }
+
+        body.dark-mode .toggle-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 600px) {
+            .time {
+                font-size: 2.8rem;
+            }
+            .date {
+                font-size: 1.15rem;
+            }
+            .toggle-button {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .time {
+                font-size: 2.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="time" id="time">--:--:--</div>
+        <div class="date" id="date">Yükleniyor...</div>
+        <button class="toggle-button" id="darkModeToggle">🌙 Karanlık Mod</button>
+    </div>
+
+    <script>
+        // Kullanıcının tarayıcı dilini al
+        const userLang = navigator.language || navigator.userLanguage;
+
+        function updateClock() {
+            const now = new Date();
+
+            // SAAT: Kullanıcının bölgesine ve diline göre formatla
+            const timeOptions = {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false // 24 saatlik format
+            };
+
+            const timeString = new Intl.DateTimeFormat(userLang, timeOptions).format(now);
+            document.getElementById('time').textContent = timeString;
+
+            // TARİH: Tam formatlı, kullanıcı dilinde
+            const dateOptions = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+
+            const dateString = new Intl.DateTimeFormat(userLang, dateOptions).format(now);
+            document.getElementById('date').textContent = dateString;
+        }
+
+        // Her saniye güncelle
+        setInterval(updateClock, 1000);
+
+        // Sayfa yüklendiğinde hemen göster
+        updateClock();
+
+        // Karanlık mod toggle
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+
+            const button = this;
+            if (document.body.classList.contains('dark-mode')) {
+                button.textContent = '☀️ Açık Mod';
+            } else {
+                button.textContent = '🌙 Karanlık Mod';
+            }
+        });
+
+        // Opsiyonel: Tarayıcı temasına göre otomatik karanlık mod
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').textContent = '☀️ Açık Mod';
+        }
+    </script>
+</body>
+</html>
