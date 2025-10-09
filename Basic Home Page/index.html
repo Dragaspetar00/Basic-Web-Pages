@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hoş geldiniz ✨</title>
+
+  <!-- Yazı tipi (isteğe bağlı) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#ffeaf4;
+      --bg2:#e7f7ff;
+      --accent1:#ff7db8;
+      --accent2:#7aa7ff;
+      --text:#263238;
+      --card:rgba(255,255,255,.62);
+      --cardBorder:rgba(255,255,255,.8);
+    }
+
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg1:#1b1220;
+        --bg2:#0e2233;
+        --accent1:#ff9bd4;
+        --accent2:#8ac2ff;
+        --text:#f2f6f8;
+        --card:rgba(255,255,255,.08);
+        --cardBorder:rgba(255,255,255,.12);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html,body { height: 100%; }
+    body{
+      margin:0;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
+      font-family: "Quicksand", system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow:hidden;
+    }
+
+    /* Pastel arka plan süsleri */
+    .deco{
+      position:absolute; border-radius:50%; filter: blur(36px);
+      opacity:.65; pointer-events:none; mix-blend-mode: screen;
+      animation: float 14s ease-in-out infinite;
+    }
+    .deco.d1{ width:320px; height:320px; top:-90px; left:-60px;
+      background: radial-gradient(circle at 30% 30%, #ffd1e6, transparent 60%);
+      animation-duration: 16s;
+    }
+    .deco.d2{ width:260px; height:260px; bottom:-70px; right:-40px;
+      background: radial-gradient(circle at 70% 40%, #bfe2ff, transparent 60%);
+      animation-duration: 18s; animation-delay: -3s;
+    }
+    .deco.d3{ width:220px; height:220px; top:15%; right:12%;
+      background: radial-gradient(circle at 50% 50%, #ffe3c7, transparent 60%);
+      animation-duration: 20s; animation-delay: -6s;
+    }
+
+    @keyframes float{
+      0%,100%{ transform: translateY(0) rotate(0); }
+      50%{ transform: translateY(-18px) rotate(3deg); }
+    }
+
+    .card{
+      width:min(680px, 92%);
+      padding:48px 36px;
+      border-radius:28px;
+      background: var(--card);
+      border:1px solid var(--cardBorder);
+      backdrop-filter: blur(14px) saturate(120%);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      box-shadow: 0 20px 60px rgba(0,0,0,.12);
+      text-align:center;
+      position:relative;
+    }
+
+    .logo{
+      width:76px; height:76px; margin:0 auto 18px;
+      display:grid; place-items:center; border-radius:50%;
+      background: linear-gradient(135deg,var(--accent1),var(--accent2));
+      color:#fff; font-size:34px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      user-select:none;
+    }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height:1.15;
+      font-weight: 800;
+      letter-spacing: .2px;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p{
+      margin:0 0 22px;
+      font-size: clamp(15px, 2.2vw, 18px);
+      opacity:.85;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:12px 22px;
+      border-radius:999px;
+      text-decoration:none;
+      color:#fff;
+      background: linear-gradient(135deg,var(--accent1),var(--accent2));
+      box-shadow: 0 8px 20px rgba(125, 164, 255, .35);
+      transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .btn:hover{ transform: translateY(-2px); filter: brightness(1.02);
+      box-shadow:0 12px 26px rgba(125,164,255,.4);
+    }
+    .btn:active{ transform: translateY(0); }
+
+    .tag{
+      position:absolute; top:14px; right:14px;
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.55);
+      border:1px solid var(--cardBorder);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: inherit; opacity:.8;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .deco{ animation: none; }
+      .btn{ transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pastel arka plan süsleri -->
+  <div class="deco d1"></div>
+  <div class="deco d2"></div>
+  <div class="deco d3"></div>
+
+  <main class="card" role="main" aria-label="Geçici ana sayfa">
+    <span class="tag">geçici</span>
+
+    <div class="logo" aria-hidden="true">✨</div>
+
+    <h1>Hoş geldiniz!</h1>
+    <p>Yakında burada tatlı şeyler olacak.</p>
+
+   
+  </main>
+</body>
+</html>
