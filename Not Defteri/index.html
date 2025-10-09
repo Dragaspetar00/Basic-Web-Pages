@@ -2,11 +2,13 @@
 <html lang="tr" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Not Defteri</title>
+
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="https://dummyimage.com/192x192/ffffff/000000.png&text=ND" />
-  <meta name="theme-color" content="#6366f1" />
+  <link rel="apple-touch-icon" href="https://dummyimage.com/192x192/ffffff/000000.png&text=ND"/>
+  <meta name="theme-color" content="#6366f1"/>
 
   <style>
     :root {
@@ -15,113 +17,199 @@
       --bg: #fafafa;
       --card-bg: #ffffff;
       --text: #1f2937;
-      --muted: #6b7280;
       --border: #e5e7eb;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --muted: #6b7280;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
       --danger: #ef4444;
       --success: #10b981;
       --warning: #f59e0b;
     }
     [data-theme="dark"] {
-      --bg: #111827;
-      --card-bg: #1f2937;
-      --text: #f9fafb;
+      --bg: #0b1220;
+      --card-bg: #121a2a;
+      --text: #e5e7eb;
+      --border: #1f2937;
       --muted: #9ca3af;
-      --border: #374151;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(99,102,241,0.08), transparent 60%), var(--bg);
       color: var(--text);
       padding: 16px;
-      transition: background 0.3s ease;
+      line-height: 1.55;
+    }
+
+    .container { max-width: 880px; margin: 0 auto; }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0 20px; margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 1.35rem; font-weight: 800; letter-spacing: .2px;
+    }
+    h1 img { width: 40px; height: 40px; border-radius: 12px; box-shadow: var(--shadow); }
+    #themeToggle {
+      background: none; border: 1px solid var(--border); color: var(--text);
+      padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 1.1rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Editor section */
+    .input-section { padding: 14px; margin-bottom: 18px; }
+    .row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+    .row .grow { flex: 1 1 220px; }
+
+    input, select, button, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
+    textarea {
+      min-height: 160px;
+      resize: vertical;
       line-height: 1.6;
     }
-    .container { max-width: 900px; margin: 0 auto; }
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 0; border-bottom: 1px solid var(--border); margin-bottom: 24px;
+
+    .editor-toolbar {
+      display: flex; gap: 8px; flex-wrap: wrap;
     }
-    h1 { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-    h1 img { width: 40px; height: 40px; border-radius: 12px; }
-    #themeToggle {
-      background: none; border: 1px solid var(--border); font-size: 1rem;
-      cursor: pointer; color: var(--text); padding: 8px 12px; border-radius: 10px;
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); cursor: pointer; font-weight: 600;
+      transition: transform .04s ease-in-out, background .15s ease-in-out, border-color .15s ease-in-out;
+      user-select: none;
     }
-    .input-section {
-      background: var(--card-bg); padding: 16px; border-radius: 16px;
-      box-shadow: var(--shadow); margin-bottom: 24px;
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
+    .btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
+    .btn-success { background: var(--success); border-color: var(--success); color: white; }
+    .btn-warning { background: var(--warning); border-color: var(--warning); color: #1f2937; }
+    .btn-ghost { background: transparent; }
+    .btn-icon { width: 42px; padding: 10px; }
+    .btn[disabled] { opacity: .6; cursor: not-allowed; }
+
+    .switch {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 10px; border: 1px dashed var(--border);
+      color: var(--muted);
     }
-    .row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
-    input, select, button, textarea {
-      padding: 12px; border-radius: 12px; border: 1px solid var(--border);
-      font-size: 16px; background: var(--bg); color: var(--text);
+    .switch input { width: auto; }
+
+    .chips {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;
     }
-    textarea { width: 100%; min-height: 120px; resize: vertical; }
-    input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); }
-    #titleInput { flex: 2; }
-    #taskInput { flex: 1; }
-    #categorySelect, #reminderTime { min-width: 170px; }
-    #tagsInput { flex: 1; }
-    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-    .tool-btn {
-      background: var(--card-bg); border: 1px solid var(--border); color: var(--text);
-      padding: 8px 10px; border-radius: 10px; cursor: pointer; font-size: 0.95rem;
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border-radius: 9999px; background: var(--bg);
+      border: 1px dashed var(--border); color: var(--muted); font-size: 12px;
     }
-    .tool-btn.primary { background: var(--primary); color: #fff; border: none; }
-    .tool-btn.warning { background: var(--warning); color: #111; border: none; }
-    .tool-btn:active { transform: scale(0.98); }
-    .tools {
-      display: grid; grid-template-columns: 1fr 160px 1fr 1fr 1fr;
-      gap: 10px; margin-bottom: 16px;
-    }
-    .tools-bottom { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
-    .upload-btn, .audio-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; }
-    .upload-btn.secondary, .audio-btn.secondary { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); }
-    #imageUpload, #importInput { display: none; }
+
     .preview {
-      background: var(--bg); border: 1px dashed var(--border); padding: 12px; border-radius: 12px;
-      margin-top: 8px; max-height: 320px; overflow: auto;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: var(--bg);
+      max-height: 420px;
+      overflow: auto;
     }
+    .preview h1, .preview h2, .preview h3 { margin: 10px 0 6px; }
+    .preview p { margin-bottom: 8px; }
+    .preview ul { margin: 8px 0 8px 18px; }
+    .preview code {
+      background: rgba(99,102,241,0.12);
+      padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border);
+    }
+    .preview pre {
+      background: rgba(99,102,241,0.08);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px; overflow: auto;
+    }
+
+    /* Tools / Filters */
+    .tools { padding: 12px; margin-bottom: 18px; }
+    .tools .row { margin-bottom: 8px; }
+    .divider { height: 1px; background: var(--border); margin: 8px 0; border-radius: 1px; }
+
+    /* List */
     ul { list-style: none; }
-    .task-item {
-      background: var(--card-bg); padding: 16px; border-radius: 16px;
-      margin-bottom: 12px; box-shadow: var(--shadow); position: relative;
+    .note-item {
+      position: relative;
+      padding: 14px; margin-bottom: 12px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
     }
-    .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
-    .left-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .task-category {
-      background: var(--primary); color: white; padding: 4px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;
+    .note-header {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+      margin-bottom: 10px;
     }
-    .pin-btn {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 9999px; padding: 6px 10px; cursor: pointer;
+    .note-title {
+      font-weight: 800; font-size: 1.05rem; line-height: 1.3; word-break: break-word;
     }
-    .task-title { font-size: 1.15rem; font-weight: 700; margin: 6px 0; }
-    .task-text { font-size: 1rem; margin: 6px 0 8px; word-break: break-word; }
-    .completed .task-text, .completed .task-title { text-decoration: line-through; opacity: 0.7; }
-    .task-meta { font-size: 0.85rem; color: var(--muted); margin: 6px 0; display: flex; gap: 10px; flex-wrap: wrap; }
-    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; }
-    .task-image { width: 100%; border-radius: 12px; margin: 8px 0; max-height: 220px; object-fit: cover; }
-    .task-audio { width: 100%; margin: 8px 0; }
-    .task-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .btn-action {
-      padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); cursor: pointer; font-size: 0.95rem; background: var(--card-bg); color: var(--text);
+    .note-cat {
+      background: var(--primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
     }
-    .btn-action.success { background: var(--success); color: #fff; border: none; }
-    .btn-action.danger { background: var(--danger); color: #fff; border: none; }
-    .btn-action.warning { background: var(--warning); color: #111; border: none; }
-    .edit-area { margin-top: 10px; display: grid; gap: 8px; }
-    .edit-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .small { font-size: 0.8rem; color: var(--muted); }
-    footer { text-align: center; padding: 24px 0; color: var(--muted); font-size: 0.9rem; }
-    @media (max-width: 960px) {
-      .tools { grid-template-columns: 1fr 1fr 1fr; }
+    .note-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 8px; }
+    .note-tag {
+      font-size: 11px; color: var(--muted); background: var(--bg);
+      border: 1px dashed var(--border); border-radius: 9999px; padding: 4px 8px;
     }
-    @media (max-width: 480px) {
+    .note-meta { font-size: 12px; color: var(--muted); margin: 8px 0; display: flex; gap: 12px; flex-wrap: wrap; }
+    .note-content { margin: 6px 0 4px; }
+    .note-audio, .note-image { margin-top: 8px; }
+    .note-image { width: 100%; max-height: 320px; border-radius: 12px; object-fit: cover; }
+
+    .note-actions {
+      display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .btn-action { padding: 8px 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; }
+    .btn-action:active { transform: scale(0.98); }
+    .btn-pin.active { color: #fbbf24; border-color: #fbbf24; }
+
+    .completed .note-title, .completed .note-content { opacity: .75; text-decoration: line-through; }
+    .pinned { box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25), var(--shadow); }
+
+    footer {
+      text-align: center; padding: 14px 0; color: var(--muted); font-size: 0.95rem;
+    }
+
+    .hidden { display: none !important; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 520px) {
+      .btn-icon { width: 40px; }
       .row { flex-direction: column; }
-      .tools { grid-template-columns: 1fr; }
+      .editor-toolbar { gap: 6px; }
+      .note-actions { justify-content: flex-start; }
     }
   </style>
 </head>
@@ -129,603 +217,132 @@
   <div class="container">
     <header>
       <h1>
-        <img src="https://dummyimage.com/300x300/ffffff/000000.png&text=Not+Defteri" alt="Logo" />
+        <img src="https://dummyimage.com/300x300/ffffff/000000.png&text=Not+Defteri" alt="Logo"/>
         Not Defteri
       </h1>
-      <button id="themeToggle">🌙 Tema</button>
+      <button id="themeToggle" title="Tema Değiştir">🌙</button>
     </header>
 
-    <div class="input-section">
+    <!-- EDITÖR: Not oluşturma / düzenleme -->
+    <section class="input-section card" id="editor">
+      <!-- Başlık - Kategori -->
       <div class="row">
-        <input type="text" id="titleInput" placeholder="Başlık (isteğe bağlı)" />
+        <input class="grow" type="text" id="titleInput" placeholder="Başlık (ör. Toplantı notu)"/>
         <select id="categorySelect" title="Kategori">
           <option value="Genel">Genel</option>
           <option value="İş">İş</option>
           <option value="Kişisel">Kişisel</option>
+          <option value="Okul">Okul</option>
           <option value="Alışveriş">Alışveriş</option>
           <option value="Sağlık">Sağlık</option>
-          <option value="Okul">Okul</option>
         </select>
-        <input type="datetime-local" id="reminderTime" />
       </div>
 
-      <div class="toolbar">
-        <button class="tool-btn" data-tool="h1">H1</button>
-        <button class="tool-btn" data-tool="h2">H2</button>
-        <button class="tool-btn" data-tool="bold"><b>B</b></button>
-        <button class="tool-btn" data-tool="italic"><i>İ</i></button>
-        <button class="tool-btn" data-tool="ul">• Liste</button>
-        <button class="tool-btn" data-tool="ol">1. Liste</button>
-        <button class="tool-btn" data-tool="code">`Kod`</button>
-        <button class="tool-btn secondary" id="previewToggle">🪄 Önizleme</button>
+      <!-- Etiketler - Pin -->
+      <div class="row">
+        <input class="grow" type="text" id="tagsInput" placeholder="Etiketler (virgülle ayır: iş, önemli, proje)"/>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button id="pinToggle" class="btn btn-ghost" title="Öne Sabitle (Pin)">📌 Pin</button>
+          <label class="switch" title="Önizleme">
+            <input type="checkbox" id="previewToggle"/>
+            Önizleme
+          </label>
+        </div>
       </div>
 
-      <textarea id="taskInput" placeholder="Not içeriğini yaz (Markdown destekli: **kalın**, *italik*, # başlık, - liste)"></textarea>
+      <!-- Araç çubuğu -->
+      <div class="row editor-toolbar">
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn btn-icon" id="mdH1" title="Başlık 1">H1</button>
+          <button class="btn btn-icon" id="mdH2" title="Başlık 2">H2</button>
+          <button class="btn btn-icon" id="mdBold" title="Kalın"><b>B</b></button>
+          <button class="btn btn-icon" id="mdItalic" title="İtalik"><i>I</i></button>
+          <button class="btn btn-icon" id="mdList" title="Liste">•</button>
+          <button class="btn btn-icon" id="mdCode" title="Kod">{"</button>
+          <button class="btn btn-icon" id="mdQuote" title="Alıntı">"</button>
+          <button class="btn btn-icon" id="mdLink" title="Bağlantı">🔗</button>
+        </div>
+        <div style="display:flex; gap:8px; margin-left:auto; flex-wrap:wrap;">
+          <input type="file" id="imageUpload" accept="image/*" class="hidden"/>
+          <label for="imageUpload" class="btn" title="Resim Ekle">📷 Resim</label>
 
-      <div id="previewArea" class="preview" style="display:none"></div>
+          <button id="recordBtn" class="btn" title="Ses Kaydı Başlat/Durdur">🎙️ Ses</button>
+          <input type="file" id="audioUpload" accept="audio/*" class="btn hidden"/>
+          <!-- Dilersen ses dosyası seçimi için buton kullanılabilir:
+          <label for="audioUpload" class="btn">🎵 Ses Dosyası</label> -->
+        </div>
+      </div>
+
+      <!-- Metin / Önizleme -->
+      <div class="row">
+        <textarea id="contentInput" placeholder="Not içeriğini yazın (Markdown destekli: **kalın**, *italik*, # Başlık, - liste)"></textarea>
+        <div id="previewArea" class="preview hidden"></div>
+      </div>
+
+      <!-- Hatırlatma - Kaydet -->
+      <div class="row">
+        <input type="datetime-local" id="reminderTime" class="grow"/>
+        <div style="display:flex; gap:8px;">
+          <button id="saveBtn" class="btn btn-primary">Kaydet ✅</button>
+          <button id="clearBtn" class="btn">Temizle</button>
+        </div>
+      </div>
+
+      <!-- Seçilen medya bilgisi -->
+      <div id="attachmentsInfo" class="chips hidden">
+        <span class="chip" id="imgChip">🖼️ Resim eklendi</span>
+        <span class="chip" id="audChip">🎧 Ses eklendi</span>
+      </div>
+    </section>
+
+    <!-- ARAÇLAR: Arama / Filtreleme / Dışa-İçe Aktarma -->
+    <section class="tools card">
+      <div class="row">
+        <input class="grow" type="text" id="searchInput" placeholder="Başlık veya içerikte ara..."/>
+        <select id="filterCategory" title="Kategori Filtre">
+          <option value="">Tüm Kategoriler</option>
+          <option value="Genel">Genel</option>
+          <option value="İş">İş</option>
+          <option value="Kişisel">Kişisel</option>
+          <option value="Okul">Okul</option>
+          <option value="Alışveriş">Alışveriş</option>
+          <option value="Sağlık">Sağlık</option>
+        </select>
+        <input type="text" id="filterTags" placeholder="Etiket filtre (virgülle)"/>
+      </div>
+      <div class="row">
+        <input type="date" id="filterFrom" title="Tarih (başlangıç)"/>
+        <input type="date" id="filterTo" title="Tarih (bitiş)"/>
+        <select id="sortSelect" title="Sıralama" class="grow">
+          <option value="pinned-desc-created-desc">Önce sabitlenenler, sonra yeni</option>
+          <option value="created-desc">Tarihe göre: Yeni → Eski</option>
+          <option value="created-asc">Tarihe göre: Eski → Yeni</option>
+          <option value="title-asc">Başlığa göre: A → Z</option>
+          <option value="title-desc">Başlığa göre: Z → A</option>
+        </select>
+        <button id="clearFiltersBtn" class="btn">Filtreleri Temizle</button>
+      </div>
+
+      <div class="divider"></div>
 
       <div class="row">
-        <input type="text" id="tagsInput" placeholder="Etiketler (virgülle: iş, kişisel)" />
-        <label for="imageUpload" class="upload-btn">📷 Resim</label>
-        <input type="file" id="imageUpload" accept="image/*" />
-        <button id="recordBtn" class="audio-btn">🎙️ Ses Kaydı</button>
-        <button id="addBtn" class="tool-btn primary">Ekle ✅</button>
+        <button id="exportJsonBtn" class="btn">💾 Dışa Aktar (JSON)</button>
+        <button id="exportTxtBtn" class="btn">📄 Dışa Aktar (TXT)</button>
+        <input type="file" id="importFile" accept=".json,.txt" class="hidden"/>
+        <label for="importFile" class="btn btn-success">📥 İçe Aktar</label>
+        <span id="stats" class="chip">0 not</span>
+        <span id="offlineBadge" class="chip hidden">🛰️ Çevrimdışı</span>
       </div>
+    </section>
 
-      <div class="row">
-        <audio id="audioPreview" class="task-audio" controls style="display:none"></audio>
-        <img id="imagePreview" class="task-image" alt="Önizleme" style="display:none; max-width: 300px;" />
-      </div>
-    </div>
-
-    <div class="tools">
-      <input type="text" id="searchInput" placeholder="Başlık/içerik/etiket ara..." />
-      <select id="filterCategory" title="Kategori Filtre">
-        <option value="Tümü">Kategori: Tümü</option>
-        <option value="Genel">Genel</option>
-        <option value="İş">İş</option>
-        <option value="Kişisel">Kişisel</option>
-        <option value="Alışveriş">Alışveriş</option>
-        <option value="Sağlık">Sağlık</option>
-        <option value="Okul">Okul</option>
-      </select>
-      <input type="date" id="dateFrom" title="Başlangıç Tarihi" />
-      <input type="date" id="dateTo" title="Bitiş Tarihi" />
-      <input type="text" id="filterTags" placeholder="Etiket filtre: ör. iş" />
-    </div>
-
-    <div class="tools-bottom">
-      <button id="exportJsonBtn" class="tool-btn">📤 JSON Dışa Aktar</button>
-      <button id="exportTxtBtn" class="tool-btn">📤 TXT Dışa Aktar</button>
-      <label for="importInput" class="tool-btn">📥 İçe Aktar</label>
-      <input type="file" id="importInput" accept=".json,.txt" />
-      <button id="shareBtn" class="tool-btn">📲 Notları Paylaş</button>
-    </div>
-
+    <!-- NOT LİSTESİ -->
     <ul id="taskList"></ul>
 
     <footer>
-      <p class="small">Ana ekrana ekleyerek uygulama gibi kullan! (PWA)</p>
+      <button id="shareBtn" class="btn">📲 Notları Paylaş</button>
+      <p style="margin-top: 12px">Ana ekrana ekleyerek uygulama gibi kullan!</p>
     </footer>
   </div>
 
+  <!-- JS (2/2 mesajında gelecek) -->
   <script>
-    // Yardımcı: Base64 dönüştürücü
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // Yardımcı: Tarih formatlama
-    function fmt(ms) { try { return new Date(ms).toLocaleString('tr-TR'); } catch { return ''; } }
-
-    // Yardımcı: Debounce
-    const debounce = (fn, delay = 2000) => {
-      let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
-    };
-
-    // Markdown (basit)
-    function escapeHtml(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    }
-    function applyInline(md) {
-      return md
-        .replace(/```([\s\S]*?)```/g, (m, p1) => `<pre><code>${p1}</code></pre>`)
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-        .replace(/```math
-([^```]+)```KATEX_INLINE_OPEN(https?:\/\/[^\s)]+)KATEX_INLINE_CLOSE/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    }
-    function parseMarkdown(input) {
-      const src = escapeHtml(input || '');
-      const lines = src.split('\n');
-      let html = '', inUl = false, inOl = false, inP = false;
-
-      const closeP = () => { if (inP) { html += '</p>'; inP=false; } };
-      const closeLists = () => {
-        if (inUl) { html += '</ul>'; inUl=false; }
-        if (inOl) { html += '</ol>'; inOl=false; }
-      };
-
-      for (let raw of lines) {
-        const line = raw.replace(/\r$/, '');
-        if (line.trim() === '') { closeP(); closeLists(); continue; }
-
-        const h = line.match(/^(#{1,3})\s+(.*)$/);
-        if (h) {
-          closeP(); closeLists();
-          const level = h[1].length;
-          html += `<h${level}>${applyInline(h[2])}</h${level}>`;
-          continue;
-        }
-
-        const ol = line.match(/^\d+\.\s+(.*)$/);
-        if (ol) {
-          closeP();
-          if (!inOl) { closeLists(); html += '<ol>'; inOl = true; }
-          html += `<li>${applyInline(ol[1])}</li>`;
-          continue;
-        }
-
-        const ul = line.match(/^(?:-|\*)\s+(.*)$/);
-        if (ul) {
-          closeP();
-          if (!inUl) { closeLists(); html += '<ul>'; inUl = true; }
-          html += `<li>${applyInline(ul[1])}</li>`;
-          continue;
-        }
-
-        closeLists();
-        if (!inP) { html += '<p>'; inP = true; }
-        html += applyInline(line) + ' ';
-      }
-      closeP(); closeLists();
-      return html;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // Elemanlar
-      const titleInput = document.getElementById('titleInput');
-      const taskInput = document.getElementById('taskInput'); // textarea
-      const categorySelect = document.getElementById('categorySelect');
-      const reminderTime = document.getElementById('reminderTime');
-      const tagsInput = document.getElementById('tagsInput');
-      const addBtn = document.getElementById('addBtn');
-      const taskList = document.getElementById('taskList');
-
-      const searchInput = document.getElementById('searchInput');
-      const filterCategory = document.getElementById('filterCategory');
-      const dateFrom = document.getElementById('dateFrom');
-      const dateTo = document.getElementById('dateTo');
-      const filterTags = document.getElementById('filterTags');
-
-      const themeToggle = document.getElementById('themeToggle');
-      const imageUpload = document.getElementById('imageUpload');
-      const recordBtn = document.getElementById('recordBtn');
-      const previewToggle = document.getElementById('previewToggle');
-      const previewArea = document.getElementById('previewArea');
-      const audioPreview = document.getElementById('audioPreview');
-      const imagePreview = document.getElementById('imagePreview');
-
-      const exportJsonBtn = document.getElementById('exportJsonBtn');
-      const exportTxtBtn = document.getElementById('exportTxtBtn');
-      const importInput = document.getElementById('importInput');
-      const shareBtn = document.getElementById('shareBtn');
-
-      // Tema
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      setTheme(savedTheme);
-      themeToggle.addEventListener('click', () => {
-        const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        setTheme(next); localStorage.setItem('theme', next);
-      });
-      function setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        themeToggle.textContent = theme === 'light' ? '🌙 Tema' : '☀️ Tema';
-      }
-
-      // Veri
-      let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-      let currentImage = null;
-      let currentAudio = null;
-      let mediaRecorder = null, audioChunks = [], mediaStream = null;
-      const reminderTimers = new Map();
-
-      // Görev/Not model yükseltme (eski sürümden)
-      let migrated = false;
-      tasks = tasks.map(t => {
-        const copy = { ...t };
-        if (copy.createdAtMs == null) {
-          if (typeof copy.createdAt === 'number') {
-            copy.createdAtMs = copy.createdAt;
-          } else {
-            copy.createdAtMs = copy.id || Date.now();
-          }
-        }
-        if (!copy.createdAtText) copy.createdAtText = fmt(copy.createdAtMs);
-        if (!Array.isArray(copy.tags)) copy.tags = [];
-        if (typeof copy.pinned !== 'boolean') copy.pinned = false;
-        if (!('title' in copy)) copy.title = '';
-        if (!('audio' in copy)) copy.audio = null;
-        if (!('image' in copy)) copy.image = copy.image || null;
-        migrated = true;
-        return copy;
-      });
-      if (migrated) saveTasks();
-
-      // Bildirim planlayıcı (gelecekteki hatırlatıcıları kur)
-      scheduleAllReminders();
-
-      // Araç çubuğu (Markdown kısa yollar)
-      document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const tool = btn.getAttribute('data-tool');
-          applyEditorTool(tool);
-        });
-      });
-      function applyEditorTool(tool) {
-        taskInput.focus();
-        if (tool === 'bold') return wrapSelection(taskInput, '**', '**');
-        if (tool === 'italic') return wrapSelection(taskInput, '*', '*');
-        if (tool === 'code') return wrapSelection(taskInput, '`', '`');
-        if (tool === 'h1') return linePrefix(taskInput, '# ');
-        if (tool === 'h2') return linePrefix(taskInput, '## ');
-        if (tool === 'ul') return linePrefix(taskInput, '- ');
-        if (tool === 'ol') return numberedList(taskInput);
-      }
-      function wrapSelection(el, before, after) {
-        const start = el.selectionStart, end = el.selectionEnd;
-        const sel = el.value.substring(start, end);
-        const newText = el.value.substring(0, start) + before + sel + after + el.value.substring(end);
-        el.value = newText;
-        el.selectionStart = start + before.length;
-        el.selectionEnd = end + before.length;
-        onDraftChange();
-        updatePreview();
-      }
-      function linePrefix(el, prefix) {
-        const start = el.selectionStart, end = el.selectionEnd;
-        const before = el.value.substring(0, start);
-        const sel = el.value.substring(start, end);
-        const after = el.value.substring(end);
-        const lines = sel.split('\n').map(l => l ? (prefix + l) : l).join('\n');
-        el.value = before + lines + after;
-        el.selectionStart = start;
-        el.selectionEnd = start + lines.length;
-        onDraftChange();
-        updatePreview();
-      }
-      function numberedList(el) {
-        const start = el.selectionStart, end = el.selectionEnd;
-        const before = el.value.substring(0, start);
-        const sel = el.value.substring(start, end);
-        const after = el.value.substring(end);
-        const lines = sel.split('\n').map((l, i) => l ? (`${i+1}. ${l}`) : l).join('\n');
-        el.value = before + lines + after;
-        el.selectionStart = start;
-        el.selectionEnd = start + lines.length;
-        onDraftChange();
-        updatePreview();
-      }
-
-      // Önizleme
-      let previewOn = false;
-      previewToggle.addEventListener('click', () => {
-        previewOn = !previewOn;
-        previewArea.style.display = previewOn ? 'block' : 'none';
-        previewToggle.textContent = previewOn ? '🔎 Önizleme Açık' : '🪄 Önizleme';
-        updatePreview();
-      });
-      function updatePreview() {
-        if (!previewOn) return;
-        previewArea.innerHTML = parseMarkdown(taskInput.value);
-      }
-
-      // Resim yükleme
-      imageUpload.addEventListener('change', async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        currentImage = await fileToBase64(file);
-        imagePreview.src = currentImage;
-        imagePreview.style.display = 'block';
-        alert('✅ Resim yüklendi! Notla birlikte kaydedilecek.');
-        onDraftChange();
-      });
-
-      // Panodan resim yapıştırma
-      document.addEventListener('paste', async (e) => {
-        const items = e.clipboardData?.items || [];
-        for (const it of items) {
-          if (it.type && it.type.startsWith('image/')) {
-            const file = it.getAsFile();
-            if (!file) continue;
-            currentImage = await fileToBase64(file);
-            imagePreview.src = currentImage;
-            imagePreview.style.display = 'block';
-            alert('📋 Panodan resim alındı!');
-            onDraftChange();
-            break;
-          }
-        }
-      });
-
-      // Ses kaydı
-      recordBtn.addEventListener('click', async () => {
-        if (!mediaRecorder || mediaRecorder.state === 'inactive') {
-          if (!navigator.mediaDevices || typeof MediaRecorder === 'undefined') {
-            alert('Cihaz ses kaydını desteklemiyor.');
-            return;
-          }
-          try {
-            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            audioChunks = [];
-            mediaRecorder = new MediaRecorder(mediaStream);
-            mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-            mediaRecorder.onstop = async () => {
-              const blob = new Blob(audioChunks, { type: 'audio/webm' });
-              // iOS bazı durumlarda audio/mp4 tercih edebilir, basit tutuyoruz
-              currentAudio = await fileToBase64(new File([blob], 'note.webm', { type: 'audio/webm' }));
-              audioPreview.src = currentAudio;
-              audioPreview.style.display = 'block';
-              // Stream durdur
-              mediaStream.getTracks().forEach(t => t.stop());
-              mediaStream = null;
-              onDraftChange();
-              alert('🎤 Ses kaydedildi!');
-            };
-            mediaRecorder.start();
-            recordBtn.textContent = '⏹️ Kaydı Durdur';
-          } catch (err) {
-            alert('Mikrofon erişimi reddedildi veya bir hata oluştu.');
-          }
-        } else if (mediaRecorder.state === 'recording') {
-          mediaRecorder.stop();
-          recordBtn.textContent = '🎙️ Ses Kaydı';
-        }
-      });
-
-      // Otomatik taslak (draft) kaydetme
-      const saveDraftDebounced = debounce(saveDraft, 2000);
-      [titleInput, taskInput, tagsInput, categorySelect, reminderTime].forEach(el => {
-        el.addEventListener('input', () => { onDraftChange(); updatePreview(); });
-      });
-      function onDraftChange() { saveDraftDebounced(); }
-      function saveDraft() {
-        const draft = {
-          title: titleInput.value || '',
-          text: taskInput.value || '',
-          category: categorySelect.value,
-          tags: tagsInput.value || '',
-          remindAt: reminderTime.value || '',
-          image: currentImage,
-          audio: currentAudio,
-          ts: Date.now()
-        };
-        localStorage.setItem('draft', JSON.stringify(draft));
-      }
-      // Taslak geri yükle
-      (function restoreDraft() {
-        try {
-          const draft = JSON.parse(localStorage.getItem('draft') || 'null');
-          if (!draft) return;
-          if (draft.title) titleInput.value = draft.title;
-          if (draft.text) taskInput.value = draft.text;
-          if (draft.category) categorySelect.value = draft.category;
-          if (draft.tags) tagsInput.value = draft.tags;
-          if (draft.remindAt) reminderTime.value = draft.remindAt;
-          if (draft.image) { currentImage = draft.image; imagePreview.src = currentImage; imagePreview.style.display = 'block'; }
-          if (draft.audio) { currentAudio = draft.audio; audioPreview.src = currentAudio; audioPreview.style.display = 'block'; }
-          updatePreview();
-        } catch {}
-      })();
-
-      // Not ekleme
-      addBtn.addEventListener('click', addTask);
-      taskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && e.shiftKey === false) { e.preventDefault(); addTask(); } });
-      function parseTagsStr(str) {
-        return (str || '')
-          .split(',')
-          .map(s => s.trim())
-          .filter(Boolean)
-          .filter((v, i, a) => a.indexOf(v) === i);
-      }
-      function addTask() {
-        const title = (titleInput.value || '').trim();
-        const text = (taskInput.value || '').trim();
-        if (!title && !text) return;
-
-        const t = {
-          id: Date.now(),
-          title,
-          text,
-          category: categorySelect.value,
-          tags: parseTagsStr(tagsInput.value),
-          completed: false,
-          pinned: false,
-          createdAtMs: Date.now(),
-          createdAtText: fmt(Date.now()),
-          updatedAtMs: Date.now(),
-          remindAt: reminderTime.value ? new Date(reminderTime.value).getTime() : null,
-          image: currentImage,
-          audio: currentAudio
-        };
-
-        // Hatırlatma
-        if (t.remindAt && t.remindAt > Date.now()) {
-          scheduleReminder(t);
-        }
-
-        tasks.push(t);
-        saveTasks();
-        renderTasks();
-
-        // Temizle + taslağı sıfırla
-        titleInput.value = '';
-        taskInput.value = '';
-        tagsInput.value = '';
-        reminderTime.value = '';
-        currentImage = null;
-        currentAudio = null;
-        imagePreview.style.display = 'none';
-        audioPreview.style.display = 'none';
-        localStorage.removeItem('draft');
-        if (previewOn) updatePreview();
-        taskInput.focus();
-      }
-
-      function saveTasks() {
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-      }
-
-      // Sil, Tamamla, Pin, Düzenle
-      function deleteTask(id) {
-        const task = tasks.find(t => t.id === id);
-        if (!task) return;
-        if (reminderTimers.has(id)) { clearTimeout(reminderTimers.get(id)); reminderTimers.delete(id); }
-        tasks = tasks.filter(t => t.id !== id);
-        saveTasks(); renderTasks();
-      }
-      function toggleComplete(id) {
-        const t = tasks.find(x => x.id === id);
-        if (!t) return;
-        t.completed = !t.completed;
-        t.updatedAtMs = Date.now();
-        saveTasks(); renderTasks();
-      }
-      function togglePin(id) {
-        const t = tasks.find(x => x.id === id);
-        if (!t) return;
-        t.pinned = !t.pinned;
-        t.updatedAtMs = Date.now();
-        saveTasks(); renderTasks();
-      }
-
-      // Düzenleme (kart içinde inline)
-      function enterEdit(li, task) {
-        li.classList.add('editing');
-        const origHtml = li.innerHTML;
-
-        const editHtml = `
-          <div class="edit-area">
-            <div class="edit-row">
-              <input type="text" id="e_title_${task.id}" value="${(task.title || '').replace(/"/g,'&quot;')}" placeholder="Başlık" style="flex:2;" />
-              <input type="text" id="e_tags_${task.id}" value="${task.tags.join(', ')}" placeholder="Etiketler (virgülle)" style="flex:1;" />
-            </div>
-            <div class="toolbar">
-              <button class="tool-btn" data-tool="h1">H1</button>
-              <button class="tool-btn" data-tool="h2">H2</button>
-              <button class="tool-btn" data-tool="bold"><b>B</b></button>
-              <button class="tool-btn" data-tool="italic"><i>İ</i></button>
-              <button class="tool-btn" data-tool="ul">• Liste</button>
-              <button class="tool-btn" data-tool="ol">1. Liste</button>
-              <button class="tool-btn" data-tool="code">` + '`Kod`' + `</button>
-              <button class="tool-btn secondary" id="e_prev_${task.id}">🪄 Önizleme</button>
-            </div>
-            <textarea id="e_text_${task.id}" style="min-height:140px;">${(task.text || '').replace(/</g,'&lt;')}</textarea>
-            <div id="e_preview_${task.id}" class="preview" style="display:none"></div>
-            <div class="edit-row">
-              <button class="btn-action success" id="e_done_${task.id}">Kaydet/Bitti</button>
-              <button class="btn-action" id="e_cancel_${task.id}">Vazgeç</button>
-            </div>
-            <div class="small" id="e_status_${task.id}">Otomatik kaydetme aktif.</div>
-          </div>
-        `;
-        li.innerHTML = editHtml;
-
-        const eTitle = li.querySelector(`#e_title_${task.id}`);
-        const eTags  = li.querySelector(`#e_tags_${task.id}`);
-        const eText  = li.querySelector(`#e_text_${task.id}`);
-        const ePrevBtn = li.querySelector(`#e_prev_${task.id}`);
-        const ePrev = li.querySelector(`#e_preview_${task.id}`);
-        const eDone = li.querySelector(`#e_done_${task.id}`);
-        const eCancel = li.querySelector(`#e_cancel_${task.id}`);
-        const eStatus = li.querySelector(`#e_status_${task.id}`);
-
-        let ePreviewOn = false;
-        ePrevBtn.addEventListener('click', () => {
-          ePreviewOn = !ePreviewOn;
-          ePrev.style.display = ePreviewOn ? 'block' : 'none';
-          ePrevBtn.textContent = ePreviewOn ? '🔎 Önizleme Açık' : '🪄 Önizleme';
-          if (ePreviewOn) ePrev.innerHTML = parseMarkdown(eText.value);
-        });
-
-        const editAutoSave = debounce(() => {
-          task.title = eTitle.value;
-          task.tags = parseTagsStr(eTags.value);
-          task.text = eText.value;
-          task.updatedAtMs = Date.now();
-          saveTasks();
-          eStatus.textContent = '💾 Kaydedildi: ' + new Date().toLocaleTimeString('tr-TR');
-        }, 2000);
-
-        eTitle.addEventListener('input', editAutoSave);
-        eTags.addEventListener('input', editAutoSave);
-        eText.addEventListener('input', () => { if (ePreviewOn) ePrev.innerHTML = parseMarkdown(eText.value); editAutoSave(); });
-
-        eDone.addEventListener('click', () => { editAutoSave(); renderTasks(); });
-        eCancel.addEventListener('click', () => { li.innerHTML = origHtml; attachCardEvents(li, task); });
-      }
-
-      // Arama/Filtreleme ve Listeleme
-      function renderTasks() {
-        const term = (searchInput.value || '').toLowerCase();
-        const fCat = filterCategory.value;
-        const fTag = (filterTags.value || '').toLowerCase();
-        const fromMs = dateFrom.value ? new Date(dateFrom.value).setHours(0,0,0,0) : null;
-        const toMs = dateTo.value ? new Date(dateTo.value).setHours(23,59,59,999) : null;
-
-        taskList.innerHTML = '';
-
-        // Filtre
-        let filtered = tasks.filter(t => {
-          const created = t.createdAtMs || t.id || Date.now();
-          if (fromMs && created < fromMs) return false;
-          if (toMs && created > toMs) return false;
-
-          if (fCat && fCat !== 'Tümü' && t.category !== fCat) return false;
-
-          const hay = (t.title + ' ' + t.text + ' ' + (t.tags||[]).join(' ') + ' ' + (t.category||'')).toLowerCase();
-          if (term && !hay.includes(term)) return false;
-
-          if (fTag && !(t.tags || []).some(x => x.toLowerCase().includes(fTag))) return false;
-
-          return true;
-        });
-
-        // Sıralama: pin > yeni
-        filtered.sort((a,b) => (b.pinned - a.pinned) || ((b.createdAtMs||0) - (a.createdAtMs||0)));
-
-        // Kartları çiz
-        filtered.forEach(task => {
-          const li = document.createElement('li');
-          li.className = `task-item ${task.completed ? 'completed' : ''}`;
-
-          const title = task.title?.trim() || '(Başlıksız)';
-          const tagsHtml = (task.tags||[]).map(t => `<span class="tag">#${t}</span>`).join(' ');
-
-          const imageHtml = task.image ? `<img src="${task.image}" class="task-image" alt="Resim">` : '';
-          const audioHtml = task.audio ? `<audio class="task-audio" controls src="${task.audio}"></audio>` : '';
-          const remindHtml = task.remindAt ? `<span>⏰ ${fmt(task.remindAt)}</span>` : '';
-
-          li.innerHTML = `
-            <div class="task-header">
-              <div class="left-head">
-                <span class="task-category">${task.category || 'Genel'}</span>
-                <button class="pin-btn" title="Sabitle">${task.pinned ? '📌 Sabit' : '📍 Sabitle'}</button>
-              </div>
-              <div class="task-meta">
-                <span>🕒 ${task.createdAtText || fmt(task.createdAtMs)}</span>
-                ${remindHtml}
-              </div>
-            </div>
-            <div class="task-title">${title}</div>
-            <div class="task-text">${parseMarkdown(task.text || '')}</div>
-            <div class="tags">${tagsHtml}</div>
-            ${imageHtml}
-            ${audioHtml}
-            <div class="task-actions">
