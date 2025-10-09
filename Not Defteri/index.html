@@ -3,76 +3,80 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Not Defteri — Hızlı ve Basit</title>
+  <title>Not Defteri</title>
   <style>
-    :root{
-      --primary:#6366f1; --primary-dark:#4f46e5;
-      --bg:#fafafa; --card:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb;
-      --danger:#ef4444; --success:#10b981; --warn:#f59e0b;
-      --shadow:0 4px 10px rgba(0,0,0,.06);
+    :root {
+      --primary: #6366f1; --primary-dark: #4f46e5;
+      --bg: #f9fafb; --card: #ffffff; --text: #111827; --muted: #6b7280;
+      --border: #e5e7eb; --danger: #ef4444; --success: #10b981; --warn: #f59e0b;
+      --shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    [data-theme="dark"]{
-      --bg:#0b1220; --card:#121a2a; --text:#e5e7eb; --muted:#9ca3af; --border:#1f2937;
+    [data-theme="dark"] {
+      --bg: #111827; --card: #1f2937; --text: #e5e7eb; --muted: #9ca3af;
+      --border: #374151;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:var(--bg); color:var(--text);
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.5;
     }
-    .container{max-width:920px;margin:0 auto;padding:16px}
-    header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 14px;border-bottom:1px solid var(--border)}
-    h1{margin:0;font-size:1.25rem;font-weight:800;display:flex;align-items:center;gap:10px}
-    #themeToggle{border:1px solid var(--border);background:transparent;color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer}
+    .container { max-width: 800px; margin: 0 auto; padding: 12px; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    h1 { margin: 0; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    #themeToggle {
+      border: 1px solid var(--border); background: none; color: var(--text);
+      padding: 6px 10px; border-radius: 8px; cursor: pointer;
+    }
 
-    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
-    .section{padding:12px;margin:14px 0}
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0;align-items:center}
-    .grow{flex:1 1 220px}
-    input,select,textarea,button{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font-size:15px}
-    input,select{width:100%}
-    textarea{width:100%;min-height:140px;resize:vertical;line-height:1.55}
-    input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);border-color:transparent}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);cursor:pointer}
-    .btn:active{transform:scale(.98)}
-    .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
-    .btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
-    .btn-success{background:var(--success);border-color:var(--success);color:#fff}
-    .btn-warn{background:var(--warn);border-color:var(--warn);color:#111827}
-    .btn-icon{width:auto;min-width:42px;padding:10px}
-    .toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-    .switch{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
-    .chips{display:flex;gap:6px;flex-wrap:wrap}
-    .chip{padding:6px 10px;border-radius:9999px;border:1px dashed var(--border);background:var(--bg);color:var(--muted);font-size:12px}
-    .hidden{display:none !important}
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+    .section { padding: 12px; margin: 12px 0; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; align-items: center; }
+    .grow { flex: 1 1 200px; }
+    input, select, textarea {
+      padding: 8px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg); color: var(--text); font-size: 14px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--primary); border-color: transparent;
+    }
+    textarea { width: 100%; min-height: 120px; resize: vertical; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg); color: var(--text); cursor: pointer; font-size: 14px;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+    .btn-success { background: var(--success); border-color: var(--success); color: #fff; }
+    .btn-icon { padding: 8px; min-width: 36px; }
+    .toolbar { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip { padding: 4px 8px; border-radius: 9999px; border: 1px dashed var(--border); background: var(--bg); color: var(--muted); font-size: 12px; }
+    .hidden { display: none !important; }
 
-    ul{list-style:none;padding:0;margin:0}
-    .note{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:12px;margin:10px 0}
-    .note-header{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
-    .note-title{font-weight:800;font-size:1.05rem}
-    .note-cat{background:var(--primary);color:#fff;padding:4px 10px;border-radius:9999px;font-size:12px;white-space:nowrap}
-    .note-tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
-    .tag{font-size:11px;color:var(--muted);background:var(--bg);border:1px dashed var(--border);border-radius:9999px;padding:4px 8px}
-    .meta{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;margin:8px 0}
-    .content{margin:6px 0}
-    .content img{max-width:100%}
-    .note-img{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:8px}
-    .note-audio{margin-top:8px;width:100%}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:10px}
-    .pin.active{border-color:var(--warn);color:#111827;background:var(--warn)}
-    .pinned{box-shadow:0 0 0 2px rgba(245,158,11,.25), var(--shadow)}
+    ul { list-style: none; padding: 0; margin: 0; }
+    .note { background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 12px; margin: 8px 0; }
+    .note-header { display: flex; gap: 8px; justify-content: space-between; align-items: flex-start; }
+    .note-title { font-weight: 700; font-size: 1rem; }
+    .note-cat { background: var(--primary); color: #fff; padding: 4px 8px; border-radius: 9999px; font-size: 12px; }
+    .note-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
+    .tag { font-size: 11px; color: var(--muted); background: var(--bg); border: 1px dashed var(--border); border-radius: 9999px; padding: 3px 6px; }
+    .meta { font-size: 12px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+    .content { margin: 6px 0; }
+    .note-img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; margin-top: 6px; }
+    .note-audio { margin-top: 6px; width: 100%; }
+    .actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; margin-top: 8px; }
+    .pinned { box-shadow: 0 0 0 2px rgba(245,158,11,0.2), var(--shadow); }
 
-    .preview{border:1px dashed var(--border);padding:12px;border-radius:12px;background:var(--bg);max-height:420px;overflow:auto}
-    .preview h1,.preview h2,.preview h3{margin:10px 0 6px}
-    .preview p{margin:8px 0}
-    .preview ul{margin:8px 0 8px 18px}
-    .preview code{background:rgba(99,102,241,.12);padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
-    .preview pre{background:rgba(99,102,241,.08);border:1px solid var(--border);border-radius:12px;padding:10px;overflow:auto}
-
-    @media (max-width:560px){
-      .btn-icon{min-width:40px}
-      .row{flex-direction:column;gap:6px}
-      .actions{justify-content:flex-start}
-      .toolbar{justify-content:center}
+    @media (max-width: 560px) {
+      .container { padding: 8px; }
+      .row { flex-direction: column; gap: 4px; }
+      .btn-icon { min-width: 34px; }
+      .actions { justify-content: flex-start; }
     }
   </style>
 </head>
@@ -85,112 +89,62 @@
 
     <section class="card section" id="editor">
       <div class="row">
-        <input id="titleInput" class="grow" type="text" placeholder="Başlık (ör. Toplantı Notu)">
-        <select id="categorySelect" title="Kategori" style="flex:0 1 150px">
+        <input id="titleInput" class="grow" type="text" placeholder="Not başlığı">
+        <select id="categorySelect" style="flex: 0 1 120px">
           <option value="Genel">Genel</option>
           <option value="İş">İş</option>
           <option value="Kişisel">Kişisel</option>
           <option value="Okul">Okul</option>
-          <option value="Alışveriş">Alışveriş</option>
-          <option value="Sağlık">Sağlık</option>
         </select>
       </div>
-
       <div class="row">
-        <input id="tagsInput" class="grow" type="text" placeholder="Etiketler (virgülle: iş, önemli)">
-        <input id="reminderTime" type="datetime-local" style="flex:0 1 200px">
+        <input id="tagsInput" class="grow" type="text" placeholder="Etiketler (örn: iş, önemli)">
       </div>
-
       <div class="row toolbar">
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-icon" id="mdH1" title="Büyük Başlık">H1</button>
-          <button class="btn btn-icon" id="mdH2" title="Orta Başlık">H2</button>
-          <button class="btn btn-icon" id="mdBold" title="Kalın"><b>B</b></button>
-          <button class="btn btn-icon" id="mdItalic" title="İtalik"><i>I</i></button>
-          <button class="btn btn-icon" id="mdList" title="Liste">•</button>
-          <button class="btn btn-icon" id="mdQuote" title="Alıntı">"</button>
-          <button class="btn btn-icon" id="mdCode" title="Kod">&lt;/&gt;</button>
-          <button class="btn btn-icon" id="mdLink" title="Bağlantı">🔗</button>
-        </div>
-        <div style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap">
-          <input type="file" id="imageUpload" accept="image/*" class="hidden">
-          <label for="imageUpload" class="btn btn-icon" title="Resim Ekle">📷</label>
-          <input type="file" id="audioUpload" accept="audio/*" class="hidden">
-          <label for="audioUpload" class="btn btn-icon" title="Ses Dosyası Ekle">🎵</label>
-          <button id="recordBtn" class="btn btn-icon" title="Ses Kaydet">🎙️</button>
-        </div>
+        <button class="btn btn-icon" id="mdBold" title="Kalın metin"><b>B</b></button>
+        <button class="btn btn-icon" id="mdItalic" title="İtalik metin"><i>I</i></button>
+        <button class="btn btn-icon" id="mdList" title="Liste">•</button>
+        <button class="btn btn-icon" id="mdLink" title="Bağlantı">🔗</button>
+        <input type="file" id="imageUpload" accept="image/*" class="hidden">
+        <label for="imageUpload" class="btn btn-icon" title="Resim ekle">📷</label>
+        <input type="file" id="audioUpload" accept="audio/*" class="hidden">
+        <label for="audioUpload" class="btn btn-icon" title="Ses ekle">🎵</label>
       </div>
-
       <div class="row">
-        <textarea id="contentInput" placeholder="Not içeriği (Markdown destekli: **kalın**, *italik*, # Başlık, - liste)"></textarea>
-        <div id="previewArea" class="preview hidden"></div>
+        <textarea id="contentInput" placeholder="Notunuzu buraya yazın (örn: **kalın**, *italik*, - liste)"></textarea>
       </div>
-
-      <div class="row" style="justify-content:space-between">
-        <div style="display:flex;gap:8px;align-items:center">
-          <button id="pinToggle" class="btn">📌 Pin</button>
-          <label class="switch"><input type="checkbox" id="previewToggle"> Önizleme</label>
+      <div class="row" style="justify-content: space-between">
+        <div class="chips">
+          <span id="imgChip" class="chip hidden">🖼️ Resim</span>
+          <span id="audChip" class="chip hidden">🎧 Ses</span>
         </div>
-        <div style="display:flex;gap:8px">
+        <div style="display: flex; gap: 6px">
           <button id="clearBtn" class="btn">Temizle</button>
-          <button id="saveBtn" class="btn btn-primary">Kaydet ✅</button>
+          <button id="saveBtn" class="btn btn-primary">Kaydet</button>
         </div>
-      </div>
-
-      <div id="attachmentsInfo" class="chips hidden">
-        <span id="imgChip" class="chip">🖼️ Resim eklendi</span>
-        <span id="audChip" class="chip">🎧 Ses eklendi</span>
       </div>
     </section>
 
     <section class="card section">
       <div class="row">
-        <input id="searchInput" class="grow" type="text" placeholder="Başlık veya içerikte ara">
-        <select id="filterCategory" style="flex:0 1 150px">
+        <input id="searchInput" class="grow" type="text" placeholder="Ara...">
+        <select id="filterCategory" style="flex: 0 1 120px">
           <option value="">Tüm Kategoriler</option>
           <option value="Genel">Genel</option>
           <option value="İş">İş</option>
           <option value="Kişisel">Kişisel</option>
           <option value="Okul">Okul</option>
-          <option value="Alışveriş">Alışveriş</option>
-          <option value="Sağlık">Sağlık</option>
         </select>
       </div>
       <div class="row">
-        <input id="filterTags" type="text" placeholder="Etiket filtre (virgülle)" class="grow">
-        <input id="filterFrom" type="date" style="flex:0 1 150px">
-        <input id="filterTo" type="date" style="flex:0 1 150px">
-      </div>
-      <div class="row">
-        <select id="sortSelect" class="grow">
-          <option value="pinned-desc-created-desc">Önce sabitlenenler, sonra yeni</option>
-          <option value="created-desc">Tarihe göre: Yeni → Eski</option>
-          <option value="created-asc">Tarihe göre: Eski → Yeni</option>
-          <option value="title-asc">Başlığa göre: A → Z</option>
-          <option value="title-desc">Başlığa göre: Z → A</option>
-        </select>
-        <button id="clearFiltersBtn" class="btn">Filtreleri Temizle</button>
-      </div>
-      <div class="row" style="align-items:center;justify-content:space-between">
-        <div style="display:flex;gap:8px">
-          <button id="exportJsonBtn" class="btn">💾 JSON</button>
-          <button id="exportTxtBtn" class="btn">📄 TXT</button>
-          <input id="importFile" type="file" accept=".json,.txt" class="hidden">
-          <label for="importFile" class="btn btn-success">📥 İçe Aktar</label>
-        </div>
-        <div style="display:flex;gap:8px">
-          <span id="stats" class="chip">0 not</span>
-          <span id="offlineBadge" class="chip hidden">🛰️ Çevrimdışı</span>
-        </div>
+        <button id="exportBtn" class="btn">💾 Dışa Aktar</button>
+        <input id="importFile" type="file" accept=".json" class="hidden">
+        <label for="importFile" class="btn btn-success">📥 İçe Aktar</label>
+        <span id="stats" class="chip">0 not</span>
       </div>
     </section>
 
     <ul id="noteList"></ul>
-
-    <footer class="section" style="text-align:center;color:var(--muted)">
-      <button id="shareBtn" class="btn">📲 Notları Paylaş</button>
-      <p style="margin:10px 0 0">Notlar localStorage’da saklanır. İnternet yokken de kaybolmaz.</p>
-    </footer>
   </div>
 
   <script src="script.js"></script>
