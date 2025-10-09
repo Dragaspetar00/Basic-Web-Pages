@@ -1,234 +1,92 @@
 <!DOCTYPE html>
 <html lang="tr" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Not Defteri</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="https://dummyimage.com/192x192/ffffff/000000.png&text=ND"/>
-  <meta name="theme-color" content="#6366f1"/>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Not Defteri — Hızlı ve Basit</title>
   <style>
-    :root {
-      --primary: #6366f1;
-      --primary-dark: #4f46e5;
-      --bg: #fafafa;
-      --card-bg: #ffffff;
-      --text: #1f2937;
-      --border: #e5e7eb;
-      --muted: #6b7280;
-      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-      --danger: #ef4444;
-      --success: #10b981;
-      --warning: #f59e0b;
+    :root{
+      --primary:#6366f1; --primary-dark:#4f46e5;
+      --bg:#fafafa; --card:#ffffff; --text:#111827; --muted:#6b7280; --border:#e5e7eb;
+      --danger:#ef4444; --success:#10b981; --warn:#f59e0b;
+      --shadow:0 4px 10px rgba(0,0,0,.06);
     }
-    [data-theme="dark"] {
-      --bg: #0b1220;
-      --card-bg: #121a2a;
-      --text: #e5e7eb;
-      --border: #1f2937;
-      --muted: #9ca3af;
+    [data-theme="dark"]{
+      --bg:#0b1220; --card:#121a2a; --text:#e5e7eb; --muted:#9ca3af; --border:#1f2937;
     }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg); color:var(--text);
+    }
+    .container{max-width:920px;margin:0 auto;padding:16px}
+    header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 14px;border-bottom:1px solid var(--border)}
+    h1{margin:0;font-size:1.25rem;font-weight:800;display:flex;align-items:center;gap:10px}
+    #themeToggle{border:1px solid var(--border);background:transparent;color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-    body {
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(99,102,241,0.08), transparent 60%), var(--bg);
-      color: var(--text);
-      padding: 16px;
-      line-height: 1.55;
-    }
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+    .section{padding:12px;margin:14px 0}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0;align-items:center}
+    .grow{flex:1 1 220px}
+    input,select,textarea,button{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);font-size:15px}
+    input,select{width:100%}
+    textarea{width:100%;min-height:140px;resize:vertical;line-height:1.55}
+    input:focus,select:focus,textarea:focus{outline:2px solid var(--primary);border-color:transparent}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--bg);color:var(--text);cursor:pointer}
+    .btn:active{transform:scale(.98)}
+    .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+    .btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+    .btn-success{background:var(--success);border-color:var(--success);color:#fff}
+    .btn-warn{background:var(--warn);border-color:var(--warn);color:#111827}
+    .btn-icon{width:auto;min-width:42px;padding:10px}
+    .toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    .switch{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}
+    .chip{padding:6px 10px;border-radius:9999px;border:1px dashed var(--border);background:var(--bg);color:var(--muted);font-size:12px}
+    .hidden{display:none !important}
 
-    .container { max-width: 880px; margin: 0 auto; }
+    ul{list-style:none;padding:0;margin:0}
+    .note{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:12px;margin:10px 0}
+    .note-header{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+    .note-title{font-weight:800;font-size:1.05rem}
+    .note-cat{background:var(--primary);color:#fff;padding:4px 10px;border-radius:9999px;font-size:12px;white-space:nowrap}
+    .note-tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+    .tag{font-size:11px;color:var(--muted);background:var(--bg);border:1px dashed var(--border);border-radius:9999px;padding:4px 8px}
+    .meta{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;margin:8px 0}
+    .content{margin:6px 0}
+    .content img{max-width:100%}
+    .note-img{width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin-top:8px}
+    .note-audio{margin-top:8px;width:100%}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:10px}
+    .pin.active{border-color:var(--warn);color:#111827;background:var(--warn)}
+    .pinned{box-shadow:0 0 0 2px rgba(245,158,11,.25), var(--shadow)}
 
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 0 20px; margin-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    h1 {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 1.35rem; font-weight: 800; letter-spacing: .2px;
-    }
-    h1 img { width: 40px; height: 40px; border-radius: 12px; box-shadow: var(--shadow); }
-    #themeToggle {
-      background: none; border: 1px solid var(--border); color: var(--text);
-      padding: 8px 12px; border-radius: 12px; cursor: pointer; font-size: 1.1rem;
-    }
+    .preview{border:1px dashed var(--border);padding:12px;border-radius:12px;background:var(--bg);max-height:420px;overflow:auto}
+    .preview h1,.preview h2,.preview h3{margin:10px 0 6px}
+    .preview p{margin:8px 0}
+    .preview ul{margin:8px 0 8px 18px}
+    .preview code{background:rgba(99,102,241,.12);padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
+    .preview pre{background:rgba(99,102,241,.08);border:1px solid var(--border);border-radius:12px;padding:10px;overflow:auto}
 
-    /* Cards */
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-    }
-
-    /* Editor section */
-    .input-section { padding: 14px; margin-bottom: 18px; }
-    .row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-    .row .grow { flex: 1 1 220px; }
-
-    input, select, button, textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 15px;
-    }
-    input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
-    textarea {
-      min-height: 160px;
-      resize: vertical;
-      line-height: 1.6;
-    }
-
-    .editor-toolbar {
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      gap: 6px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); cursor: pointer; font-weight: 600;
-      transition: transform .04s ease-in-out, background .15s ease-in-out, border-color .15s ease-in-out;
-      user-select: none;
-    }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
-    .btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
-    .btn-success { background: var(--success); border-color: var(--success); color: white; }
-    .btn-warning { background: var(--warning); border-color: var(--warning); color: #1f2937; }
-    .btn-ghost { background: transparent; }
-    .btn-icon { width: 42px; padding: 10px; }
-    .btn[disabled] { opacity: .6; cursor: not-allowed; }
-
-    .switch {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 10px; border-radius: 10px; border: 1px dashed var(--border);
-      color: var(--muted);
-    }
-    .switch input { width: auto; }
-
-    .chips {
-      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;
-    }
-    .chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 10px; border-radius: 9999px; background: var(--bg);
-      border: 1px dashed var(--border); color: var(--muted); font-size: 12px;
-    }
-
-    .preview {
-      border: 1px dashed var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      background: var(--bg);
-      max-height: 420px;
-      overflow: auto;
-    }
-    .preview h1, .preview h2, .preview h3 { margin: 10px 0 6px; }
-    .preview p { margin-bottom: 8px; }
-    .preview ul { margin: 8px 0 8px 18px; }
-    .preview code {
-      background: rgba(99,102,241,0.12);
-      padding: 2px 6px; border-radius: 6px; border: 1px solid var(--border);
-    }
-    .preview pre {
-      background: rgba(99,102,241,0.08);
-      border: 1px solid var(--border);
-      border-radius: 12px; padding: 10px; overflow: auto;
-    }
-
-    /* Tools / Filters */
-    .tools { padding: 12px; margin-bottom: 18px; }
-    .tools .row { margin-bottom: 8px; }
-    .divider { height: 1px; background: var(--border); margin: 8px 0; border-radius: 1px; }
-
-    /* List */
-    ul { list-style: none; }
-    .note-item {
-      position: relative;
-      padding: 14px; margin-bottom: 12px;
-      background: var(--card-bg);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-    .note-header {
-      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
-      margin-bottom: 10px;
-    }
-    .note-title {
-      font-weight: 800; font-size: 1.05rem; line-height: 1.3; word-break: break-word;
-    }
-    .note-cat {
-      background: var(--primary);
-      color: white;
-      padding: 4px 10px;
-      border-radius: 9999px;
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .note-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 8px; }
-    .note-tag {
-      font-size: 11px; color: var(--muted); background: var(--bg);
-      border: 1px dashed var(--border); border-radius: 9999px; padding: 4px 8px;
-    }
-    .note-meta { font-size: 12px; color: var(--muted); margin: 8px 0; display: flex; gap: 12px; flex-wrap: wrap; }
-    .note-content { margin: 6px 0 4px; }
-    .note-audio, .note-image { margin-top: 8px; }
-    .note-image { width: 100%; max-height: 320px; border-radius: 12px; object-fit: cover; }
-
-    .note-actions {
-      display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: flex-end;
-    }
-    .btn-action { padding: 8px 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; }
-    .btn-action:active { transform: scale(0.98); }
-    .btn-pin.active { color: #fbbf24; border-color: #fbbf24; }
-
-    .completed .note-title, .completed .note-content { opacity: .75; text-decoration: line-through; }
-    .pinned { box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25), var(--shadow); }
-
-    footer {
-      text-align: center; padding: 14px 0; color: var(--muted); font-size: 0.95rem;
-    }
-
-    .hidden { display: none !important; }
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
-
-    /* Mobile tweaks */
-    @media (max-width: 520px) {
-      .btn-icon { width: 40px; }
-      .row { flex-direction: column; }
-      .editor-toolbar { gap: 6px; }
-      .note-actions { justify-content: flex-start; }
+    @media (max-width:560px){
+      .btn-icon{min-width:40px}
+      .row{flex-direction:column;gap:6px}
+      .actions{justify-content:flex-start}
+      .toolbar{justify-content:center}
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>
-        <img src="https://dummyimage.com/300x300/ffffff/000000.png&text=Not+Defteri" alt="Logo"/>
-        Not Defteri
-      </h1>
-      <button id="themeToggle" title="Tema Değiştir">🌙</button>
+      <h1>🗒️ Not Defteri</h1>
+      <button id="themeToggle">🌙</button>
     </header>
 
-    <!-- EDITÖR: Not oluşturma / düzenleme -->
-    <section class="input-section card" id="editor">
-      <!-- Başlık - Kategori -->
+    <section class="card section" id="editor">
       <div class="row">
-        <input class="grow" type="text" id="titleInput" placeholder="Başlık (ör. Toplantı notu)"/>
-        <select id="categorySelect" title="Kategori">
+        <input id="titleInput" class="grow" type="text" placeholder="Başlık (ör. Toplantı Notu)">
+        <select id="categorySelect" title="Kategori" style="flex:0 1 150px">
           <option value="Genel">Genel</option>
           <option value="İş">İş</option>
           <option value="Kişisel">Kişisel</option>
@@ -238,68 +96,57 @@
         </select>
       </div>
 
-      <!-- Etiketler - Pin -->
       <div class="row">
-        <input class="grow" type="text" id="tagsInput" placeholder="Etiketler (virgülle ayır: iş, önemli, proje)"/>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <button id="pinToggle" class="btn btn-ghost" title="Öne Sabitle (Pin)">📌 Pin</button>
-          <label class="switch" title="Önizleme">
-            <input type="checkbox" id="previewToggle"/>
-            Önizleme
-          </label>
-        </div>
+        <input id="tagsInput" class="grow" type="text" placeholder="Etiketler (virgülle: iş, önemli)">
+        <input id="reminderTime" type="datetime-local" style="flex:0 1 200px">
       </div>
 
-      <!-- Araç çubuğu -->
-      <div class="row editor-toolbar">
-        <div style="display:flex; gap:6px; flex-wrap:wrap;">
-          <button class="btn btn-icon" id="mdH1" title="Başlık 1">H1</button>
-          <button class="btn btn-icon" id="mdH2" title="Başlık 2">H2</button>
+      <div class="row toolbar">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-icon" id="mdH1" title="Büyük Başlık">H1</button>
+          <button class="btn btn-icon" id="mdH2" title="Orta Başlık">H2</button>
           <button class="btn btn-icon" id="mdBold" title="Kalın"><b>B</b></button>
           <button class="btn btn-icon" id="mdItalic" title="İtalik"><i>I</i></button>
           <button class="btn btn-icon" id="mdList" title="Liste">•</button>
-          <button class="btn btn-icon" id="mdCode" title="Kod">{"</button>
           <button class="btn btn-icon" id="mdQuote" title="Alıntı">"</button>
+          <button class="btn btn-icon" id="mdCode" title="Kod">&lt;/&gt;</button>
           <button class="btn btn-icon" id="mdLink" title="Bağlantı">🔗</button>
         </div>
-        <div style="display:flex; gap:8px; margin-left:auto; flex-wrap:wrap;">
-          <input type="file" id="imageUpload" accept="image/*" class="hidden"/>
-          <label for="imageUpload" class="btn" title="Resim Ekle">📷 Resim</label>
-
-          <button id="recordBtn" class="btn" title="Ses Kaydı Başlat/Durdur">🎙️ Ses</button>
-          <input type="file" id="audioUpload" accept="audio/*" class="btn hidden"/>
-          <!-- Dilersen ses dosyası seçimi için buton kullanılabilir:
-          <label for="audioUpload" class="btn">🎵 Ses Dosyası</label> -->
+        <div style="display:flex;gap:6px;margin-left:auto;flex-wrap:wrap">
+          <input type="file" id="imageUpload" accept="image/*" class="hidden">
+          <label for="imageUpload" class="btn btn-icon" title="Resim Ekle">📷</label>
+          <input type="file" id="audioUpload" accept="audio/*" class="hidden">
+          <label for="audioUpload" class="btn btn-icon" title="Ses Dosyası Ekle">🎵</label>
+          <button id="recordBtn" class="btn btn-icon" title="Ses Kaydet">🎙️</button>
         </div>
       </div>
 
-      <!-- Metin / Önizleme -->
       <div class="row">
-        <textarea id="contentInput" placeholder="Not içeriğini yazın (Markdown destekli: **kalın**, *italik*, # Başlık, - liste)"></textarea>
+        <textarea id="contentInput" placeholder="Not içeriği (Markdown destekli: **kalın**, *italik*, # Başlık, - liste)"></textarea>
         <div id="previewArea" class="preview hidden"></div>
       </div>
 
-      <!-- Hatırlatma - Kaydet -->
-      <div class="row">
-        <input type="datetime-local" id="reminderTime" class="grow"/>
-        <div style="display:flex; gap:8px;">
-          <button id="saveBtn" class="btn btn-primary">Kaydet ✅</button>
+      <div class="row" style="justify-content:space-between">
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="pinToggle" class="btn">📌 Pin</button>
+          <label class="switch"><input type="checkbox" id="previewToggle"> Önizleme</label>
+        </div>
+        <div style="display:flex;gap:8px">
           <button id="clearBtn" class="btn">Temizle</button>
+          <button id="saveBtn" class="btn btn-primary">Kaydet ✅</button>
         </div>
       </div>
 
-      <!-- Seçilen medya bilgisi -->
       <div id="attachmentsInfo" class="chips hidden">
-        <span class="chip" id="imgChip">🖼️ Resim eklendi</span>
-        <span class="chip" id="audChip">🎧 Ses eklendi</span>
+        <span id="imgChip" class="chip">🖼️ Resim eklendi</span>
+        <span id="audChip" class="chip">🎧 Ses eklendi</span>
       </div>
     </section>
 
-    <!-- ARAÇLAR: Arama / Filtreleme / Dışa-İçe Aktarma -->
-    <section class="tools card">
+    <section class="card section">
       <div class="row">
-        <input class="grow" type="text" id="searchInput" placeholder="Başlık veya içerikte ara..."/>
-        <select id="filterCategory" title="Kategori Filtre">
+        <input id="searchInput" class="grow" type="text" placeholder="Başlık veya içerikte ara">
+        <select id="filterCategory" style="flex:0 1 150px">
           <option value="">Tüm Kategoriler</option>
           <option value="Genel">Genel</option>
           <option value="İş">İş</option>
@@ -308,12 +155,14 @@
           <option value="Alışveriş">Alışveriş</option>
           <option value="Sağlık">Sağlık</option>
         </select>
-        <input type="text" id="filterTags" placeholder="Etiket filtre (virgülle)"/>
       </div>
       <div class="row">
-        <input type="date" id="filterFrom" title="Tarih (başlangıç)"/>
-        <input type="date" id="filterTo" title="Tarih (bitiş)"/>
-        <select id="sortSelect" title="Sıralama" class="grow">
+        <input id="filterTags" type="text" placeholder="Etiket filtre (virgülle)" class="grow">
+        <input id="filterFrom" type="date" style="flex:0 1 150px">
+        <input id="filterTo" type="date" style="flex:0 1 150px">
+      </div>
+      <div class="row">
+        <select id="sortSelect" class="grow">
           <option value="pinned-desc-created-desc">Önce sabitlenenler, sonra yeni</option>
           <option value="created-desc">Tarihe göre: Yeni → Eski</option>
           <option value="created-asc">Tarihe göre: Eski → Yeni</option>
@@ -322,27 +171,28 @@
         </select>
         <button id="clearFiltersBtn" class="btn">Filtreleri Temizle</button>
       </div>
-
-      <div class="divider"></div>
-
-      <div class="row">
-        <button id="exportJsonBtn" class="btn">💾 Dışa Aktar (JSON)</button>
-        <button id="exportTxtBtn" class="btn">📄 Dışa Aktar (TXT)</button>
-        <input type="file" id="importFile" accept=".json,.txt" class="hidden"/>
-        <label for="importFile" class="btn btn-success">📥 İçe Aktar</label>
-        <span id="stats" class="chip">0 not</span>
-        <span id="offlineBadge" class="chip hidden">🛰️ Çevrimdışı</span>
+      <div class="row" style="align-items:center;justify-content:space-between">
+        <div style="display:flex;gap:8px">
+          <button id="exportJsonBtn" class="btn">💾 JSON</button>
+          <button id="exportTxtBtn" class="btn">📄 TXT</button>
+          <input id="importFile" type="file" accept=".json,.txt" class="hidden">
+          <label for="importFile" class="btn btn-success">📥 İçe Aktar</label>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span id="stats" class="chip">0 not</span>
+          <span id="offlineBadge" class="chip hidden">🛰️ Çevrimdışı</span>
+        </div>
       </div>
     </section>
 
-    <!-- NOT LİSTESİ -->
-    <ul id="taskList"></ul>
+    <ul id="noteList"></ul>
 
-    <footer>
+    <footer class="section" style="text-align:center;color:var(--muted)">
       <button id="shareBtn" class="btn">📲 Notları Paylaş</button>
-      <p style="margin-top: 12px">Ana ekrana ekleyerek uygulama gibi kullan!</p>
+      <p style="margin:10px 0 0">Notlar localStorage’da saklanır. İnternet yokken de kaybolmaz.</p>
     </footer>
   </div>
 
-  <!-- JS (2/2 mesajında gelecek) -->
-  <script>
+  <script src="script.js"></script>
+</body>
+</html>
