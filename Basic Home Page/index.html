@@ -118,6 +118,7 @@
       border-radius:999px;
       text-decoration:none;
       color:#fff;
+      margin:10px 2px 0;
       background: linear-gradient(135deg,var(--accent1),var(--accent2));
       box-shadow: 0 8px 20px rgba(125, 164, 255, .35);
       transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
@@ -144,20 +145,102 @@
   </style>
 </head>
 <body>
-  <!-- Pastel arka plan süsleri -->
-  <div class="deco d1"></div>
-  <div class="deco d2"></div>
-  <div class="deco d3"></div>
+  <!-- ...existing code... -->
+<main class="card" role="main" aria-label="Ana sayfa">
+  <div class="logo" aria-hidden="true">🧰</div>
+  <h1>Hoş geldiniz!</h1>
+  <p>Codpass'de herşey var!</p>
 
-  <main class="card" role="main" aria-label="Geçici ana sayfa">
-    <span class="tag">geçici</span>
+  <input id="searchInput" type="text" placeholder="Ara..." style="width:70%;padding:10px 16px;margin-bottom:18px;font-size:16px;border-radius:999px;border:1px solid var(--cardBorder);outline:none;box-shadow:0 2px 8px rgba(125,164,255,.08);" />
 
-    <div class="logo" aria-hidden="true">✨</div>
+  <div style="margin-bottom:10px;">
+    <label>Kategori: </label>
+    <select id="categorySelect" style="padding:6px 12px;border-radius:999px;border:1px solid var(--cardBorder);font-size:15px;">
+      <option value="hepsi">Hepsi</option>
+      <option value="gündelik">Gündelik</option>
+      <option value="ders">Ders</option>
+      <option value="eğlence">Eğlence</option>
+      <option value="iş">İş</option>
+    </select>
+  </div>
 
-    <h1>Hoş geldiniz!</h1>
-    <p>Yakında burada tatlı şeyler olacak.</p>
+  <div id="btnList"></div>
+</main>
 
-   
-  </main>
+<script>
+const buttons = [
+  { name: "Global Saat", kategori: "gündelik" },
+  { name: "Renk Paleti Üretici", kategori: "eğlence" },
+  { name: "Not Defteri", kategori: "gündelik" },
+  { name: "Rastgele Alıntı Üretici", kategori: "eğlence" },
+  // Yeni buton eklemek için:
+  // { name: "Yeni Buton Adı", kategori: "iş" },
+];
+
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .replace(/ı/g, "i")
+    .replace(/ü/g, "u")
+    .replace(/ö/g, "o")
+    .replace(/ş/g, "s")
+    .replace(/ç/g, "c")
+    .replace(/ğ/g, "g")
+    .replace(/[^a-z0-9 ]/g, "");
+}
+
+// Basit yazım hatası toleransı (Levenshtein mesafesi)
+function levenshtein(a, b) {
+  const m = [];
+  for (let i = 0; i <= b.length; i++) m[i] = [i];
+  for (let j = 0; j <= a.length; j++) m[0][j] = j;
+  for (let i = 1; i <= b.length; i++)
+    for (let j = 1; j <= a.length; j++)
+      m[i][j] =
+        b[i - 1] === a[j - 1]
+          ? m[i - 1][j - 1]
+          : 1 + Math.min(m[i - 1][j - 1], m[i][j - 1], m[i - 1][j]);
+  return m[b.length][a.length];
+}
+
+function filterButtons() {
+  const search = normalize(document.getElementById("searchInput").value.trim());
+  const kategori = document.getElementById("categorySelect").value;
+  const list = document.getElementById("btnList");
+  list.innerHTML = "";
+
+  let filtered = buttons.filter(btn => {
+    // Kategori filtresi
+    if (kategori !== "hepsi" && btn.kategori !== kategori) return false;
+    // Arama filtresi
+    if (!search) return true;
+    const btnName = normalize(btn.name);
+    if (btnName.includes(search)) return true;
+    // Yazım hatası toleransı
+    return levenshtein(search, btnName) <= 2;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="opacity:.7;margin-top:18px;">Sonuç bulunamadı.</div>`;
+    return;
+  }
+
+  filtered.forEach(btn => {
+    const div = document.createElement("div");
+    div.className = "btn";
+    div.textContent = btn.name;
+    div.title = `Kategori: ${btn.kategori}`;
+    list.appendChild(div);
+  });
+}
+
+// Olaylar
+document.getElementById("searchInput").addEventListener("input", filterButtons);
+document.getElementById("categorySelect").addEventListener("change", filterButtons);
+
+// Sayfa ilk açıldığında
+filterButtons();
+</script>
+<!-- ...existing code... -->
 </body>
 </html>
