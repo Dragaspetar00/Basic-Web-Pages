@@ -1,349 +1,606 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dragaspetar Text Editor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/zstd-wasm@0.2.0/dist/zstd.min.js"></script>
-    <style>
-        body {
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .dark body {
-            background-color: #1f2937;
-            color: #e5e7eb;
-        }
-        .light body {
-            background-color: #f9fafb;
-            color: #1f2937;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dragaspetar Text Editor (.dspx)</title>
+<meta name="color-scheme" content="light dark" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+<style>
+  :root{
+    --bg: #0f1115;
+    --panel: #171a21;
+    --text: #e6e9ef;
+    --muted: #9aa4b2;
+    --accent: #4da3ff;
+    --accent-2: #7cc0ff;
+    --danger: #ff6b6b;
+    --ok: #3ad29f;
+    --shadow: 0 8px 24px rgba(0,0,0,.25);
+    --radius: 12px;
+  }
+  [data-theme="light"]{
+    --bg: #f6f7fb;
+    --panel: #ffffff;
+    --text: #111318;
+    --muted: #54606e;
+    --accent: #2f74ff;
+    --accent-2: #77a6ff;
+    --danger: #e24a4a;
+    --ok: #1aa874;
+    --shadow: 0 8px 24px rgba(16,24,40,.10);
+  }
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  .app{
+    display:grid;grid-template-rows:auto auto 1fr auto;min-height:100dvh;gap:10px;
+    max-width:1400px;margin:0 auto;padding:12px;
+  }
+  header{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+  .brand .badge{background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;font-size:12px}
+  .toolbar{
+    position:sticky;top:0;z-index:50;background:var(--panel);
+    border-radius:var(--radius);box-shadow:var(--shadow);padding:8px 10px;
+  }
+  .ribbon{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .group{display:flex;gap:6px;align-items:center;border-right:1px solid #00000022;padding-right:8px}
+  .group:last-child{border-right:none}
+  button, .btn{
+    appearance:none;border:1px solid #0000;background:#1b1f29;color:var(--text);
+    padding:8px 10px;border-radius:8px;cursor:pointer;
+    transition:.15s transform, .15s background;
+  }
+  [data-theme="light"] button{background:#f3f6ff;border-color:#dfe7ff}
+  button:hover{transform:translateY(-1px);background:#2a2f3b}
+  [data-theme="light"] button:hover{background:#e7eeff}
+  .btn-accent{background:var(--accent);color:#fff}
+  .btn-danger{background:var(--danger);color:#fff}
+  .btn-ghost{background:transparent;border:1px solid #ffffff22}
+  input[type="file"]{display:none}
+  .main{
+    display:grid;grid-template-columns:1fr 320px;gap:12px;min-height:0;
+  }
+  .editor{
+    background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);min-height:0;display:flex;flex-direction:column;
+  }
+  textarea{
+    flex:1;padding:18px 20px;background:transparent;color:var(--text);
+    border:none;outline:none;resize:none;font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+    tab-size:2;white-space:pre-wrap;word-break:break-word;
+  }
+  .stats{
+    background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;
+  }
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .card{background:#00000010;padding:10px;border-radius:10px}
+  .muted{color:var(--muted);font-size:12px}
+  .bar{height:8px;background:#ffffff12;border-radius:999px;overflow:hidden}
+  .bar > span{display:block;height:100%;background:var(--accent);width:0%}
+  .list{max-height:160px;overflow:auto}
+  .status{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+  .status .dot{width:8px;height:8px;border-radius:50%}
+  .dot.ok{background:var(--ok)} .dot.warn{background:var(--danger)}
+  .pill{background:#00000020;border-radius:999px;padding:2px 8px;font-size:12px}
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-inner{background:var(--panel);border-radius:12px;box-shadow:var(--shadow);min-width:280px;max-width:520px;width:100%;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .modal input, .modal select{
+    width:100%;padding:10px;border-radius:8px;border:1px solid #ffffff22;background:#0f131a;color:var(--text)
+  }
+  [data-theme="light"] .modal input{background:#fff;border-color:#dfe3ea}
+  .modal .actions{display:flex;justify-content:flex-end;gap:8px}
+  @media (max-width: 900px){
+    .main{grid-template-columns:1fr}
+    .ribbon{gap:6px}
+    .group{border-right:none}
+  }
+</style>
 </head>
-<body class="light min-h-screen flex flex-col items-center p-4">
-    <div class="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col gap-4">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Dragaspetar Text Editor</h1>
-            <button id="theme-toggle" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg">Toggle Theme</button>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <button id="to-uppercase" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Uppercase</button>
-            <button id="to-lowercase" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Lowercase</button>
-            <button id="to-titlecase" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Title Case</button>
-            <button id="clean-spaces" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Clean Spaces</button>
-            <button id="copy-text" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Copy</button>
-            <button id="download-text" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Download .txt</button>
-            <button id="clear-text" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Clear</button>
-            <button id="export-dspx" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Export .dspx</button>
-            <input type="file" id="import-dspx" accept=".dspx" class="hidden">
-            <button id="import-dspx-btn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Import .dspx</button>
-        </div>
-        <div class="flex gap-2">
-            <input id="find-input" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Find...">
-            <input id="replace-input" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Replace...">
-            <button id="replace-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Replace</button>
-        </div>
-        <textarea id="text-input" class="w-full h-64 p-4 border rounded-lg dark:bg-gray-700 dark:text-white resize-y focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type or paste your text here..."></textarea>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div>
-                <span class="font-semibold">Words:</span>
-                <span id="word-count">0</span>
-            </div>
-            <div>
-                <span class="font-semibold">Characters (with spaces):</span>
-                <span id="char-count-with-spaces">0</span>
-            </div>
-            <div>
-                <span class="font-semibold">Characters (no spaces):</span>
-                <span id="char-count-no-spaces">0</span>
-            </div>
-            <div>
-                <span class="font-semibold">Reading Time:</span>
-                <span id="reading-time">0 min</span>
-            </div>
-            <div>
-                <span class="font-semibold">Sentences:</span>
-                <span id="sentence-count">0</span>
-            </div>
-            <div>
-                <span class="font-semibold">Paragraphs:</span>
-                <span id="paragraph-count">0</span>
-            </div>
-            <div>
-                <span class="font-semibold">Top Word:</span>
-                <span id="top-word">-</span>
-            </div>
-            <div>
-                <span class="font-semibold">Readability:</span>
-                <span id="readability">-</span>
-            </div>
-        </div>
+<body data-theme="dark">
+<div class="app">
+  <header>
+    <div class="brand">
+      <span>Dragaspetar Text Editor</span>
+      <span class="badge">.dspx</span>
     </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="themeBtn" class="btn-ghost" title="Tema">🌙/☀️</button>
+      <span id="autosaveState" class="pill">Otomatik kaydediliyor…</span>
+    </div>
+  </header>
 
-    <script>
-        // Initialize Zstandard
-        let zstd;
-        Zstd.init().then(module => {
-            zstd = module;
-        }).catch(err => {
-            console.error('Zstandard initialization failed:', err);
-            alert('Failed to initialize compression library. .dspx export/import may not work.');
-        });
+  <div class="toolbar">
+    <div class="ribbon">
+      <div class="group">
+        <button id="newBtn" title="Temizle (Ctrl+N)" class="btn-danger">Yeni</button>
+        <label class="btn">
+          Aç (.dspx)
+          <input type="file" id="openFile" accept=".dspx,application/vnd.dragaspetar.dspx" />
+        </label>
+        <button id="saveDspxBtn" class="btn-accent" title="Kaydet .dspx (Ctrl+S)">Kaydet .dspx</button>
+        
+      </div>
+      <div class="group">
+        <button id="upperBtn" title="BÜYÜK (Alt+U)">BÜYÜK</button>
+        <button id="lowerBtn" title="küçük (Alt+L)">küçük</button>
+        <button id="titleBtn" title="Baş Harf (Alt+T)">Baş Harf</button>
+        <button id="cleanBtn" title="Boşlukları temizle (Ctrl+/)">Temizle</button>
+      </div>
+      <div class="group">
+        <button id="copyBtn" title="Panoya kopyala">Kopyala</button>
+        <button id="findBtn" title="Bul (Ctrl+F)">Bul</button>
+        <button id="replaceBtn" title="Değiştir (Ctrl+H)">Değiştir</button>
+      </div>
+      <div class="group">
+        <button id="darkBtn" class="btn-ghost">Koyu/Açık</button>
+        <button id="wrapBtn" class="btn-ghost" title="Satır kaydırma">Kaydır: Açık</button>
+      </div>
+    </div>
+  </div>
 
-        const textInput = document.getElementById('text-input');
-        const wordCount = document.getElementById('word-count');
-        const charCountWithSpaces = document.getElementById('char-count-with-spaces');
-        const charCountNoSpaces = document.getElementById('char-count-no-spaces');
-        const readingTime = document.getElementById('reading-time');
-        const sentenceCount = document.getElementById('sentence-count');
-        const paragraphCount = document.getElementById('paragraph-count');
-        const topWord = document.getElementById('top-word');
-        const readability = document.getElementById('readability');
-        const themeToggle = document.getElementById('theme-toggle');
-        const toUppercase = document.getElementById('to-uppercase');
-        const toLowercase = document.getElementById('to-lowercase');
-        const toTitlecase = document.getElementById('to-titlecase');
-        const cleanSpaces = document.getElementById('clean-spaces');
-        const copyText = document.getElementById('copy-text');
-        const downloadText = document.getElementById('download-text');
-        const clearText = document.getElementById('clear-text');
-        const exportDspx = document.getElementById('export-dspx');
-        const importDspx = document.getElementById('import-dspx');
-        const importDspxBtn = document.getElementById('import-dspx-btn');
-        const findInput = document.getElementById('find-input');
-        const replaceInput = document.getElementById('replace-input');
-        const replaceBtn = document.getElementById('replace-btn');
+  <div class="main">
+    <div class="editor">
+      <textarea id="editor" placeholder="Yazmaya başlayın…"></textarea>
+    </div>
+    <aside class="stats">
+      <div class="stat-grid">
+        <div class="card">
+          <div class="muted">Kelime</div>
+          <div id="words" style="font-size:20px;font-weight:700">0</div>
+        </div>
+        <div class="card">
+          <div class="muted">Karakter (boşluklu)</div>
+          <div id="chars" style="font-size:20px;font-weight:700">0</div>
+        </div>
+        <div class="card">
+          <div class="muted">Karakter (boşluksuz)</div>
+          <div id="charsNo" style="font-size:20px;font-weight:700">0</div>
+        </div>
+        <div class="card">
+          <div class="muted">Cümle</div>
+          <div id="sentences" style="font-size:20px;font-weight:700">0</div>
+        </div>
+        <div class="card">
+          <div class="muted">Paragraf</div>
+          <div id="paras" style="font-size:20px;font-weight:700">0</div>
+        </div>
+        <div class="card">
+          <div class="muted">Okuma süresi</div>
+          <div id="readTime" style="font-size:20px;font-weight:700">0 sn</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="muted">Okunabilirlik</div>
+        <div id="readability" style="font-weight:700;margin:6px 0">-</div>
+        <div class="bar"><span id="readBar"></span></div>
+      </div>
+      <div class="card">
+        <div class="muted">Seçili metin</div>
+        <div id="selStats">0 kelime · 0 karakter</div>
+      </div>
+      <div class="card">
+        <div class="muted">En çok kullanılan kelimeler</div>
+        <div id="topWords" class="list"></div>
+      </div>
+    </aside>
+  </div>
 
-        const MAGIC = 'DSPX';
-        const VERSION = 1;
-        const CHUNK_RAW = 256 * 1024; // 256 KB
-        const FIXED_SECRET = 'DragaspetarEditorSecretKey1234567890'; // Fixed secret for key derivation
+  <div class="status">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="dot ok" id="saveDot"></span>
+      <span id="statusText">Hazır</span>
+    </div>
+    <div>
+      <span class="muted">Kısayollar: Ctrl+S .dspx · Ctrl+Shift+S .txt · Ctrl+F · Ctrl+H · Alt+U/L/T · Ctrl+/</span>
+    </div>
+  </div>
+</div>
 
-        // Load saved text from localStorage
-        textInput.value = localStorage.getItem('savedText') || '';
+<!-- Bul/Değiştir Modal -->
+<div id="findModal" class="modal" aria-hidden="true">
+  <div class="modal-inner">
+    <strong>Bul & Değiştir</strong>
+    <input id="findInput" placeholder="Bul…" />
+    <input id="replaceInput" placeholder="Şununla değiştir…" />
+    <label class="muted" style="display:flex;align-items:center;gap:8px">
+      <input type="checkbox" id="caseChk" />Büyük/küçük harf duyarlı
+    </label>
+    <div class="actions">
+      <button id="findNextBtn">Bul</button>
+      <button id="replaceOneBtn">Değiştir</button>
+      <button id="replaceAllBtn" class="btn-accent">Tümünü Değiştir</button>
+      <button id="closeFindBtn" class="btn-ghost">Kapat</button>
+    </div>
+  </div>
+</div>
 
-        // Update statistics
-        function updateStats() {
-            const text = textInput.value;
-            wordCount.textContent = text.trim().split(/\s+/).filter(word => word.length > 0).length;
-            charCountWithSpaces.textContent = text.length;
-            charCountNoSpaces.textContent = text.replace(/\s/g, '').length;
-            readingTime.textContent = Math.ceil(wordCount.textContent / 200) + ' min';
-            sentenceCount.textContent = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
-            paragraphCount.textContent = text.split(/\n+/).filter(p => p.trim().length > 0).length;
+<script>
+(function(){
+  const $ = sel => document.querySelector(sel);
+  const ta = $('#editor');
+  const autosaveState = $('#autosaveState');
+  const saveDot = $('#saveDot');
+  const statusText = $('#statusText');
+  const wrapBtn = $('#wrapBtn');
+  const themeBtn = $('#themeBtn');
+  const darkBtn = $('#darkBtn');
 
-            // Top word
-            const words = text.toLowerCase().match(/\b\w+\b/g) || [];
-            const wordFreq = {};
-            words.forEach(word => wordFreq[word] = (wordFreq[word] || 0) + 1);
-            const top = Object.entries(wordFreq).sort((a, b) => b[1] - a[1])[0];
-            topWord.textContent = top ? `${top[0]} (${top[1]})` : '-';
+  // Local state
+  let dirty = false;
+  let wrapOn = true;
+  let theme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.body.dataset.theme = theme;
 
-            // Readability (simplified Flesch-Kincaid)
-            const syllables = words.reduce((sum, word) => sum + (word.match(/[aeiouy]+/gi) || []).length, 0);
-            const fkScore = 206.835 - 1.015 * (wordCount.textContent / sentenceCount.textContent) - 84.6 * (syllables / wordCount.textContent);
-            readability.textContent = fkScore > 80 ? 'Easy' : fkScore > 50 ? 'Medium' : 'Hard';
-        }
+  // Restore autosave
+  const saved = localStorage.getItem('dspx_text');
+  if(saved) ta.value = saved;
 
-        // Auto-save to localStorage
-        textInput.addEventListener('input', () => {
-            localStorage.setItem('savedText', textInput.value);
-            updateStats();
-        });
+  // UI updates
+  const numFmt = n => n.toLocaleString('tr-TR');
+  const debounce = (fn, ms=200)=>{let t; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms)}};
+  const TURKISH_STOP = new Set([
+    've','veya','ile','ya','yada','ya da','bir','bu','şu','o','da','de','mi','mı','mu','mü',
+    'için','gibi','çok','az','ama','fakat','ki','ise','en','hem','çünkü','daha','her','hiç',
+    'ne','neden','nasıl','nerede','hangi','ben','sen','o','biz','siz','onlar','şey','olan','olarak','var','yok',
+    'ile','diye','dahi','bile','keza','ile','mı','mi','mu','mü','de','da'
+  ]);
 
-        // Theme toggle
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light');
-            document.body.classList.toggle('dark');
-            themeToggle.textContent = document.body.classList.contains('dark') ? 'Light Theme' : 'Dark Theme';
-        });
+  function getStats(text){
+    const chars = text.length;
+    const charsNo = text.replace(/\s/g,'').length;
+    const wordsArr = (text.match(/\p{L}+(?:'\p{L}+)?/gu) || []);
+    const words = wordsArr.length;
+    const sentences = (text.match(/[^.!?…]+[.!?…]+(\s|$)/g) || (text.trim()? [text] : [])).length;
+    const paras = (text.split(/\n{2,}/).filter(p=>p.trim().length>0)).length || (text.trim()?1:0);
+    const readSec = Math.max(1, Math.round((words/200)*60));
 
-        // Text manipulation
-        toUppercase.addEventListener('click', () => {
-            textInput.value = textInput.value.toUpperCase();
-            updateStats();
-        });
+    // Readability: basit sezgisel skor
+    const avgWPS = sentences ? (words/sentences) : (words?words:0);
+    const avgCPW = words ? (charsNo/words) : 0;
+    let score = 0;
+    // Düşük skor daha kolay – ters çevirip 0..100 arası normalize edelim:
+    //  ideal ~ 12 sözcük/cümle ve ~5-6 char/kelime civarı
+    const s1 = Math.max(0, 30 - Math.abs(12 - avgWPS)*3);  // 0..30
+    const s2 = Math.max(0, 30 - Math.abs(5.5 - avgCPW)*8); // 0..30
+    const s3 = Math.min(40, Math.max(0, 40 - Math.log10(Math.max(1, words))*10)); // 0..40
+    score = Math.min(100, s1+s2+s3);
+    let label = 'Orta';
+    if(score >= 70) label = 'Kolay';
+    else if(score < 40) label = 'Zor';
 
-        toLowercase.addEventListener('click', () => {
-            textInput.value = textInput.value.toLowerCase();
-            updateStats();
-        });
+    return { chars, charsNo, words, sentences, paras, readSec, readability:{score,label} };
+  }
 
-        toTitlecase.addEventListener('click', () => {
-            textInput.value = textInput.value.replace(/\b\w/g, c => c.toUpperCase());
-            updateStats();
-        });
+  function updateStats(){
+    const text = ta.value;
+    const s = getStats(text);
+    $('#words').textContent = numFmt(s.words);
+    $('#chars').textContent = numFmt(s.chars);
+    $('#charsNo').textContent = numFmt(s.charsNo);
+    $('#sentences').textContent = numFmt(s.sentences);
+    $('#paras').textContent = numFmt(s.paras);
+    $('#readTime').textContent = s.readSec < 60 ? `${s.readSec} sn` : `${Math.floor(s.readSec/60)} dk ${s.readSec%60} sn`;
+    $('#readability').textContent = `${s.readability.label} (${Math.round(s.readability.score)}/100)`;
+    $('#readBar').style.width = `${s.readability.score}%`;
 
-        cleanSpaces.addEventListener('click', () => {
-            textInput.value = textInput.value.replace(/\s+/g, ' ').trim();
-            updateStats();
-        });
+    // En çok kullanılan kelimeler (stopword filtreli)
+    const tokens = (ta.value.toLocaleLowerCase('tr').match(/\p{L}+/gu) || []).filter(w => !TURKISH_STOP.has(w) && w.length>=2);
+    const freq = new Map();
+    for(const t of tokens){ freq.set(t, (freq.get(t)||0)+1); }
+    const top = [...freq.entries()].sort((a,b)=>b[1]-a[1]).slice(0,10);
+    const total = tokens.length || 1;
+    const ul = document.createElement('div');
+    for(const [w,c] of top){
+      const pct = Math.min(100, Math.round((c/total)*100*4)); // görsel için büyüt
+      const row = document.createElement('div');
+      row.style.display='grid'; row.style.gridTemplateColumns='1fr auto'; row.style.gap='8px'; row.style.alignItems='center'; row.style.margin='4px 0';
+      row.innerHTML = `<span>${w}</span><span class="muted">${c}</span>`;
+      const bar = document.createElement('div');
+      bar.className='bar'; bar.style.marginTop='4px';
+      const span = document.createElement('span'); span.style.width = pct+'%';
+      bar.appendChild(span);
+      const wrapper = document.createElement('div');
+      wrapper.appendChild(row); wrapper.appendChild(bar);
+      ul.appendChild(wrapper);
+    }
+    const tw = $('#topWords');
+    tw.innerHTML=''; tw.appendChild(ul);
 
-        copyText.addEventListener('click', () => {
-            navigator.clipboard.writeText(textInput.value);
-            alert('Text copied to clipboard!');
-        });
+    // Seçili metin
+    updateSelectionStats();
+  }
 
-        downloadText.addEventListener('click', () => {
-            const blob = new Blob([textInput.value], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'text.txt';
-            a.click();
-            URL.revokeObjectURL(url);
-        });
+  function updateSelectionStats(){
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    const sel = ta.value.slice(start, end);
+    const words = (sel.match(/\p{L}+(?:'\p{L}+)?/gu) || []).length;
+    $('#selStats').textContent = `${numFmt(words)} kelime · ${numFmt(sel.length)} karakter`;
+  }
 
-        clearText.addEventListener('click', () => {
-            textInput.value = '';
-            localStorage.removeItem('savedText');
-            updateStats();
-        });
+  const saveLocal = debounce(()=>{
+    localStorage.setItem('dspx_text', ta.value);
+    autosaveState.textContent = 'Kaydedildi (tarayıcı)';
+    saveDot.className = 'dot ok';
+  }, 400);
 
-        // Key derivation using fixed secret
-        async function deriveKey(salt) {
-            const enc = new TextEncoder();
-            const keyMaterial = await crypto.subtle.importKey(
-                'raw',
-                enc.encode(FIXED_SECRET),
-                { name: 'PBKDF2' },
-                false,
-                ['deriveBits', 'deriveKey']
-            );
-            return await crypto.subtle.deriveKey(
-                {
-                    name: 'PBKDF2',
-                    salt: salt,
-                    iterations: 100000,
-                    hash: 'SHA-256'
-                },
-                keyMaterial,
-                { name: 'AES-GCM', length: 256 },
-                true,
-                ['encrypt', 'decrypt']
-            );
-        }
+  ta.addEventListener('input', ()=>{
+    dirty = true;
+    saveDot.className = 'dot warn';
+    statusText.textContent = 'Düzenleniyor…';
+    autosaveState.textContent = 'Otomatik kaydediliyor…';
+    updateStats();
+    saveLocal();
+  });
+  ta.addEventListener('select', updateSelectionStats);
 
-        // .dspx export
-        exportDspx.addEventListener('click', async () => {
-            if (!zstd) {
-                alert('Compression library not ready. Please try again.');
-                return;
-            }
-            try {
-                const text = textInput.value;
-                const enc = new TextEncoder();
-                const rawData = enc.encode(text);
-                const salt = crypto.getRandomValues(new Uint8Array(16));
-                const key = await deriveKey(salt);
-                const header = new Uint8Array(48);
-                header.set(enc.encode(MAGIC), 0);
-                header[4] = VERSION;
-                header[5] = 0; // Flags
-                header.set(salt, 8);
-                const nonceBase = crypto.getRandomValues(new Uint8Array(12));
-                header.set(nonceBase, 24);
-                new DataView(header.buffer).setUint32(36, CHUNK_RAW, true);
-                new DataView(header.buffer).setBigUint64(40, BigInt(rawData.length), true);
+  // Initial render
+  updateStats();
 
-                const chunks = [];
-                for (let i = 0; i < rawData.length; i += CHUNK_RAW) {
-                    const chunk = rawData.slice(i, i + CHUNK_RAW);
-                    const compressed = zstd.compress(chunk, 3);
-                    const nonce = new Uint8Array(12);
-                    nonce.set(nonceBase);
-                    new DataView(nonce.buffer).setUint32(8, i / CHUNK_RAW, true);
-                    const encrypted = await crypto.subtle.encrypt(
-                        { name: 'AES-GCM', iv: nonce, additionalData: header.slice(0, 16) },
-                        key,
-                        compressed
-                    );
-                    const chunkLen = new Uint8Array(4);
-                    new DataView(chunkLen.buffer).setUint32(0, encrypted.byteLength, true);
-                    chunks.push(chunkLen, nonce, new Uint8Array(encrypted));
-                }
+  // Tools
+  const toUpper = s => s.toLocaleUpperCase('tr');
+  const toLower = s => s.toLocaleLowerCase('tr');
+  const toTitle = s => s.replace(/\p{L}[\p{L}'’\-]*/gu, w=>{
+    const low = w.toLocaleLowerCase('tr'); return low[0]?.toLocaleUpperCase('tr') + low.slice(1);
+  });
+  const cleanWhitespace = s => {
+    return s
+      .replace(/[ \t]+/g,' ')       // çoklu boşluk -> tek boşluk
+      .replace(/[ \t]+\n/g,'\n')    // satır sonu boşluklarını kaldır
+      .replace(/\n{3,}/g,'\n\n')    // 2+ boş satırı 1 boş satıra indir
+      .trim();
+  }
 
-                const blob = new Blob([header, ...chunks], { type: 'application/vnd.dragaspetar.dspx' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'text.dspx';
-                a.click();
-                URL.revokeObjectURL(url);
-            } catch (err) {
-                console.error('Export failed:', err);
-                alert('Failed to export .dspx file. Please try again.');
-            }
-        });
+  function replaceSelection(fn){
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    const before = ta.value.slice(0,start);
+    const mid = ta.value.slice(start,end);
+    const after = ta.value.slice(end);
+    const next = before + fn(mid || ta.value) + after;
+    ta.value = next;
+    ta.focus();
+    updateStats();
+    saveLocal();
+  }
 
-        // .dspx import
-        importDspxBtn.addEventListener('click', () => importDspx.click());
-        importDspx.addEventListener('change', async (e) => {
-            if (!zstd) {
-                alert('Compression library not ready. Please try again.');
-                return;
-            }
-            const file = e.target.files[0];
-            if (file) {
-                try {
-                    const buffer = await file.arrayBuffer();
-                    const data = new Uint8Array(buffer);
-                    if (String.fromCharCode(...data.slice(0, 4)) !== MAGIC) {
-                        alert('Invalid .dspx file');
-                        return;
-                    }
-                    const salt = data.slice(8, 24);
-                    const key = await deriveKey(salt);
-                    const nonceBase = data.slice(24, 36);
-                    let decrypted = new Uint8Array();
-                    let offset = 48;
-                    while (offset < data.length) {
-                        const ctLen = new DataView(data.buffer).getUint32(offset, true);
-                        const nonce = data.slice(offset + 4, offset + 16);
-                        const ciphertext = data.slice(offset + 16, offset + 16 + ctLen);
-                        offset += 16 + ctLen;
-                        const compressed = await crypto.subtle.decrypt(
-                            { name: 'AES-GCM', iv: nonce, additionalData: data.slice(0, 16) },
-                            key,
-                            ciphertext
-                        );
-                        const decompressed = zstd.decompress(new Uint8Array(compressed));
-                        decrypted = new Uint8Array([...decrypted, ...decompressed]);
-                    }
-                    textInput.value = new TextDecoder().decode(decrypted);
-                    localStorage.setItem('savedText', textInput.value);
-                    updateStats();
-                } catch (err) {
-                    console.error('Import failed:', err);
-                    alert('Failed to import .dspx file. File may be corrupted.');
-                }
-            }
-        });
+  $('#upperBtn').onclick = ()=> replaceSelection(toUpper);
+  $('#lowerBtn').onclick = ()=> replaceSelection(toLower);
+  $('#titleBtn').onclick = ()=> replaceSelection(toTitle);
+  $('#cleanBtn').onclick = ()=> { ta.value = cleanWhitespace(ta.value); updateStats(); saveLocal(); };
+  $('#copyBtn').onclick = async ()=> { await navigator.clipboard.writeText(ta.value); statusText.textContent='Panoya kopyalandı'; };
 
-        // Find and replace
-        replaceBtn.addEventListener('click', () => {
-            const find = findInput.value;
-            const replace = replaceInput.value;
-            if (find) {
-                textInput.value = textInput.value.replaceAll(find, replace);
-                updateStats();
-            }
-        });
+  // Wrap toggle
+  wrapBtn.onclick = ()=>{
+    wrapOn = !wrapOn;
+    ta.style.whiteSpace = wrapOn ? 'pre-wrap' : 'pre';
+    wrapBtn.textContent = `Kaydır: ${wrapOn?'Açık':'Kapalı'}`;
+  };
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                downloadText.click();
-            }
-            if (e.ctrlKey && e.key === 'c') {
-                e.preventDefault();
-                copyText.click();
-            }
-        });
+  // Theme
+  function setTheme(t){ document.body.dataset.theme = t; localStorage.setItem('theme', t); }
+  themeBtn.onclick = darkBtn.onclick = ()=> setTheme(document.body.dataset.theme==='dark' ? 'light' : 'dark');
 
-        // Initial stats update
-        updateStats();
-    </script>
+  // Find/Replace
+  const findModal = $('#findModal');
+  const findInput = $('#findInput');
+  const replaceInput = $('#replaceInput');
+  const caseChk = $('#caseChk');
+
+  function openFind(){ findModal.style.display='flex'; findModal.setAttribute('aria-hidden','false'); findInput.focus(); }
+  function closeFind(){ findModal.style.display='none'; findModal.setAttribute('aria-hidden','true'); ta.focus(); }
+
+  $('#findBtn').onclick = openFind;
+  $('#replaceBtn').onclick = openFind;
+  $('#closeFindBtn').onclick = closeFind;
+
+  function findNext(){
+    const q = findInput.value;
+    if(!q) return;
+    const text = ta.value;
+    const start = ta.selectionEnd || 0;
+    const flags = caseChk.checked ? 'g' : 'gi';
+    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+    re.lastIndex = start;
+    const m = re.exec(text) || re.exec(text.slice(0, start));
+    if(m){
+      const idx = m.index + (m.input===text ? 0 : 0);
+      ta.focus();
+      ta.setSelectionRange(idx, idx+m[0].length);
+      ta.scrollTop = ta.scrollHeight * (idx/text.length);
+    }
+  }
+  function replaceOne(){
+    if(ta.selectionStart === ta.selectionEnd){ findNext(); return; }
+    const repl = replaceInput.value ?? '';
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    ta.setRangeText(repl, start, end, "end");
+    updateStats(); saveLocal();
+  }
+  function replaceAll(){
+    const q = findInput.value; if(!q) return;
+    const repl = replaceInput.value ?? '';
+    const flags = caseChk.checked ? 'g' : 'gi';
+    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+    ta.value = ta.value.replace(re, repl);
+    updateStats(); saveLocal();
+  }
+
+  $('#findNextBtn').onclick = findNext;
+  $('#replaceOneBtn').onclick = replaceOne;
+  $('#replaceAllBtn').onclick = replaceAll;
+
+  // Keyboard shortcuts
+  window.addEventListener('keydown', (e)=>{
+    if(e.ctrlKey && e.key.toLowerCase()==='s'){ e.preventDefault(); saveAsDspx(); }
+    if(e.ctrlKey && e.shiftKey && e.key.toLowerCase()==='s'){ e.preventDefault(); saveAsTxt(); }
+    if(e.ctrlKey && e.key.toLowerCase()==='f'){ e.preventDefault(); openFind(); }
+    if(e.ctrlKey && e.key.toLowerCase()==='h'){ e.preventDefault(); openFind(); }
+    if(e.altKey && e.key.toLowerCase()==='u'){ e.preventDefault(); replaceSelection(toUpper); }
+    if(e.altKey && e.key.toLowerCase()==='l'){ e.preventDefault(); replaceSelection(toLower); }
+    if(e.altKey && e.key.toLowerCase()==='t'){ e.preventDefault(); replaceSelection(toTitle); }
+    if(e.ctrlKey && e.key==='/'){ e.preventDefault(); ta.value = cleanWhitespace(ta.value); updateStats(); saveLocal(); }
+    if(e.ctrlKey && e.key.toLowerCase()==='n'){ e.preventDefault(); newDoc(); }
+    if(e.key==='Escape' && findModal.getAttribute('aria-hidden')==='false'){ e.preventDefault(); closeFind(); }
+  });
+
+  $('#newBtn').onclick = newDoc;
+  function newDoc(){
+    if(ta.value && !confirm('Metni temizlemek istediğine emin misin?')) return;
+    ta.value=''; updateStats(); saveLocal(); statusText.textContent='Yeni dosya';
+  }
+
+  // Download helpers
+  function dl(filename, blob){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  }
+
+  function saveAsTxt(){
+    dl('document.txt', new Blob([ta.value], {type:'text/plain;charset=utf-8'}));
+    statusText.textContent='TXT indirildi';
+    dirty = false; saveDot.className='dot ok';
+  }
+  $('#saveTxtBtn').onclick = saveAsTxt;
+
+  // .dspx format v1: DSPX(4) | ver(1)=1 | flags(1) | reserved(2) | salt(16) | iv(12) | origLen(4) | ciphertext(...)
+  const MAGIC = new TextEncoder().encode('DSPX');
+  const MIME = 'application/vnd.dragaspetar.dspx';
+
+  async function deriveKeyPBKDF2(passwordBytes, salt){
+    const keyMat = await crypto.subtle.importKey('raw', passwordBytes, 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name:'PBKDF2', salt, iterations: 250000, hash: 'SHA-256' },
+      keyMat, { name:'AES-GCM', length: 256 }, false, ['encrypt','decrypt']
+    );
+  }
+
+  async function encodeDSPX(text, password){
+    const enc = new TextEncoder();
+    const raw = enc.encode(text);
+    const comp = fflate.compressSync(raw, { level: 6 });
+
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKeyPBKDF2(enc.encode(password), salt);
+
+    // Header (40 bytes)
+    const header = new Uint8Array(40);
+    header.set(MAGIC, 0);
+    header[4] = 1; // version
+    header[5] = 0b00000010; // flags: bit1 => AES-GCM, bit0 => deflate (0=deflate default)
+    header[6] = 0; header[7] = 0; // reserved
+    header.set(salt, 8);
+    header.set(iv, 24);
+    new DataView(header.buffer).setUint32(36, raw.length, true);
+    const aad = header.slice(0, 16);
+
+    const cipherBuf = await crypto.subtle.encrypt({name:'AES-GCM', iv, additionalData: aad}, key, comp);
+    const cipher = new Uint8Array(cipherBuf);
+
+    const fileBytes = new Uint8Array(header.length + cipher.length);
+    fileBytes.set(header, 0);
+    fileBytes.set(cipher, header.length);
+
+    return new Blob([fileBytes], {type: MIME});
+  }
+
+  async function decodeDSPX(buf, password){
+    const view = new Uint8Array(buf);
+    if(view.length < 40) throw new Error('Dosya çok küçük');
+    if(view[0]!==77||view[1]!==83||view[2]!==80||view[3]!==88){ // 'DSPX'
+      // 68 83 80 88? Wait 'D'=68. But we used 'DSPX' which is 68,83,80,88
+    }
+    // safer check using TextDecoder:
+    const magic = new TextDecoder().decode(view.slice(0,4));
+    if(magic!=='DSPX') throw new Error('Geçersiz dosya (magic)');
+
+    const version = view[4]; if(version!==1) throw new Error('Sürüm desteklenmiyor');
+    const flags = view[5];
+    const salt = view.slice(8, 24);
+    const iv = view.slice(24, 36);
+    const origLen = new DataView(view.buffer, view.byteOffset+36, 4).getUint32(0, true);
+    const aad = view.slice(0, 16);
+    const cipher = view.slice(40);
+
+    const enc = new TextEncoder();
+    const key = await deriveKeyPBKDF2(enc.encode(password), salt);
+    let comp;
+    try{
+      const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv, additionalData: aad}, key, cipher);
+      comp = new Uint8Array(plain);
+    }catch(e){
+      throw new Error('Şifre hatalı veya dosya bozuk');
+    }
+    const raw = fflate.decompressSync(comp);
+    const text = new TextDecoder().decode(raw);
+    if(origLen && raw.length !== origLen){
+      // Uyuşmazlık durumunda yine de döndürüyoruz, sadece bilgi:
+      console.warn('Uzunluk uyuşmazlığı', raw.length, origLen);
+    }
+    return text;
+  }
+
+  async function saveAsDspx(){
+    const password = prompt('Bu .dspx dosyası için parola belirleyin (boş bırakırsanız kaydedilmez):', localStorage.getItem('dspx_default_pw')||'');
+    if(password==null) return;
+    if(!password){ alert('Güvenlik için parola önerilir.'); }
+    try{
+      const blob = await encodeDSPX(ta.value, password || 'dragaspetar-default');
+      const name = `document_${new Date().toISOString().replace(/[:.]/g,'-')}.dspx`;
+      dl(name, blob);
+      statusText.textContent='DSPX kaydedildi';
+      dirty=false; saveDot.className='dot ok';
+      if(password) localStorage.setItem('dspx_default_pw', password);
+    }catch(e){
+      console.error(e);
+      alert('Kaydetme sırasında hata: '+e.message);
+    }
+  }
+  $('#saveDspxBtn').onclick = saveAsDspx;
+
+  // Open .dspx
+  $('#openFile').addEventListener('change', async (e)=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    const password = prompt('Dosya parolasını girin:', localStorage.getItem('dspx_default_pw')||'');
+    try{
+      const buf = await f.arrayBuffer();
+      const text = await decodeDSPX(buf, password || 'dragaspetar-default');
+      ta.value = text; updateStats(); saveLocal();
+      statusText.textContent = `Açıldı: ${f.name}`;
+      dirty=false; saveDot.className='dot ok';
+    }catch(err){
+      alert('Açılırken hata: '+err.message);
+    }finally{
+      e.target.value = '';
+    }
+  });
+
+  // Drag & drop açma
+  document.addEventListener('dragover', e=>{ e.preventDefault(); });
+  document.addEventListener('drop', async e=>{
+    e.preventDefault();
+    const file = [...(e.dataTransfer?.files||[])].find(f=>f.name.endsWith('.dspx'));
+    if(!file) return;
+    const pw = prompt('Dosya parolasını girin:', localStorage.getItem('dspx_default_pw')||'');
+    try{
+      const buf = await file.arrayBuffer();
+      const text = await decodeDSPX(buf, pw || 'dragaspetar-default');
+      ta.value = text; updateStats(); saveLocal();
+      statusText.textContent = `Açıldı: ${file.name}`;
+    }catch(err){ alert('Açılamadı: '+err.message); }
+  });
+
+})();
+</script>
 </body>
 </html>
