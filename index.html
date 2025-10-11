@@ -1,3 +1,5 @@
+  <!-- tüm araçların ana sayfası -->
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -169,10 +171,10 @@
 
 <script>
 const buttons = [
-  { name: "Global Saat", kategori: "gündelik", url: "../clock/" },
-  { name: "Renk Paleti Üretici", kategori: "eğlence", url: "renkpaleti.html" },
-  { name: "Not Defteri", kategori: "gündelik", url: "notdefteri.html" },
-  { name: "Rastgele Alıntı Üretici", kategori: "eğlence", url: "alinti.html" },
+  { name: "Global Saat", kategori: "gündelik", url: "Clock/" },
+  { name: "Renk Paleti Üretici", kategori: "eğlence", url: "ColorPaletGenerator/" },
+  { name: "Not Defteri", kategori: "gündelik", url: "NotDefteri/" },
+  { name: "Rastgele Alıntı Üretici", kategori: "eğlence", url: "Random_Quote_Generator/" },
   // Yeni buton eklemek için:
   // { name: "Yeni Buton Adı", kategori: "iş", url: "yenibuton.html" },
 ];
@@ -203,6 +205,8 @@ function levenshtein(a, b) {
   return m[b.length][a.length];
 }
 
+// ...existing code...
+
 function filterButtons() {
   const search = normalize(document.getElementById("searchInput").value.trim());
   const kategori = document.getElementById("categorySelect").value;
@@ -210,13 +214,10 @@ function filterButtons() {
   list.innerHTML = "";
 
   let filtered = buttons.filter(btn => {
-    // Kategori filtresi
     if (kategori !== "hepsi" && btn.kategori !== kategori) return false;
-    // Arama filtresi
     if (!search) return true;
     const btnName = normalize(btn.name);
     if (btnName.includes(search)) return true;
-    // Yazım hatası toleransı
     return levenshtein(search, btnName) <= 2;
   });
 
@@ -226,20 +227,33 @@ function filterButtons() {
   }
 
   filtered.forEach(btn => {
-    const div = document.createElement("div");
-    div.className = "btn";
-    div.textContent = btn.name;
-    div.title = `Kategori: ${btn.kategori}`;
-    list.appendChild(div);
+    let el;
+    if (btn.url) {
+      el = document.createElement("a");
+      el.href = btn.url;
+      el.target = "_blank";
+      el.rel = "noopener";
+      el.className = "btn";
+      el.textContent = btn.name;
+      el.title = `Kategori: ${btn.kategori}`;
+    } else {
+      el = document.createElement("div");
+      el.className = "btn";
+      el.textContent = btn.name;
+      el.title = `Kategori: ${btn.kategori}`;
+    }
+    list.appendChild(el);
   });
 }
 
-// Olaylar
+// Olay dinleyicileri fonksiyonun dışında olmalı!
 document.getElementById("searchInput").addEventListener("input", filterButtons);
 document.getElementById("categorySelect").addEventListener("change", filterButtons);
 
 // Sayfa ilk açıldığında
 filterButtons();
+
+// ...existing code...
 </script>
 <!-- ...existing code... -->
 </body>
