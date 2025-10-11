@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragaspetar Text Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/zstd-wasm@0.2.0/dist/zstd.min.js"></script>
+    <style>
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark body {
+            background-color: #1f2937;
+            color: #e5e7eb;
+        }
+        .light body {
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body class="light min-h-screen flex flex-col items-center p-4">
+    <div class="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col gap-4">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Dragaspetar Text Editor</h1>
+            <button id="theme-toggle" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg">Toggle Theme</button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button id="to-uppercase" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Uppercase</button>
+            <button id="to-lowercase" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Lowercase</button>
+            <button id="to-titlecase" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Title Case</button>
+            <button id="clean-spaces" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Clean Spaces</button>
+            <button id="copy-text" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Copy</button>
+            <button id="download-text" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Download .txt</button>
+            <button id="clear-text" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Clear</button>
+            <button id="export-dspx" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Export .dspx</button>
+            <input type="file" id="import-dspx" accept=".dspx" class="hidden">
+            <button id="import-dspx-btn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Import .dspx</button>
+        </div>
+        <div class="flex gap-2">
+            <input id="find-input" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Find...">
+            <input id="replace-input" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Replace...">
+            <button id="replace-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Replace</button>
+        </div>
+        <textarea id="text-input" class="w-full h-64 p-4 border rounded-lg dark:bg-gray-700 dark:text-white resize-y focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type or paste your text here..."></textarea>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div>
+                <span class="font-semibold">Words:</span>
+                <span id="word-count">0</span>
+            </div>
+            <div>
+                <span class="font-semibold">Characters (with spaces):</span>
+                <span id="char-count-with-spaces">0</span>
+            </div>
+            <div>
+                <span class="font-semibold">Characters (no spaces):</span>
+                <span id="char-count-no-spaces">0</span>
+            </div>
+            <div>
+                <span class="font-semibold">Reading Time:</span>
+                <span id="reading-time">0 min</span>
+            </div>
+            <div>
+                <span class="font-semibold">Sentences:</span>
+                <span id="sentence-count">0</span>
+            </div>
+            <div>
+                <span class="font-semibold">Paragraphs:</span>
+                <span id="paragraph-count">0</span>
+            </div>
+            <div>
+                <span class="font-semibold">Top Word:</span>
+                <span id="top-word">-</span>
+            </div>
+            <div>
+                <span class="font-semibold">Readability:</span>
+                <span id="readability">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Zstandard
+        let zstd;
+        Zstd.init().then(module => {
+            zstd = module;
+        }).catch(err => {
+            console.error('Zstandard initialization failed:', err);
+            alert('Failed to initialize compression library. .dspx export/import may not work.');
+        });
+
+        const textInput = document.getElementById('text-input');
+        const wordCount = document.getElementById('word-count');
+        const charCountWithSpaces = document.getElementById('char-count-with-spaces');
+        const charCountNoSpaces = document.getElementById('char-count-no-spaces');
+        const readingTime = document.getElementById('reading-time');
+        const sentenceCount = document.getElementById('sentence-count');
+        const paragraphCount = document.getElementById('paragraph-count');
+        const topWord = document.getElementById('top-word');
+        const readability = document.getElementById('readability');
+        const themeToggle = document.getElementById('theme-toggle');
+        const toUppercase = document.getElementById('to-uppercase');
+        const toLowercase = document.getElementById('to-lowercase');
+        const toTitlecase = document.getElementById('to-titlecase');
+        const cleanSpaces = document.getElementById('clean-spaces');
+        const copyText = document.getElementById('copy-text');
+        const downloadText = document.getElementById('download-text');
+        const clearText = document.getElementById('clear-text');
+        const exportDspx = document.getElementById('export-dspx');
+        const importDspx = document.getElementById('import-dspx');
+        const importDspxBtn = document.getElementById('import-dspx-btn');
+        const findInput = document.getElementById('find-input');
+        const replaceInput = document.getElementById('replace-input');
+        const replaceBtn = document.getElementById('replace-btn');
+
+        const MAGIC = 'DSPX';
+        const VERSION = 1;
+        const CHUNK_RAW = 256 * 1024; // 256 KB
+        const FIXED_SECRET = 'DragaspetarEditorSecretKey1234567890'; // Fixed secret for key derivation
+
+        // Load saved text from localStorage
+        textInput.value = localStorage.getItem('savedText') || '';
+
+        // Update statistics
+        function updateStats() {
+            const text = textInput.value;
+            wordCount.textContent = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+            charCountWithSpaces.textContent = text.length;
+            charCountNoSpaces.textContent = text.replace(/\s/g, '').length;
+            readingTime.textContent = Math.ceil(wordCount.textContent / 200) + ' min';
+            sentenceCount.textContent = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+            paragraphCount.textContent = text.split(/\n+/).filter(p => p.trim().length > 0).length;
+
+            // Top word
+            const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+            const wordFreq = {};
+            words.forEach(word => wordFreq[word] = (wordFreq[word] || 0) + 1);
+            const top = Object.entries(wordFreq).sort((a, b) => b[1] - a[1])[0];
+            topWord.textContent = top ? `${top[0]} (${top[1]})` : '-';
+
+            // Readability (simplified Flesch-Kincaid)
+            const syllables = words.reduce((sum, word) => sum + (word.match(/[aeiouy]+/gi) || []).length, 0);
+            const fkScore = 206.835 - 1.015 * (wordCount.textContent / sentenceCount.textContent) - 84.6 * (syllables / wordCount.textContent);
+            readability.textContent = fkScore > 80 ? 'Easy' : fkScore > 50 ? 'Medium' : 'Hard';
+        }
+
+        // Auto-save to localStorage
+        textInput.addEventListener('input', () => {
+            localStorage.setItem('savedText', textInput.value);
+            updateStats();
+        });
+
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light');
+            document.body.classList.toggle('dark');
+            themeToggle.textContent = document.body.classList.contains('dark') ? 'Light Theme' : 'Dark Theme';
+        });
+
+        // Text manipulation
+        toUppercase.addEventListener('click', () => {
+            textInput.value = textInput.value.toUpperCase();
+            updateStats();
+        });
+
+        toLowercase.addEventListener('click', () => {
+            textInput.value = textInput.value.toLowerCase();
+            updateStats();
+        });
+
+        toTitlecase.addEventListener('click', () => {
+            textInput.value = textInput.value.replace(/\b\w/g, c => c.toUpperCase());
+            updateStats();
+        });
+
+        cleanSpaces.addEventListener('click', () => {
+            textInput.value = textInput.value.replace(/\s+/g, ' ').trim();
+            updateStats();
+        });
+
+        copyText.addEventListener('click', () => {
+            navigator.clipboard.writeText(textInput.value);
+            alert('Text copied to clipboard!');
+        });
+
+        downloadText.addEventListener('click', () => {
+            const blob = new Blob([textInput.value], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'text.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        clearText.addEventListener('click', () => {
+            textInput.value = '';
+            localStorage.removeItem('savedText');
+            updateStats();
+        });
+
+        // Key derivation using fixed secret
+        async function deriveKey(salt) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                enc.encode(FIXED_SECRET),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+            return await crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                true,
+                ['encrypt', 'decrypt']
+            );
+        }
+
+        // .dspx export
+        exportDspx.addEventListener('click', async () => {
+            if (!zstd) {
+                alert('Compression library not ready. Please try again.');
+                return;
+            }
+            try {
+                const text = textInput.value;
+                const enc = new TextEncoder();
+                const rawData = enc.encode(text);
+                const salt = crypto.getRandomValues(new Uint8Array(16));
+                const key = await deriveKey(salt);
+                const header = new Uint8Array(48);
+                header.set(enc.encode(MAGIC), 0);
+                header[4] = VERSION;
+                header[5] = 0; // Flags
+                header.set(salt, 8);
+                const nonceBase = crypto.getRandomValues(new Uint8Array(12));
+                header.set(nonceBase, 24);
+                new DataView(header.buffer).setUint32(36, CHUNK_RAW, true);
+                new DataView(header.buffer).setBigUint64(40, BigInt(rawData.length), true);
+
+                const chunks = [];
+                for (let i = 0; i < rawData.length; i += CHUNK_RAW) {
+                    const chunk = rawData.slice(i, i + CHUNK_RAW);
+                    const compressed = zstd.compress(chunk, 3);
+                    const nonce = new Uint8Array(12);
+                    nonce.set(nonceBase);
+                    new DataView(nonce.buffer).setUint32(8, i / CHUNK_RAW, true);
+                    const encrypted = await crypto.subtle.encrypt(
+                        { name: 'AES-GCM', iv: nonce, additionalData: header.slice(0, 16) },
+                        key,
+                        compressed
+                    );
+                    const chunkLen = new Uint8Array(4);
+                    new DataView(chunkLen.buffer).setUint32(0, encrypted.byteLength, true);
+                    chunks.push(chunkLen, nonce, new Uint8Array(encrypted));
+                }
+
+                const blob = new Blob([header, ...chunks], { type: 'application/vnd.dragaspetar.dspx' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'text.dspx';
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                console.error('Export failed:', err);
+                alert('Failed to export .dspx file. Please try again.');
+            }
+        });
+
+        // .dspx import
+        importDspxBtn.addEventListener('click', () => importDspx.click());
+        importDspx.addEventListener('change', async (e) => {
+            if (!zstd) {
+                alert('Compression library not ready. Please try again.');
+                return;
+            }
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    const buffer = await file.arrayBuffer();
+                    const data = new Uint8Array(buffer);
+                    if (String.fromCharCode(...data.slice(0, 4)) !== MAGIC) {
+                        alert('Invalid .dspx file');
+                        return;
+                    }
+                    const salt = data.slice(8, 24);
+                    const key = await deriveKey(salt);
+                    const nonceBase = data.slice(24, 36);
+                    let decrypted = new Uint8Array();
+                    let offset = 48;
+                    while (offset < data.length) {
+                        const ctLen = new DataView(data.buffer).getUint32(offset, true);
+                        const nonce = data.slice(offset + 4, offset + 16);
+                        const ciphertext = data.slice(offset + 16, offset + 16 + ctLen);
+                        offset += 16 + ctLen;
+                        const compressed = await crypto.subtle.decrypt(
+                            { name: 'AES-GCM', iv: nonce, additionalData: data.slice(0, 16) },
+                            key,
+                            ciphertext
+                        );
+                        const decompressed = zstd.decompress(new Uint8Array(compressed));
+                        decrypted = new Uint8Array([...decrypted, ...decompressed]);
+                    }
+                    textInput.value = new TextDecoder().decode(decrypted);
+                    localStorage.setItem('savedText', textInput.value);
+                    updateStats();
+                } catch (err) {
+                    console.error('Import failed:', err);
+                    alert('Failed to import .dspx file. File may be corrupted.');
+                }
+            }
+        });
+
+        // Find and replace
+        replaceBtn.addEventListener('click', () => {
+            const find = findInput.value;
+            const replace = replaceInput.value;
+            if (find) {
+                textInput.value = textInput.value.replaceAll(find, replace);
+                updateStats();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                downloadText.click();
+            }
+            if (e.ctrlKey && e.key === 'c') {
+                e.preventDefault();
+                copyText.click();
+            }
+        });
+
+        // Initial stats update
+        updateStats();
+    </script>
+</body>
+</html>
