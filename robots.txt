@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://codpass.rf.gd/sitemap.xml
