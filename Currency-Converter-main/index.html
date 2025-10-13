@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
   <title>Döviz Çevirici</title>
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
@@ -11,13 +11,20 @@
   <style>
     /* Basit reset ve temel yardımcılar (Tailwind benzeri minimal) */
     *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
-    html{-webkit-text-size-adjust:100%}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif}
+    html{-webkit-text-size-adjust:100%;height:100%}
+    body{
+      margin:0;height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
+      -webkit-tap-highlight-color:transparent;
+    }
     input,button,select{font-family:inherit;font-size:100%;line-height:1.15;margin:0}
     button[type=button]{-webkit-appearance:button}
     input[type=number]{-moz-appearance:textfield}
     input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-
+   option {
+    color: #111827;
+   }
     .min-h-screen{min-height:100vh}
     .flex{display:flex}
     .items-center{align-items:center}
@@ -31,7 +38,9 @@
     .mb-6{margin-bottom:1.5rem}
     .mx-auto{margin-left:auto;margin-right:auto}
     .w-full{width:100%}
-    .max-w-md{max-width:50rem}
+    /* Mobil öncelikli: daha dar max-width, büyük ekranlarda genişle */
+    .max-w-md{max-width:28rem}
+    @media (min-width:1024px){.max-w-md{max-width:50rem}}
     .rounded-lg{border-radius:.5rem}
     .rounded-full{border-radius:9999px}
     .rounded-2xl{border-radius:1rem}
@@ -57,7 +66,11 @@
       --green:#10b981; --red:#ef4444;
     }
 
-    .app-bg{position:relative;min-height:100vh;overflow:hidden}
+    .app-bg{
+      position:relative;min-height:100vh;overflow:hidden;
+      padding-top:calc(env(safe-area-inset-top) + 1rem);
+      padding-bottom:calc(env(safe-area-inset-bottom) + 1rem);
+    }
     .app-bg[data-theme="light"]{
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
       background-size:200% 200%; animation:bgShift 14s ease-in-out infinite;
@@ -82,18 +95,11 @@
     .brand img{width:40px;height:40px;object-fit:contain;border-radius:10px}
     .subtitle{font-size:.875rem;opacity:.8;margin-top:.25rem}
 
-    .control{display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem;
-        max-width: 21.5rem;
-    
-    }
+    .control{display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem;max-width:21.5rem}
     .label{font-size:.85rem;opacity:.9}
     .field{
       display:flex;align-items:center;gap:.5rem;border:1px solid rgba(148,163,184,.35);
-      border-radius:12px;padding:.5rem .625rem;
-      background:rgba(255,255,255,.3);
-
-      
-
+      border-radius:12px;padding:.5rem .625rem;background:rgba(255,255,255,.3);
     }
     .app-bg[data-theme="dark"] .field{background:rgba(17,24,39,.35);border-color:rgba(255,255,255,.08)}
     .field:focus-within{box-shadow:0 0 0 3px rgba(37,99,235,.2);border-color:rgba(37,99,235,.6)}
@@ -115,7 +121,7 @@
       border:1px dashed rgba(148,163,184,.45);border-radius:14px;padding:1rem;text-align:center;margin:.75rem 0 1rem;background:rgba(255,255,255,.35)
     }
     .app-bg[data-theme="dark"] .result{background:rgba(17,24,39,.35)}
-    .result-main{font-size:1.15rem;font-weight:700;letter-spacing:.2px}
+    .result-main{font-weight:700;letter-spacing:.2px;font-size:clamp(1.05rem, 2.5vw + .7rem, 1.2rem)}
     .result-sub{margin-top:.4rem;font-size:.85rem;opacity:.8}
 
     .btn{width:100%;height:52px;border-radius:12px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;cursor:pointer;transition:transform .15s ease, background .2s ease, box-shadow .2s ease}
@@ -137,7 +143,114 @@
     @keyframes spin{to{transform:rotate(360deg)}}
 
     .error{display:flex;gap:.5rem;align-items:center;justify-content:center;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:.5rem .75rem;margin:.5rem 0}
+
+    /* Erişilebilir odak stilleri */
+    .field input:focus-visible,.field select:focus-visible,.btn:focus-visible,.theme-toggle:focus-visible,.swap-btn:focus-visible{
+      outline:3px solid rgba(37,99,235,.5);outline-offset:2px
+    }
+
+    /* Mobil düzen: kaynak/hedef/swap alt alta gelsin, alan/padding/fontlar ayarlansın */
+    .responsive-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    @media (max-width:640px){
+      .responsive-row{flex-direction:column;align-items:stretch}
+      .swap-wrap{order:-1;margin:.25rem 0 .5rem}
+      .converter-card{padding:1rem}
+      .brand img{width:32px;height:32px}
+      .field{padding:.625rem .75rem}
+      .field input,.field select{font-size:16px} /* iOS zoom fix */
+      .result{padding:.75rem}
+      .btn{height:52px}
+    }
+
+    /* Dokunmatik hedefler */
+    @media (pointer:coarse){
+      .theme-toggle,.swap-btn,.btn{min-width:48px;min-height:48px}
+    }
+
+    /* Blob ve animasyonlar mobilde hafifletilsin */
+    @media (max-width:640px){
+      .blob{width:240px;height:240px;filter:blur(40px)}
+      .blob.two{right:-15%;bottom:-10%}
+    }
+
+    /* Hareket azaltma tercihi olan kullanıcılar için animasyonları kapat */
+    @media (prefers-reduced-motion:reduce){
+      .app-bg[data-theme="light"]{animation:none}
+      .blob{animation:none}
+      .swap-btn,.btn,.theme-toggle{transition:none}
+    }
+
     @media (max-width:420px){.text-3xl{font-size:1.6rem}}
+
+    /* Orta çözünürlüklerde taşmayı önle: wrap + esnek kolonlar */
+.responsive-row{
+  display:flex;
+  align-items:stretch;
+  justify-content:space-between;
+  gap:.75rem;
+  flex-wrap:wrap; /* kritik */
+}
+
+/* Swap dışındaki kolonlar esnek ve daralabilir olsun */
+.responsive-row > div:not(.swap-wrap){
+  flex:1 1 220px; /* 2x220 + swap ile 500-560px'e kadar sığar */
+  min-width:0;    /* içerik taşmasını önler */
+}
+
+/* Swap sabit kalsın; dar ekranlarda alta iner */
+.responsive-row .swap-wrap{
+  flex:0 0 auto;
+}
+
+/* Dar ve orta tablet aralığında swap alta geçsin, merkeze gelsin */
+@media (max-width: 820px){
+  .responsive-row .swap-wrap{
+    order:-1;
+    width:100%;
+    margin:.25rem 0 .5rem;
+    display:flex;
+    justify-content:center;
+  }
+}
+
+/* .control üzerindeki katı sınırı kaldır: daralabilsin */
+.control{ max-width:none; }
+
+/* Select metni taşmasın, layout'u bozmasın */
+.field select{
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  /* iOS zoom fix zaten var; gerekirse burada da font-size:16px tutulabilir */
+}
+
+/* Kart daha esnek ölçeklensin ve yatay kaydırma olmasın */
+html, body{ overflow-x:hidden; }
+.converter-card{
+  margin-inline:auto;
+  width:100%;
+  max-width: clamp(20rem, 92vw, 42rem);
+}
+
+/* Swap butonu çözünürlüğe göre esnek */
+.swap-btn{
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
+}
+
+/* Çok dar ekran optimizasyonları (<=360px) */
+@media (max-width:360px){
+  .converter-card{ padding:.875rem; }
+  .field{ padding:.5rem .625rem; gap:.4rem; }
+  .brand img{ width:28px; height:28px; }
+  .result{ padding:.625rem; }
+}
+
+/* Tablet-landscape aralığı: gap'ı biraz kısalt */
+@media (min-width:641px) and (max-width:900px){
+  .responsive-row{ gap:.5rem; }
+}
   </style>
 </head>
 <body>
@@ -396,11 +509,12 @@
                 <img
                   src="logo.png"
                   alt="Logo"
+                  loading="lazy"
                   onError={(e) => { e.currentTarget.style.display='none'; }}
                 />
                 <div>
                   <div className="text-2xl font-extrabold">Döviz Çevirici</div>
-                  <div className="subtitle">Hızlı, modern ve şık</div>
+                  <div className="subtitle">Geliştirme Aşamasında</div>
                 </div>
               </div>
 
@@ -432,18 +546,21 @@
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="Miktar giriniz"
                   aria-label="Miktar"
+                  inputMode="decimal"
+                  enterKeyHint="done"
                 />
               </div>
             </div>
 
             {/* Kaynak / Hedef */}
-            <div className="flex items-center justify-between" style={{ gap: '0.75rem' }}>
+            <div className="responsive-row">
               {/* Kaynak */}
               <div style={{ flex: 1 }}>
                 <div className="control">
                   <label className="label font-medium">Kaynak</label>
                   <div className="field">
-                    <img className="flag" src={updateFlag(fromCurr)} alt={`${fromCurr} bayrağı`} />
+                    <img className="flag" src={updateFlag(fromCurr)} alt={`${fromCurr} bayrağı`} loading="lazy"
+                         onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                     <select
                       value={fromCurr}
                       onChange={(e)=>setFromCurr(e.target.value)}
@@ -461,7 +578,7 @@
 
               {/* Swap */}
               <div className="swap-wrap">
-                <button className="swap-btn" onClick={handleSwap} title="Değiştir">
+                <button className="swap-btn" onClick={handleSwap} title="Değiştir" aria-label="Kaynak ve hedefi değiştir">
                   <svg className="swap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10l-3-3m3 3-3 3M17 16H7l3 3m-3-3 3-3"/>
                   </svg>
@@ -473,7 +590,8 @@
                 <div className="control">
                   <label className="label font-medium">Hedef</label>
                   <div className="field">
-                    <img className="flag" src={updateFlag(toCurr)} alt={`${toCurr} bayrağı`} />
+                    <img className="flag" src={updateFlag(toCurr)} alt={`${toCurr} bayrağı`} loading="lazy"
+                         onError={(e)=>{e.currentTarget.style.visibility='hidden'}} />
                     <select
                       value={toCurr}
                       onChange={(e)=>setToCurr(e.target.value)}
@@ -535,4 +653,4 @@
     }
   </script>
 </body>
-</html> 
+</html>
