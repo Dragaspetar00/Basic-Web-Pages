@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>QR Oluşturucu — Modern</title>
+  <meta name="description" content="Saf HTML/CSS/JS QR kod oluşturucu: canlı önizleme, PNG/SVG indirme, logo ve stil.">
+  <!-- QRCode Styling (SVG/Canvas + logo/stil) -->
+  <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+  <!-- qrcode-generator (sürüm/kapasite tahmini) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+  <style>
+    :root{
+      --bg: #0b0f15;
+      --bg2: #0e1420;
+      --glass: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.08);
+      --text: #e6ecf3;
+      --muted:#a6b2c3;
+      --primary:#7aa2ff;
+      --primary2:#a77bff;
+      --ok:#2ecc71;
+      --warn:#f5b52e;
+      --err:#ff6b6b;
+      --card-radius:16px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --focus:#8ab4ff;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f8ff; --bg2:#eef2ff; --glass:rgba(255,255,255,0.8);
+        --border: rgba(0,0,0,0.08);
+        --text:#0f172a; --muted:#4b5563; --primary:#3b82f6; --primary2:#a855f7;
+        --shadow: 0 10px 25px rgba(0,0,0,0.08);
+        --focus:#2563eb;
+      }
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font: 15px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+      background:
+        radial-gradient(1200px 600px at -5% -10%, #1b2a43 0%, transparent 50%),
+        radial-gradient(900px 500px at 110% 10%, #2a164a 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      background-attachment: fixed;
+    }
+
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: saturate(1.4) blur(10px);
+      background: linear-gradient(90deg, rgba(122,162,255,0.12), rgba(167,123,255,0.10));
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1180px; margin:0 auto; padding:14px 16px}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:36px; height:36px; border-radius:12px;
+      display:grid; place-items:center; font-weight:800; color:white;
+      background: conic-gradient(from 210deg, var(--primary), var(--primary2), var(--primary));
+      box-shadow: 0 6px 18px rgba(122,162,255,0.35);
+    }
+    .brand-name{font-weight:800; letter-spacing:.2px}
+    .brand-sub{color:var(--muted); font-size:12px}
+
+    .lang-toggle button{
+      border:1px solid var(--border); background:var(--glass); color:var(--muted);
+      padding:6px 10px; border-radius:999px; cursor:pointer;
+    }
+    .lang-toggle button.active{color:var(--text); border-color:var(--primary)}
+
+    main .wrap{padding:18px 16px}
+    .grid{
+      display:grid; gap:16px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width:980px){
+      .grid{grid-template-columns: 1.05fr 0.95fr;}
+    }
+
+    section.card{
+      background: var(--glass);
+      border:1px solid var(--border);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    h2{margin:0 0 10px; font-size:16px}
+    .muted{color:var(--muted)}
+
+    textarea,input,select,button{font:inherit; color:var(--text)}
+    .field{display:flex; flex-direction:column; gap:6px; margin-bottom:12px}
+    label{font-weight:600}
+    textarea{
+      min-height:130px; resize:vertical; border-radius:12px;
+      border:1px solid var(--border); background: rgba(255,255,255,0.04);
+      color:var(--text); padding:10px;
+    }
+    input[type="number"], input[type="text"], select{
+      border:1px solid var(--border); border-radius:12px;
+      background: rgba(255,255,255,0.04); padding:8px 10px; color:var(--text);
+    }
+    input[type="color"]{width:46px;height:34px;padding:0;border-radius:10px;border:1px solid var(--border);background:transparent}
+    .row-fields{display:grid; gap:10px; grid-template-columns: 1fr 1fr}
+    @media(min-width:980px){ .row-fields{grid-template-columns: repeat(3, minmax(0,1fr));} }
+
+    .controls{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+    .btn{
+      border:1px solid var(--border); background: rgba(255,255,255,0.05);
+      color:var(--text); border-radius:12px; padding:9px 12px; cursor:pointer;
+      transition: transform .05s ease, background .2s ease;
+    }
+    .btn.primary{background: linear-gradient(90deg, var(--primary), var(--primary2)); color:white; border-color:transparent}
+    .btn:active{transform: translateY(1px)}
+    .btn:focus{outline:2px solid var(--focus); outline-offset:2px}
+
+    .preview{
+      display:grid; place-items:center; min-height:360px;
+      border:1px dashed var(--border); border-radius:14px; padding:12px;
+      background: rgba(0,0,0,0.12);
+    }
+    .meta{display:flex; flex-wrap:wrap; gap:8px; font-size:12.5px; margin-top:8px}
+    .pill{border:1px solid var(--border); border-radius:999px; padding:4px 8px; color:var(--muted)}
+    .pill.ok{border-color:var(--ok); color:var(--ok)}
+    .pill.warn{border-color:var(--warn); color:var(--warn)}
+    .pill.err{border-color:var(--err); color:var(--err)}
+
+    details summary{cursor:pointer; font-weight:700}
+    .alert{
+      background: rgba(255,85,85,0.12); border:1px solid rgba(255,85,85,0.35);
+      color:#ff9aa8; padding:10px; border-radius:10px; font-size:14px; margin-top:8px;
+    }
+
+    footer{padding:18px 16px; color:var(--muted)}
+    .toast{
+      position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+      background: rgba(0,0,0,0.78); color:#fff; padding:10px 14px; border-radius:10px; z-index:9999
+    }
+
+    /* Mobil rahatlık */
+    @media(max-width:480px){
+      .preview{min-height:300px}
+      textarea{min-height:110px}
+      .controls{position:sticky; bottom:10px; background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.25) 100%); padding-top:6px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap row">
+      <div class="brand">
+        <div class="logo">QR</div>
+        <div>
+          <div class="brand-name">QR Oluşturucu</div>
+          <div class="brand-sub" data-i18n="subtitle">Saf HTML/CSS/JS — canlı önizleme, PNG & SVG indirme</div>
+        </div>
+      </div>
+      <div class="lang-toggle" aria-label="Dil seçimi">
+        <button id="langTr" class="active" data-lang="tr" aria-pressed="true">TR</button>
+        <button id="langEn" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap grid">
+      <!-- Sol: Girdi & Ayarlar -->
+      <section class="card" aria-labelledby="sec-input">
+        <h2 id="sec-input" data-i18n="inputs">Girdi & Ayarlar</h2>
+
+        <div class="field">
+          <label for="textInput" data-i18n="textLabel">Metin</label>
+          <textarea id="textInput" placeholder="Metni buraya yaz..." aria-describedby="textHint"></textarea>
+          <div class="muted" id="textHint" data-i18n="textHint">Uzun/çok satırlı metin desteklenir.</div>
+        </div>
+
+        <details open>
+          <summary data-i18n="settings">Ayarlar</summary>
+          <div class="row-fields" style="margin-top:10px">
+            <div class="field">
+              <label for="size" data-i18n="size">Boyut (px)</label>
+              <input id="size" type="number" min="150" max="3000" step="10" value="512" />
+            </div>
+            <div class="field">
+              <label for="margin" data-i18n="margin">Margin (px)</label>
+              <input id="margin" type="number" min="0" max="50" step="1" value="8" />
+            </div>
+            <div class="field">
+              <label for="ecLevel" data-i18n="ecLevel">Hata Düzeltme</label>
+              <select id="ecLevel">
+                <option value="L">L (düşük)</option>
+                <option value="M" selected>M</option>
+                <option value="Q">Q</option>
+                <option value="H">H (yüksek)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label data-i18n="fgColor">Ön plan rengi</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input id="fgColor" type="color" value="#000000" aria-label="Ön plan rengi" />
+                <input id="fgHex" type="text" value="#000000" aria-label="Ön plan hex" />
+              </div>
+            </div>
+            <div class="field">
+              <label data-i18n="bgColor">Arka plan rengi</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input id="bgColor" type="color" value="#ffffff" aria-label="Arka plan rengi" />
+                <input id="bgHex" type="text" value="#ffffff" aria-label="Arka plan hex" />
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <input type="checkbox" id="bgTransparent" />
+                <label for="bgTransparent" data-i18n="transparentBg">Şeffaf arka plan</label>
+              </div>
+            </div>
+            <div class="field">
+              <label for="moduleStyle" data-i18n="moduleStyle">Modül stili</label>
+              <select id="moduleStyle">
+                <option value="square" selected>Kare</option>
+                <option value="dots">Nokta</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="finderStyle" data-i18n="finderStyle">Köşe (finder) stili</label>
+              <select id="finderStyle">
+                <option value="square" selected>Kare</option>
+                <option value="dot">Nokta</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="logoFile" data-i18n="logo">Logo (opsiyonel)</label>
+              <input id="logoFile" type="file" accept="image/png,image/jpeg,image/svg+xml" />
+              <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+                <input type="range" id="logoScale" min="0" max="40" step="1" value="20" />
+                <span class="muted" data-i18n="logoScale">Logo boyutu (% QR genişliği)</span>
+              </div>
+              <div class="muted" data-i18n="logoNote">Logo için H hata düzeltme önerilir.</div>
+              <div id="logoPreview" class="muted"></div>
+            </div>
+          </div>
+        </details>
+
+        <div class="controls" role="toolbar" aria-label="İşlemler">
+          <button id="btnCopy" class="btn" data-i18n="copyText">Kopyala Metin</button>
+          <button id="btnClear" class="btn" data-i18n="clear">Temizle</button>
+          <span class="muted" aria-hidden="true">|</span>
+          <button id="btnDownloadPNG" class="btn primary" data-i18n="downloadPng">İndir PNG</button>
+          <button id="btnDownloadSVG" class="btn" data-i18n="downloadSvg">İndir SVG</button>
+        </div>
+
+        <div id="warnings"></div>
+      </section>
+
+      <!-- Sağ: Önizleme (tek) + Kamera test -->
+      <section class="card" aria-labelledby="sec-preview">
+        <h2 id="sec-preview" data-i18n="preview">Önizleme</h2>
+        <div id="preview" class="preview" aria-live="polite"></div>
+
+        <div class="meta">
+          <span class="pill" id="charCount">0 chars</span>
+          <span class="pill" id="byteCount">0 bytes (UTF‑8)</span>
+          <span class="pill" id="ecInfo">EC: M</span>
+          <span class="pill" id="verInfo">v? (auto)</span>
+          <span class="pill" id="contrastInfo">contrast ok</span>
+        </div>
+
+        <details style="margin-top:10px">
+          <summary data-i18n="mobileTest">Mobilde test et (kamera)</summary>
+          <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+            <button class="btn" id="btnScanStart" data-i18n="startScan">Kamerayı başlat</button>
+            <button class="btn" id="btnScanStop" data-i18n="stopScan">Durdur</button>
+            <span class="muted" id="scanStatus">—</span>
+          </div>
+          <video id="video" playsinline muted style="width:100%;max-width:440px;border-radius:12px;margin-top:8px;border:1px solid var(--border);background:#000"></video>
+          <div id="scanResult" class="muted" style="margin-top:6px"></div>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <div class="muted">
+      • Tüm işlemler tarayıcıda yapılır. Verileriniz ve yüklediğiniz logolar sunucuya gönderilmez. <br/>
+      • Kamera için güvenli bağlam (https) gerekir — GitHub Pages/Netlify/Vercel uygundur. <br/>
+      • Kütüphaneler: qr-code-styling, qrcode-generator; ZXing (kamera fallback).
+    </div>
+  </footer>
+
+  <script>
+    // Metinler
+    const I18N = {
+      tr: {
+        subtitle: "Saf HTML/CSS/JS — canlı önizleme, PNG & SVG indirme",
+        inputs: "Girdi & Ayarlar",
+        textLabel: "Metin",
+        textHint: "Uzun/çok satırlı metin desteklenir.",
+        settings: "Ayarlar",
+        size: "Boyut (px)", margin: "Margin (px)", ecLevel: "Hata Düzeltme",
+        fgColor: "Ön plan rengi", bgColor: "Arka plan rengi", transparentBg: "Şeffaf arka plan",
+        moduleStyle: "Modül stili", finderStyle: "Köşe (finder) stili",
+        logo: "Logo (opsiyonel)", logoScale: "Logo boyutu (% QR genişliği)",
+        logoNote: "Logo için H hata düzeltme önerilir.",
+        copyText: "Kopyala Metin", clear: "Temizle",
+        downloadPng: "İndir PNG", downloadSvg: "İndir SVG",
+        preview: "Önizleme",
+        mobileTest: "Mobilde test et (kamera)", startScan: "Kamerayı başlat", stopScan: "Durdur",
+      },
+      en: {
+        subtitle: "Pure HTML/CSS/JS — live preview, PNG & SVG export",
+        inputs: "Input & Settings",
+        textLabel: "Text",
+        textHint: "Supports long and multi-line text.",
+        settings: "Settings",
+        size: "Size (px)", margin: "Margin (px)", ecLevel: "Error correction",
+        fgColor: "Foreground color", bgColor: "Background color", transparentBg: "Transparent background",
+        moduleStyle: "Module style", finderStyle: "Finder style",
+        logo: "Logo (optional)", logoScale: "Logo size (% of QR width)",
+        logoNote: "H error correction is recommended with logos.",
+        copyText: "Copy Text", clear: "Clear",
+        downloadPng: "Download PNG", downloadSvg: "Download SVG",
+        preview: "Preview",
+        mobileTest: "Test on mobile (camera)", startScan: "Start camera", stopScan: "Stop",
+      }
+    };
+    let currentLang = 'tr';
+    const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+
+    // Elemanlar
+    const textInput = $("#textInput");
+    const sizeInput = $("#size");
+    const marginInput = $("#margin");
+    const ecSelect = $("#ecLevel");
+    const fgColor = $("#fgColor");
+    const fgHex = $("#fgHex");
+    const bgColor = $("#bgColor");
+    const bgHex = $("#bgHex");
+    const bgTransparent = $("#bgTransparent");
+    const moduleStyle = $("#moduleStyle");
+    const finderStyle = $("#finderStyle");
+    const logoFile = $("#logoFile");
+    const logoScale = $("#logoScale");
+    const logoPreview = $("#logoPreview");
+    const warnings = $("#warnings");
+
+    const btnCopy = $("#btnCopy");
+    const btnClear = $("#btnClear");
+    const btnDownloadPNG = $("#btnDownloadPNG");
+    const btnDownloadSVG = $("#btnDownloadSVG");
+
+    const preview = $("#preview");
+
+    const charCount = $("#charCount");
+    const byteCount = $("#byteCount");
+    const ecInfo = $("#ecInfo");
+    const verInfo = $("#verInfo");
+    const contrastInfo = $("#contrastInfo");
+
+    const langTr = $("#langTr"), langEn = $("#langEn");
+
+    // Kamera
+    const btnScanStart = $("#btnScanStart");
+    const btnScanStop = $("#btnScanStop");
+    const videoEl = $("#video");
+    const scanStatus = $("#scanStatus");
+    const scanResult = $("#scanResult");
+
+    // Durum
+    let logoDataUrl = null;
+    let stream = null;
+    let scanTimer = null;
+    let detector = null;
+    let zxingReader = null;
+
+    // Tek görünür QR (SVG). PNG indirme için ayrı bir canvas instance (DOM'a eklenmeyecek).
+    const commonOptions = () => ({
+      width: clamp(int(sizeInput.value, 512), 150, 3000),
+      height: clamp(int(sizeInput.value, 512), 150, 3000),
+      margin: clamp(int(marginInput.value, 8), 0, 50),
+      data: textInput.value,
+      qrOptions: { errorCorrectionLevel: ecSelect.value },
+      dotsOptions: { type: moduleStyle.value, color: fgHex.value },
+      cornersSquareOptions: { type: finderStyle.value },
+      cornersDotOptions: { type: finderStyle.value === "dot" ? "dot" : undefined },
+      backgroundOptions: { color: bgTransparent.checked ? "rgba(0,0,0,0)" : bgHex.value },
+      image: logoDataUrl || undefined,
+      imageOptions: { hideBackgroundDots:false, margin:0, imageSize:(int(logoScale.value,20)/100) }
+    });
+
+    const qrSvg = new QRCodeStyling({ ...commonOptions(), type:"svg" });
+    const qrCanvas = new QRCodeStyling({ ...commonOptions(), type:"canvas" });
+    qrSvg.append(preview); // Sadece bir önizleme
+
+    // Yardımcılar
+    function int(v, d=0){ v= parseInt(v); return Number.isFinite(v) ? v : d; }
+    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+    function debounce(fn, t=250){ let id; return (...a)=>{ clearTimeout(id); id=setTimeout(()=>fn(...a), t); }; }
+    function nowStamp(){
+      const d=new Date(), p = n=> String(n).padStart(2,'0');
+      return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+    }
+    function utf8Bytes(s){ try{ return new TextEncoder().encode(s).length }catch{ return unescape(encodeURIComponent(s)).length } }
+    function normalizeHex(s){
+      s=(s||'').trim(); if(!s) return '#000000';
+      if(s[0]!=='#') s='#'+s;
+      if(/^#([0-9a-f]{3})$/i.test(s)) return '#'+s.slice(1).split('').map(x=>x+x).join('');
+      if(/^#([0-9a-f]{6})$/i.test(s)) return s.toLowerCase();
+      return '#000000';
+    }
+    function syncColor(inp, hex){
+      hex.value = normalizeHex(inp.value);
+      inp.addEventListener('input', ()=> hex.value = normalizeHex(inp.value));
+      hex.addEventListener('input', ()=> inp.value = normalizeHex(hex.value));
+    }
+    function relLum(hex){
+      const c=normalizeHex(hex).slice(1);
+      const r=parseInt(c.substr(0,2),16)/255, g=parseInt(c.substr(2,2),16)/255, b=parseInt(c.substr(4,2),16)/255;
+      const f=u=> u<=0.03928 ? u/12.92 : Math.pow((u+0.055)/1.055,2.4);
+      return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);
+    }
+    function contrast(hex1, hex2){
+      const [L1,L2]=[relLum(hex1), relLum(hex2)];
+      const [a,b]= L1>L2 ? [L1,L2] : [L2,L1];
+      return (a+0.05)/(b+0.05);
+    }
+    function toast(msg){
+      const el=document.createElement('div');
+      el.className='toast'; el.textContent=msg; document.body.appendChild(el);
+      setTimeout(()=> el.remove(), 1600);
+    }
+    function clearWarnings(){ warnings.innerHTML = ""; }
+    function warn(html){
+      const d=document.createElement('div'); d.className='alert'; d.innerHTML=html; warnings.appendChild(d);
+    }
+
+    // Dil
+    function applyLang(lang){
+      currentLang=lang; document.documentElement.lang=lang;
+      $$(".lang-toggle button").forEach(b=>{
+        const act=b.dataset.lang===lang; b.classList.toggle('active', act); b.setAttribute('aria-pressed', String(act));
+      });
+      document.querySelectorAll("[data-i18n]").forEach(el=>{
+        const k=el.getAttribute('data-i18n'); if(I18N[lang][k]) el.textContent=I18N[lang][k];
+      });
+      updateMeta(); // etiketler güncellensin
+    }
+    langTr.addEventListener('click', ()=> applyLang('tr'));
+    langEn.addEventListener('click', ()=> applyLang('en'));
+
+    // Renk eşitle
+    syncColor(fgColor, fgHex);
+    syncColor(bgColor, bgHex);
+    bgTransparent.addEventListener('change', ()=>{
+      bgColor.disabled = bgHex.disabled = bgTransparent.checked;
+      triggerRender();
+    });
+
+    // Logo
+    logoFile.addEventListener('change', ()=>{
+      const f=logoFile.files?.[0];
+      if(!f){ logoDataUrl=null; logoPreview.textContent=""; triggerRender(); return; }
+      if(f.size > 3*1024*1024){ warn(`<b>Logo boyutu büyük</b>: ${Math.round(f.size/1024)} KB.`); }
+      const reader=new FileReader();
+      reader.onload=()=>{ logoDataUrl=reader.result; logoPreview.textContent=`${f.name} — ${Math.round(f.size/1024)} KB`; triggerRender(); };
+      reader.readAsDataURL(f);
+    });
+
+    // Kopyala/Temizle/İndir
+    btnCopy.addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(textInput.value||""); toast(currentLang==='tr'?'Kopyalandı ✅':'Copied ✅'); }
+      catch{ toast(currentLang==='tr'?'Kopyalama başarısız':'Copy failed'); }
+    });
+    btnClear.addEventListener('click', ()=>{ textInput.value=""; triggerRender(); });
+
+    btnDownloadPNG.addEventListener('click', ()=>{
+      const name=`qr_${nowStamp()}`;
+      // PNG için canvas instance, DOM'a eklenmez (tek QR görünür)
+      qrCanvas.download({ name, extension:"png" });
+    });
+    btnDownloadSVG.addEventListener('click', ()=>{
+      const name=`qr_${nowStamp()}`;
+      qrSvg.download({ name, extension:"svg" });
+    });
+
+    // Kapasite/versiyon
+    function estimateVersion(text, ec){
+      try{
+        const qr = qrcode(0, ec);
+        qr.addData(text, 'Byte'); qr.make();
+        const count = qr.getModuleCount();
+        const v = Math.round((count - 17)/4);
+        return { ok:true, version:v };
+      }catch(e){ return { ok:false, error:e?.message || String(e) }; }
+    }
+
+    // Render
+    const triggerRender = debounce(render, 220);
+    [textInput,sizeInput,marginInput,ecSelect,fgColor,fgHex,bgColor,bgHex,bgTransparent,moduleStyle,finderStyle,logoScale]
+      .forEach(el=>{
+        el.addEventListener('input', triggerRender);
+        el.addEventListener('change', triggerRender);
+      });
+
+    function updateMeta(extra={}){
+      const txt = textInput.value||"";
+      const bytes = utf8Bytes(txt);
+      const ec = ecSelect.value;
+      charCount.textContent = `${txt.length} ${currentLang==='tr'?'karakter':'chars'}`;
+      byteCount.textContent = `${bytes} bytes (UTF‑8)`;
+      ecInfo.textContent = `EC: ${ec}`;
+      verInfo.textContent = extra.version ? `v${extra.version}` : `v? (auto)`;
+
+      const fg=fgHex.value, bg=bgTransparent.checked ? "#ffffff" : bgHex.value;
+      const r= contrast(fg, bg);
+      const ok = r>=2.0;
+      contrastInfo.textContent = ok ? `contrast ok (${r.toFixed(1)}:1)` :
+                                    (currentLang==='tr'?`düşük kontrast (${r.toFixed(1)}:1)`:`low contrast (${r.toFixed(1)}:1)`);
+      contrastInfo.className = "pill " + (ok ? "ok" : "warn");
+    }
+
+    async function render(){
+      clearWarnings();
+
+      const options = commonOptions();
+      if(logoDataUrl && ecSelect.value!=='H'){
+        warn(`Logo eklediniz. <b>EC=H</b> önerilir. <a href="#" id="setECH">EC'yi H yap</a>`);
+        setTimeout(()=> $("#setECH")?.addEventListener('click', (e)=>{e.preventDefault(); ecSelect.value='H'; triggerRender();}),0);
+      }
+      const est = estimateVersion(textInput.value, ecSelect.value);
+      if(!est.ok){
+        warn(`<b>Veri kapasitesi aşıldı.</b> Hata düzeltmeyi düşürün (Q/M/L) veya metni kısaltın.`);
+      }
+      await qrSvg.update({ ...options, type:"svg" });
+      await qrCanvas.update({ ...options, type:"canvas" });
+      updateMeta({ version: est.ok ? est.version : undefined });
+    }
+
+    // Başlangıç
+    textInput.value = "https://example.com";
+    fgColor.value = fgHex.value = "#000000";
+    bgColor.value = bgHex.value = "#ffffff";
+    applyLang('tr');
+    render();
+
+    // Kısayol
+    document.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); btnDownloadPNG.click(); }
+    });
+
+    // Kamera — güvenli bağlam kontrolü + BarcodeDetector veya ZXing fallback
+    const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+    btnScanStart.addEventListener('click', startScan);
+    btnScanStop.addEventListener('click', stopScan);
+
+    async function startScan(){
+      if(!isSecure){
+        scanStatus.textContent = currentLang==='tr'
+          ? "Kamera için HTTPS gerekli. Lütfen siteyi https ile açın."
+          : "Camera requires HTTPS. Please open over https.";
+        return;
+      }
+      try{
+        scanStatus.textContent = currentLang==='tr' ? "Kamera başlatılıyor..." : "Starting camera...";
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal:"environment" } }, audio:false });
+        videoEl.srcObject = stream; await videoEl.play();
+        scanStatus.textContent = currentLang==='tr' ? "Tarama aktif" : "Scanning";
+
+        // BarcodeDetector varsa doğrudan video üzerinde tara
+        if('BarcodeDetector' in window){
+          try{
+            detector = new BarcodeDetector({ formats:["qr_code"] });
+            let last = 0, foundOnce = false;
+            scanTimer = setInterval(async ()=>{
+              if(!stream) return;
+              try{
+                const res = await detector.detect(videoEl);
+                if(res && res.length){
+                  if(!foundOnce){ vibrate(30); }
+                  foundOnce = true;
+                  scanResult.textContent = (currentLang==='tr' ? "Bulundu: " : "Found: ") + (res[0].rawValue || "");
+                }
+              }catch{}
+            }, 180); // ~5-6 fps yeter
+          }catch{
+            await startZXing(); // fallback
+          }
+        }else{
+          await startZXing();
+        }
+      }catch(e){
+        scanStatus.textContent = (currentLang==='tr' ? "Kamera erişimi reddedildi/bulunamadı." : "Camera denied/unavailable.") + " " + (e?.message||"");
+      }
+    }
+
+    async function startZXing(){
+      scanStatus.textContent = (currentLang==='tr' ? "ZXing yükleniyor..." : "Loading ZXing...");
+      await loadZXing();
+      zxingReader = new ZXing.BrowserMultiFormatReader();
+      try{
+        const devices = await zxingReader.listVideoInputDevices();
+        const back = devices.find(d=> /back|rear|environment/i.test(d.label)) || devices[0];
+        await zxingReader.decodeFromVideoDevice(back?.deviceId ?? null, videoEl, (result, err)=>{
+          if(result && result.text){
+            vibrate(30);
+            scanResult.textContent = (currentLang==='tr' ? "Bulundu: " : "Found: ") + result.text;
+          }
+        });
+        scanStatus.textContent = currentLang==='tr' ? "Tarama aktif (ZXing)" : "Scanning (ZXing)";
+      }catch(e){
+        scanStatus.textContent = (currentLang==='tr' ? "ZXing başlatılamadı: " : "ZXing failed: ") + (e?.message||"");
+      }
+    }
+
+    async function stopScan(){
+      if(scanTimer){ clearInterval(scanTimer); scanTimer=null; }
+      if(zxingReader){ try{ zxingReader.reset(); }catch{} zxingReader=null; }
+      if(stream){ try{ stream.getTracks().forEach(t=>t.stop()); }catch{} stream=null; }
+      videoEl.srcObject=null;
+      scanStatus.textContent = currentLang==='tr' ? "Durduruldu" : "Stopped";
+    }
+
+    function loadZXing(){
+      return new Promise((resolve,reject)=>{
+        if(window.ZXing){ resolve(); return; }
+        const s=document.createElement('script');
+        s.src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/index.min.js";
+        s.onload=()=> resolve();
+        s.onerror=()=> reject(new Error("ZXing yüklenemedi"));
+        document.head.appendChild(s);
+      });
+    }
+    function vibrate(ms){ if(navigator.vibrate) try{ navigator.vibrate(ms); }catch{} }
+  </script>
+</body>
+</html>
