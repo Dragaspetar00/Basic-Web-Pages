@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Döviz Çevirici</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.5/babel.min.js"></script>
+
+  <style>
+    /* Basit reset ve temel yardımcılar (Tailwind benzeri minimal) */
+    *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+    html{-webkit-text-size-adjust:100%}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Open Sans','Helvetica Neue',sans-serif}
+    input,button,select{font-family:inherit;font-size:100%;line-height:1.15;margin:0}
+    button[type=button]{-webkit-appearance:button}
+    input[type=number]{-moz-appearance:textfield}
+    input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+    .min-h-screen{min-height:100vh}
+    .flex{display:flex}
+    .items-center{align-items:center}
+    .justify-center{justify-content:center}
+    .justify-between{justify-content:space-between}
+    .p-4{padding:1rem}
+    .p-6{padding:1.5rem}
+    .mb-1{margin-bottom:.25rem}
+    .mb-2{margin-bottom:.5rem}
+    .mb-4{margin-bottom:1rem}
+    .mb-6{margin-bottom:1.5rem}
+    .mx-auto{margin-left:auto;margin-right:auto}
+    .w-full{width:100%}
+    .max-w-md{max-width:50rem}
+    .rounded-lg{border-radius:.5rem}
+    .rounded-full{border-radius:9999px}
+    .rounded-2xl{border-radius:1rem}
+    .shadow-2xl{box-shadow:0 25px 50px -12px rgba(0,0,0,.3)}
+    .text-center{text-align:center}
+    .text-sm{font-size:.875rem;line-height:1.25rem}
+    .text-lg{font-size:1.125rem;line-height:1.75rem}
+    .text-xl{font-size:1.25rem;line-height:1.75rem}
+    .text-2xl{font-size:1.5rem;line-height:2rem}
+    .text-3xl{font-size:1.875rem;line-height:2.25rem}
+    .font-medium{font-weight:500}
+    .font-semibold{font-weight:600}
+    .font-extrabold{font-weight:800}
+
+    :root{
+      --bg1:#60a5fa; --bg2:#a78bfa;
+      --bg-dark-start:#0b1220; --bg-dark-end:#111827;
+      --card-light:rgba(255,255,255,.6); --card-dark:rgba(17,24,39,.6);
+      --border-light:rgba(255,255,255,.35); --border-dark:rgba(255,255,255,.08);
+      --text-dark:#111827; --text-light:#f3f4f6;
+      --muted-dark:#6b7280; --muted-light:#4b5563;
+      --accent:#2563eb; --accent-hover:#1d4ed8;
+      --green:#10b981; --red:#ef4444;
+    }
+
+    .app-bg{position:relative;min-height:100vh;overflow:hidden}
+    .app-bg[data-theme="light"]{
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      background-size:200% 200%; animation:bgShift 14s ease-in-out infinite;
+    }
+    .app-bg[data-theme="dark"]{
+      background:radial-gradient(1200px 600px at -10% -10%, #1e293b 0%, var(--bg-dark-start) 40%, var(--bg-dark-end) 100%);
+    }
+    @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .blob{position:absolute;width:380px;height:380px;border-radius:9999px;filter:blur(70px);opacity:.5;pointer-events:none;transform:translate(-50%,-50%);mix-blend:overlay}
+    .blob.one{left:10%;top:15%;background:#60a5fa;animation:float 16s ease-in-out infinite}
+    .blob.two{right:-5%;bottom:-5%;background:#a78bfa;animation:float 20s ease-in-out infinite reverse}
+    @keyframes float{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-20px)}}
+
+    .converter-card{
+      position:relative;border:1px solid var(--border-light);background:var(--card-light);
+      backdrop-filter:saturate(1.3) blur(12px);-webkit-backdrop-filter:saturate(1.3) blur(12px);color:var(--text-dark);
+    }
+    .app-bg[data-theme="dark"] .converter-card{border-color:var(--border-dark);background:var(--card-dark);color:var(--text-light)}
+
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+    .brand{display:flex;align-items:center;gap:.75rem}
+    .brand img{width:40px;height:40px;object-fit:contain;border-radius:10px}
+    .subtitle{font-size:.875rem;opacity:.8;margin-top:.25rem}
+
+    .control{display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem;
+        max-width: 21.5rem;
+    
+    }
+    .label{font-size:.85rem;opacity:.9}
+    .field{
+      display:flex;align-items:center;gap:.5rem;border:1px solid rgba(148,163,184,.35);
+      border-radius:12px;padding:.5rem .625rem;
+      background:rgba(255,255,255,.3);
+
+      
+
+    }
+    .app-bg[data-theme="dark"] .field{background:rgba(17,24,39,.35);border-color:rgba(255,255,255,.08)}
+    .field:focus-within{box-shadow:0 0 0 3px rgba(37,99,235,.2);border-color:rgba(37,99,235,.6)}
+    .field input,.field select{flex:1;border:none;background:transparent;outline:none;color:inherit;font-size:1rem}
+    .flag{width:28px;height:28px;border-radius:6px;object-fit:cover}
+
+    .swap-wrap{display:flex;align-items:center;justify-content:center;margin:.5rem 0 .75rem}
+    .swap-btn{
+      width:48px;height:48px;border-radius:9999px;border:1px solid rgba(148,163,184,.35);
+      background:linear-gradient(135deg,rgba(96,165,250,.2),rgba(167,139,250,.2));
+      color:inherit;display:flex;align-items:center;justify-content:center;cursor:pointer;
+      transition:transform .2s ease, box-shadow .2s ease, background .2s ease
+    }
+    .swap-btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.15)}
+    .swap-btn:active{transform:scale(.95) rotate(180deg)}
+    .swap-icon{width:22px;height:22px}
+
+    .result{
+      border:1px dashed rgba(148,163,184,.45);border-radius:14px;padding:1rem;text-align:center;margin:.75rem 0 1rem;background:rgba(255,255,255,.35)
+    }
+    .app-bg[data-theme="dark"] .result{background:rgba(17,24,39,.35)}
+    .result-main{font-size:1.15rem;font-weight:700;letter-spacing:.2px}
+    .result-sub{margin-top:.4rem;font-size:.85rem;opacity:.8}
+
+    .btn{width:100%;height:52px;border-radius:12px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;cursor:pointer;transition:transform .15s ease, background .2s ease, box-shadow .2s ease}
+    .btn:disabled{opacity:.7;cursor:not-allowed}
+    .btn-primary{background:var(--accent);color:#fff;box-shadow:0 8px 24px rgba(37,99,235,.35)}
+    .btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px)}
+    .btn-ghost{background:transparent;border-color:rgba(148,163,184,.35)}
+    .btn-ghost:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(0,0,0,.1)}
+
+    .theme-toggle{
+      width:44px;height:44px;border-radius:9999px;border:1px solid rgba(148,163,184,.35);
+      background:transparent;color:inherit;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:transform .15s ease, background .2s ease
+    }
+    .theme-toggle:hover{transform:translateY(-1px);background:rgba(148,163,184,.15)}
+    .icon{width:22px;height:22px}
+
+    .spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:9999px;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .error{display:flex;gap:.5rem;align-items:center;justify-content:center;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.35);border-radius:10px;padding:.5rem .75rem;margin:.5rem 0}
+    @media (max-width:420px){.text-3xl{font-size:1.6rem}}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // Hata yakalama
+    window.onerror = (msg, url, lineNo, columnNo, error) => {
+      console.error('Hata:', msg, 'Satır:', lineNo, 'Sütun:', columnNo, 'Detay:', error);
+      document.getElementById('root').innerHTML = '<div style="text-align:center;color:red;padding:20px;">Uygulama yüklenemedi. Lütfen konsolu kontrol edin.</div>';
+      return false;
+    };
+
+    const countryList = {
+      AED:{code:"AE",name:"Birleşik Arap Emirlikleri Dirhemi"},
+      AFN:{code:"AF",name:"Afgan Afganisi"},
+      XCD:{code:"AG",name:"Doğu Karayip Doları"},
+      ALL:{code:"AL",name:"Arnavut Leki"},
+      AMD:{code:"AM",name:"Ermeni Dramı"},
+      ANG:{code:"AN",name:"Hollanda Antilleri Guldeni"},
+      AOA:{code:"AO",name:"Angola Kvanzası"},
+      AQD:{code:"AQ",name:"Antarktika Doları"},
+      ARS:{code:"AR",name:"Arjantin Pesosu"},
+      AUD:{code:"AU",name:"Avustralya Doları"},
+      AZN:{code:"AZ",name:"Azerbaycan Manatı"},
+      BAM:{code:"BA",name:"Bosna-Hersek Markı"},
+      BBD:{code:"BB",name:"Barbados Doları"},
+      BDT:{code:"BD",name:"Bangladeş Takası"},
+      XOF:{code:"BE",name:"Batı Afrika CFA Frangı"},
+      BGN:{code:"BG",name:"Bulgar Levası"},
+      BHD:{code:"BH",name:"Bahreyn Dinarı"},
+      BIF:{code:"BI",name:"Burundi Frangı"},
+      BMD:{code:"BM",name:"Bermuda Doları"},
+      BND:{code:"BN",name:"Brunei Doları"},
+      BOB:{code:"BO",name:"Bolivya Bolivyanosu"},
+      BRL:{code:"BR",name:"Brezilya Reali"},
+      BSD:{code:"BS",name:"Bahama Doları"},
+      NOK:{code:"BV",name:"Norveç Kronu"},
+      BWP:{code:"BW",name:"Botsvana Pulası"},
+      BYR:{code:"BY",name:"Belarus Rublesi"},
+      BZD:{code:"BZ",name:"Belize Doları"},
+      CAD:{code:"CA",name:"Kanada Doları"},
+      CDF:{code:"CD",name:"Kongo Frangı"},
+      XAF:{code:"CF",name:"Orta Afrika CFA Frangı"},
+      CHF:{code:"CH",name:"İsviçre Frangı"},
+      CLP:{code:"CL",name:"Şili Pesosu"},
+      CNY:{code:"CN",name:"Çin Yuanı"},
+      COP:{code:"CO",name:"Kolombiya Pesosu"},
+      CRC:{code:"CR",name:"Kosta Rika Kolonu"},
+      CUP:{code:"CU",name:"Küba Pesosu"},
+      CVE:{code:"CV",name:"Cape Verde Eskudosu"},
+      CYP:{code:"CY",name:"Kıbrıs Lirası"},
+      CZK:{code:"CZ",name:"Çek Korunası"},
+      DJF:{code:"DJ",name:"Cibuti Frangı"},
+      DKK:{code:"DK",name:"Danimarka Kronu"},
+      DOP:{code:"DO",name:"Dominik Pesosu"},
+      DZD:{code:"DZ",name:"Cezayir Dinarı"},
+      ECS:{code:"EC",name:"Ekvador Sukresi"},
+      EEK:{code:"EE",name:"Estonya Kronu"},
+      EGP:{code:"EG",name:"Mısır Lirası"},
+      ETB:{code:"ET",name:"Etiyopya Birri"},
+      EUR:{code:"FR",name:"Euro"},
+      FJD:{code:"FJ",name:"Fiji Doları"},
+      FKP:{code:"FK",name:"Falkland Adaları Lirası"},
+      GBP:{code:"GB",name:"İngiliz Sterlini"},
+      GEL:{code:"GE",name:"Gürcistan Larisi"},
+      GGP:{code:"GG",name:"Guernsey Lirası"},
+      GHS:{code:"GH",name:"Gana Sedisi"},
+      GIP:{code:"GI",name:"Cebelitarık Lirası"},
+      GMD:{code:"GM",name:"Gambiya Dalasisi"},
+      GNF:{code:"GN",name:"Gine Frangı"},
+      GTQ:{code:"GT",name:"Guatemala Quetzalı"},
+      GYD:{code:"GY",name:"Guyana Doları"},
+      HKD:{code:"HK",name:"Hong Kong Doları"},
+      HNL:{code:"HN",name:"Honduras Lempirası"},
+      HRK:{code:"HR",name:"Hırvat Kunası"},
+      HTG:{code:"HT",name:"Haiti Gurdu"},
+      HUF:{code:"HU",name:"Macar Forinti"},
+      IDR:{code:"ID",name:"Endonezya Rupiahı"},
+      ILS:{code:"IL",name:"İsrail Şekeli"},
+      INR:{code:"IN",name:"Hindistan Rupisi"},
+      IQD:{code:"IQ",name:"Irak Dinarı"},
+      IRR:{code:"IR",name:"İran Riyali"},
+      ISK:{code:"IS",name:"İzlanda Kronu"},
+      JMD:{code:"JM",name:"Jamaika Doları"},
+      JOD:{code:"JO",name:"Ürdün Dinarı"},
+      JPY:{code:"JP",name:"Japon Yeni"},
+      KES:{code:"KE",name:"Kenya Şilini"},
+      KGS:{code:"KG",name:"Kırgızistan Somu"},
+      KHR:{code:"KH",name:"Kamboçya Rieli"},
+      KMF:{code:"KM",name:"Komor Frangı"},
+      KPW:{code:"KP",name:"Kuzey Kore Wonu"},
+      KRW:{code:"KR",name:"Güney Kore Wonu"},
+      KWD:{code:"KW",name:"Kuveyt Dinarı"},
+      KYD:{code:"KY",name:"Cayman Adaları Doları"},
+      KZT:{code:"KZ",name:"Kazakistan Tengesi"},
+      LAK:{code:"LA",name:"Laos Kipi"},
+      LBP:{code:"LB",name:"Lübnan Lirası"},
+      LKR:{code:"LK",name:"Sri Lanka Rupisi"},
+      LRD:{code:"LR",name:"Liberya Doları"},
+      LSL:{code:"LS",name:"Lesotho Lotisi"},
+      LTL:{code:"LT",name:"Litvanya Litas"},
+      LVL:{code:"LV",name:"Letonya Latsı"},
+      LYD:{code:"LY",name:"Libya Dinarı"},
+      MAD:{code:"MA",name:"Fas Dirhemi"},
+      MDL:{code:"MD",name:"Moldova Leusu"},
+      MGA:{code:"MG",name:"Madagaskar Ariarysi"},
+      MKD:{code:"MK",name:"Makedonya Denarı"},
+      MMK:{code:"MM",name:"Myanmar Kyatı"},
+      MNT:{code:"MN",name:"Moğolistan Tugriki"},
+      MOP:{code:"MO",name:"Makao Patakası"},
+      MRO:{code:"MR",name:"Moritanya Ouguiyası"},
+      MTL:{code:"MT",name:"Malta Lirası"},
+      MUR:{code:"MU",name:"Mauritius Rupisi"},
+      MVR:{code:"MV",name:"Maldiv Rufiyası"},
+      MWK:{code:"MW",name:"Malavi Kvaçası"},
+      MXN:{code:"MX",name:"Meksika Pesosu"},
+      MYR:{code:"MY",name:"Malezya Ringgiti"},
+      MZN:{code:"MZ",name:"Mozambik Metikali"},
+      NAD:{code:"NA",name:"Namibya Doları"},
+      XPF:{code:"NC",name:"CFP Frangı"},
+      NGN:{code:"NG",name:"Nijerya Nairası"},
+      NIO:{code:"NI",name:"Nikaragua Kordobası"},
+      NPR:{code:"NP",name:"Nepal Rupisi"},
+      NZD:{code:"NZ",name:"Yeni Zelanda Doları"},
+      OMR:{code:"OM",name:"Umman Riyali"},
+      PAB:{code:"PA",name:"Panama Balboası"},
+      PEN:{code:"PE",name:"Peru Solu"},
+      PGK:{code:"PG",name:"Papua Yeni Gine Kinası"},
+      PHP:{code:"PH",name:"Filipin Pesosu"},
+      PKR:{code:"PK",name:"Pakistan Rupisi"},
+      PLN:{code:"PL",name:"Polonya Zlotisi"},
+      PYG:{code:"PY",name:"Paraguay Guaranisi"},
+      QAR:{code:"QA",name:"Katar Riyali"},
+      RON:{code:"RO",name:"Rumen Leyi"},
+      RSD:{code:"RS",name:"Sırp Dinarı"},
+      RUB:{code:"RU",name:"Rus Rublesi"},
+      RWF:{code:"RW",name:"Ruanda Frangı"},
+      SAR:{code:"SA",name:"Suudi Riyali"},
+      SBD:{code:"SB",name:"Solomon Adaları Doları"},
+      SCR:{code:"SC",name:"Seyşeller Rupisi"},
+      SDG:{code:"SD",name:"Sudan Lirası"},
+      SEK:{code:"SE",name:"İsveç Kronu"},
+      SGD:{code:"SG",name:"Singapur Doları"},
+      SKK:{code:"SK",name:"Slovak Korunası"},
+      SLL:{code:"SL",name:"Sierra Leone Leonesi"},
+      SOS:{code:"SO",name:"Somali Şilini"},
+      SRD:{code:"SR",name:"Surinam Doları"},
+      STD:{code:"ST",name:"São Tomé ve Príncipe Dobrası"},
+      SVC:{code:"SV",name:"El Salvador Kolonu"},
+      SYP:{code:"SY",name:"Suriye Lirası"},
+      SZL:{code:"SZ",name:"Esvatini Lilangenisi"},
+      THB:{code:"TH",name:"Tayland Bahtı"},
+      TJS:{code:"TJ",name:"Tacikistan Somonisi"},
+      TMT:{code:"TM",name:"Türkmenistan Manatı"},
+      TND:{code:"TN",name:"Tunus Dinarı"},
+      TOP:{code:"TO",name:"Tonga Paʻangası"},
+      TRY:{code:"TR",name:"Türk Lirası"},
+      TTD:{code:"TT",name:"Trinidad ve Tobago Doları"},
+      TWD:{code:"TW",name:"Tayvan Doları"},
+      TZS:{code:"TZ",name:"Tanzanya Şilini"},
+      UAH:{code:"UA",name:"Ukrayna Grivnası"},
+      UGX:{code:"UG",name:"Uganda Şilini"},
+      USD:{code:"US",name:"Amerikan Doları"},
+      UYU:{code:"UY",name:"Uruguay Pesosu"},
+      UZS:{code:"UZ",name:"Özbekistan Somu"},
+      VEF:{code:"VE",name:"Venezuela Bolívarı"},
+      VND:{code:"VN",name:"Vietnam Dongu"},
+      VUV:{code:"VU",name:"Vanuatu Vatusu"},
+      YER:{code:"YE",name:"Yemen Riyali"},
+      ZAR:{code:"ZA",name:"Güney Afrika Randı"},
+      ZMK:{code:"ZM",name:"Zambiya Kvaçası"},
+      ZWD:{code:"ZW",name:"Zimbabve Doları"}
+    };
+
+    const CurrencyConverter = () => {
+      const [amount, setAmount] = React.useState(1);
+      const [fromCurr, setFromCurr] = React.useState('USD');
+      const [toCurr, setToCurr] = React.useState('TRY');
+      const [resultText, setResultText] = React.useState('1 Güney Kore Wonu = 0,0610 Hindistan Rupisi');
+      const [isLoading, setIsLoading] = React.useState(false);
+      const [lastUpdated, setLastUpdated] = React.useState(null);
+      const [error, setError] = React.useState(null);
+
+      const [isDarkMode, setIsDarkMode] = React.useState(() => {
+        const saved = localStorage.getItem('cc.theme');
+        if (saved !== null) return saved === 'dark';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      });
+      React.useEffect(() => {
+        localStorage.setItem('cc.theme', isDarkMode ? 'dark' : 'light');
+      }, [isDarkMode]);
+
+      const toggleDarkMode = () => setIsDarkMode(v => !v);
+
+      const updateFlag = (currency) => {
+        try {
+          const code = countryList[currency]?.code;
+          return code ? `https://flagsapi.com/${code}/flat/64.png` : '';
+        } catch { return ''; }
+      };
+
+      const updateExchangeRate = async () => {
+        let amtVal = parseFloat(amount);
+        if (!amtVal || amtVal <= 0) {
+          amtVal = 1;
+          setAmount(1);
+        }
+        setIsLoading(true);
+        setError(null);
+        try {
+          const res = await fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${fromCurr.toLowerCase()}.json`);
+          if (!res.ok) throw new Error('Ağ yanıtı başarısız');
+          const data = await res.json();
+          const rate = data?.[fromCurr.toLowerCase()]?.[toCurr.toLowerCase()];
+          if (!rate) throw new Error('Kur bulunamadı');
+          const finalAmount = (amtVal * rate);
+          const formattedFinal = finalAmount.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+          const formattedAmt = amtVal.toLocaleString('tr-TR', { maximumFractionDigits: 6 });
+
+          setResultText(`${formattedAmt} ${countryList[fromCurr].name} = ${formattedFinal} ${countryList[toCurr].name}`);
+          setLastUpdated(data?.date || new Date().toISOString().slice(0,10));
+        } catch (e) {
+          console.error('Döviz kuru alınamadı:', e);
+          setError('Döviz kuru alınamadı. Lütfen tekrar deneyin.');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      // İlk yüklemede ve her değişimde 300ms debounce ile güncelle
+      const debounceRef = React.useRef();
+      React.useEffect(() => {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+          updateExchangeRate();
+        }, 300);
+        return () => clearTimeout(debounceRef.current);
+      }, [amount, fromCurr, toCurr]);
+
+      const handleSwap = () => {
+        const prevFrom = fromCurr;
+        setFromCurr(toCurr);
+        setToCurr(prevFrom);
+      };
+
+      return (
+        <div className="app-bg p-4 flex items-center justify-center" data-theme={isDarkMode ? 'dark' : 'light'}>
+          <span className="blob one" aria-hidden="true"></span>
+          <span className="blob two" aria-hidden="true"></span>
+
+          <div className="converter-card rounded-2xl shadow-2xl p-6 w-full max-w-md">
+            {/* Header */}
+            <div className="header">
+              <div className="brand">
+                <img
+                  src="logo.png"
+                  alt="Logo"
+                  onError={(e) => { e.currentTarget.style.display='none'; }}
+                />
+                <div>
+                  <div className="text-2xl font-extrabold">Döviz Çevirici</div>
+                  <div className="subtitle">Hızlı, modern ve şık</div>
+                </div>
+              </div>
+
+              <button className="theme-toggle" onClick={toggleDarkMode} aria-label="Tema değiştir">
+                {isDarkMode ? (
+                  <svg className="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12ZM12 2a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 18a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.222 5.636a1 1 0 0 1 1.414 0l.707.707A1 1 0 1 1 5 8.686l-.707-.707a1 1 0 0 1 0-1.414Zm12.728 12.728a1 1 0 0 1 1.414 0l.707.707A1 1 0 0 1 18.364 21l-.707-.707a1 1 0 0 1 0-1.414ZM2 12a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H3a1 1 0 0 1-1-1Zm18 0a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2h-1a1 1 0 0 1-1-1ZM4.222 18.364a1 1 0 0 1 1.414 0l.707.707A1 1 0 1 1 5 21.414l-.707-.707a1 1 0 0 1 0-1.414Zm12.728-12.728a1 1 0 0 1 1.414 0l.707.707A1 1 0 1 1 18.364 8.05l-.707-.707a1 1 0 0 1 0-1.414Z"/>
+                  </svg>
+                ) : (
+                  <svg className="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79Z"/>
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            {/* Miktar */}
+            <div className="control">
+              <label className="label font-medium">Miktar</label>
+              <div className="field">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ opacity: .6 }}>
+                  <path d="M12 1a1 1 0 0 1 1 1v1.055A7.002 7.002 0 0 1 18.945 11H20a1 1 0 1 1 0 2h-1.055A7.002 7.002 0 0 1 13 20.945V22a1 1 0 1 1-2 0v-1.055A7.002 7.002 0 0 1 5.055 13H4a1 1 0 1 1 0-2h1.055A7.002 7.002 0 0 1 11 3.055V2a1 1 0 0 1 1-1Zm0 6a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z"/>
+                </svg>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Miktar giriniz"
+                  aria-label="Miktar"
+                />
+              </div>
+            </div>
+
+            {/* Kaynak / Hedef */}
+            <div className="flex items-center justify-between" style={{ gap: '0.75rem' }}>
+              {/* Kaynak */}
+              <div style={{ flex: 1 }}>
+                <div className="control">
+                  <label className="label font-medium">Kaynak</label>
+                  <div className="field">
+                    <img className="flag" src={updateFlag(fromCurr)} alt={`${fromCurr} bayrağı`} />
+                    <select
+                      value={fromCurr}
+                      onChange={(e)=>setFromCurr(e.target.value)}
+                      aria-label="Kaynak para birimi"
+                    >
+                      {Object.keys(countryList).map(curr => (
+                        <option key={curr} value={curr}>
+                          {curr} — {countryList[curr].name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Swap */}
+              <div className="swap-wrap">
+                <button className="swap-btn" onClick={handleSwap} title="Değiştir">
+                  <svg className="swap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10l-3-3m3 3-3 3M17 16H7l3 3m-3-3 3-3"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Hedef */}
+              <div style={{ flex: 1 }}>
+                <div className="control">
+                  <label className="label font-medium">Hedef</label>
+                  <div className="field">
+                    <img className="flag" src={updateFlag(toCurr)} alt={`${toCurr} bayrağı`} />
+                    <select
+                      value={toCurr}
+                      onChange={(e)=>setToCurr(e.target.value)}
+                      aria-label="Hedef para birimi"
+                    >
+                      {Object.keys(countryList).map(curr => (
+                        <option key={curr} value={curr}>
+                          {curr} — {countryList[curr].name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sonuç */}
+            <div className="result" aria-live="polite">
+              {isLoading ? (
+                <div className="result-main" style={{ opacity: .7 }}>Güncelleniyor...</div>
+              ) : (
+                <>
+                  <div className="result-main">{resultText}</div>
+                  <div className="result-sub">
+                    {lastUpdated ? `Son güncelleme: ${new Date(lastUpdated).toLocaleDateString('tr-TR')}` : 'Son güncelleme bilgisi alınamadı'}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {error && (
+              <div className="error">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 14h-2v-2h2v2Zm0-4h-2V6h2v6Z"/></svg>
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Buton */}
+            <button className="btn btn-primary" onClick={updateExchangeRate} disabled={isLoading}>
+              {isLoading ? (<><span className="spinner"></span> Güncelleniyor</>) : (<>Döviz Kurunu Al</>)}
+            </button>
+
+            {/* Alt bilgi */}
+            <div className="text-center" style={{ marginTop: '.75rem', opacity: .7, fontSize: '.85rem' }}>
+             2023 Dragaspetar Studios | Döviz Çevirici
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // React render
+    try{
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<CurrencyConverter />);
+    }catch(error){
+      console.error('React render hatası:', error);
+      document.getElementById('root').innerHTML = '<div style="text-align:center;color:red;padding:20px;">Uygulama yüklenemedi. Lütfen konsolu kontrol edin.</div>';
+    }
+  </script>
+</body>
+</html> 
