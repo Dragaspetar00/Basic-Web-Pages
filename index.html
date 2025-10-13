@@ -94,6 +94,13 @@
       color:#fff; font-size:34px;
       box-shadow: 0 10px 24px rgba(0,0,0,.18);
       user-select:none;
+      transition: all 10s ease;
+    }
+    .logo:hover
+    {
+      box-shadow: 0 14px 32px rgba(0,0,0,.22);
+      transform: translateY(-2px) rotate(36000deg);
+      
     }
 
     h1{
@@ -144,6 +151,12 @@
       .deco{ animation: none; }
       .btn{ transition: none; }
     }
+
+    select{
+      border-radius: 100%;
+      background-color: #2476be;
+      color: #f2f6f8;
+    }
   </style>
 </head>
 <body>
@@ -178,7 +191,7 @@ const buttons = [
   { name:  "Text Editor", kategori: "iş", url: "texteditor/" },
 
   
-  // { name: "Yeni Buton Adı", kategori: "iş", url: "yenibuton.html" },
+  // { name: "", kategori: "", url: "." },
 ];
 
 function normalize(str) {

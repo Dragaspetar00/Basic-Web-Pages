@@ -361,6 +361,18 @@
             margin-top: 20px;
         }
 
+        .logo {
+            height: 100px;
+            margin-bottom: -25px;
+            transition: all 3s;
+            
+        }
+
+    .logo:hover {
+    transform: scale(2) rotate(3600deg);
+
+    }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             h1 {
@@ -421,13 +433,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>Renk Paleti Üretici</h1>
-            <p class="subtitle">HEX, RGB ve HSL formatlarında renk paletleri oluşturun. Sıcak ve soğuk temalarla çalışın, CSS gradient'leri oluşturun ve paletlerinizi kaydedin.</p>
+           <img src="logo.png" alt="logo" class="logo"> <h1>Renk Paleti Üretici</h1> 
+            <p class="subtitle">Çizerler için rastgele renk paleti üretim merkezi.</p>
         </header>
 
         <div class="controls">
             <div class="control-group">
-                <label for="themeSelect">Tema Seçin</label>
+                <label for="themeSelect">Tema</label>
                 <select id="themeSelect">
                     <option value="random">Rastgele</option>
                     <option value="warm">Sıcak Renkler</option>
@@ -441,7 +453,7 @@
                 <label for="colorCount">Renk Sayısı</label>
                 <select id="colorCount">
                     <option value="4">4 Renk</option>
-                    <option value="5" selected>5 Renk</option>
+                    <option value="5" >5 Renk</option>
                     <option value="6">6 Renk</option>
                     <option value="7">7 Renk</option>
                 </select>
@@ -503,7 +515,7 @@
         </div>
 
         <footer>
-            <p>© 2023 Renk Paleti Üretici | Tasarım ve Geliştirme</p>
+            <p>© 2023 Dragaspetar Studios | Renk Paleti Üretici</p>
         </footer>
     </div>
 
