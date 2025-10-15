@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Rastgele Tarih ve Saat Üretici — Hızlı, Mobil ve SEO Uyumlu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rastgele tarih, rastgele saat veya tarih+Saat üret. Opsiyonel aralıklar, tek tıkla kopyala, mobil ve SEO uyumlu şık tasarım.">
+  <meta name="keywords" content="rastgele tarih, rastgele saat, tarih ve saat üretici, random date generator, random time generator, tarih ve saat aralığı">
+  <meta name="theme-color" content="#7C3AED">
+  <link rel="canonical" href="https://example.com/rastgele-tarih-saat-uretici">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Rastgele Tarih ve Saat Üretici">
+  <meta property="og:description" content="3 mod: tarih, saat, tarih+Saat. Opsiyonel aralık, tek tıkla kopyala. Hızlı ve mobil uyumlu.">
+  <meta property="og:url" content="https://example.com/rastgele-tarih-saat-uretici">
+  <meta property="og:image" content="https://example.com/og-image.png">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Rastgele Tarih ve Saat Üretici",
+    "operatingSystem":"All",
+    "applicationCategory":"UtilitiesApplication",
+    "description":"3 modlu hızlı rastgele tarih/saat üretici. Opsiyonel aralık seçimi, mobil uyumlu ve SEO dostu.",
+    "url":"https://example.com/rastgele-tarih-saat-uretici",
+    "inLanguage":"tr",
+    "browserRequirements":"HTML5",
+    "featureList":["Rastgele tarih","Rastgele saat","Rastgele tarih ve saat","Opsiyonel aralık","Kopyala ve paylaş"]
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg: #0b0b12;
+      --fg: #e8e8ef;
+      --muted: #b6b6c6;
+      --card: rgba(255,255,255,0.07);
+      --card-border: rgba(255,255,255,0.15);
+      --accent1: #7C3AED; /* purple */
+      --accent2: #22D3EE; /* cyan */
+      --accent3: #F472B6; /* pink */
+      --success: #10B981;
+      --danger: #EF4444;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 200ms ease;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f7f7fb;
+        --fg: #111113;
+        --muted: #545460;
+        --card: rgba(255,255,255,0.85);
+        --card-border: rgba(0,0,0,0.08);
+        --shadow: 0 10px 28px rgba(18, 20, 35, .12);
+      }
+    }
+    * { box-sizing: border-box; }
+    html,body { height: 100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--fg);
+      background:
+        radial-gradient(1200px 600px at -10% -10%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(1000px 500px at 110% 10%, rgba(34,211,238,.25), transparent 55%),
+        linear-gradient(180deg, #0b0b12, #0d0d18 60%, #0b0b12);
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+    }
+    .wrap{
+      width:100%;
+      max-width: 980px;
+    }
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      margin-bottom: 18px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo{
+      width:40px; height:40px; border-radius:12px;
+      background: conic-gradient(from 120deg, var(--accent1), var(--accent2), var(--accent3), var(--accent1));
+      box-shadow: 0 6px 20px rgba(124,58,237,.35), inset 0 0 40px rgba(255,255,255,.12);
+    }
+    .title h1{
+      font-size: clamp(20px, 3.2vw, 28px);
+      margin:0; letter-spacing:.2px;
+    }
+    .title p{
+      margin:0; color: var(--muted); font-size: 14px;
+    }
+    main{
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: saturate(160%) blur(16px);
+      -webkit-backdrop-filter: saturate(160%) blur(16px);
+      overflow:hidden;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:0;
+    }
+    @media (max-width: 880px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+    .pane{
+      padding: 20px;
+      border-right: 1px solid var(--card-border);
+    }
+    .pane:last-child{ border-right:none; }
+    .controls{
+      display:grid; gap:16px;
+    }
+    .segment{
+      display:inline-grid; grid-auto-flow:column; gap:8px; background: rgba(255,255,255,.06);
+      padding: 6px; border-radius: 999px; border:1px solid var(--card-border);
+      width: fit-content;
+    }
+    .segment input{ display:none; }
+    .segment label{
+      padding: 10px 14px; border-radius: 999px; cursor:pointer; user-select:none; color: var(--muted);
+      font-weight: 600; font-size: 14px; letter-spacing:.2px; transition: color var(--transition), background var(--transition), transform var(--transition);
+    }
+    .segment input:checked + label{
+      color:#fff;
+      background: linear-gradient(120deg, var(--accent1), var(--accent2));
+      box-shadow: 0 6px 18px rgba(34,211,238,.25);
+      transform: translateY(-1px);
+    }
+    .disclosure{
+      background: rgba(255,255,255,.04);
+      border:1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      overflow: clip;
+    }
+    .disclosure header{
+      margin:0; padding: 12px 14px; cursor:pointer; user-select:none;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .disclosure header h3{ margin:0; font-size: 14px; color: var(--muted); }
+    .chev{ transition: transform var(--transition); }
+    .disclosure[data-open="true"] .chev{ transform: rotate(180deg); }
+    .disclosure .content{ display:none; border-top:1px solid var(--card-border); padding: 14px; }
+    .disclosure[data-open="true"] .content{ display:grid; gap:12px; }
+    .row{ display:grid; gap:10px; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 520px){ .row{ grid-template-columns: 1fr; } }
+    label.small{ font-size: 12px; color: var(--muted); }
+    input[type="date"], input[type="time"]{
+      width:100%;
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--card-border);
+      color: var(--fg);
+      padding: 10px 12px;
+      border-radius: 10px;
+      outline:none;
+      transition: border var(--transition), box-shadow var(--transition), transform var(--transition);
+    }
+    input[type="date"]:focus, input[type="time"]:focus{
+      border-color: rgba(124,58,237,.6);
+      box-shadow: 0 0 0 4px rgba(124,58,237,.15);
+    }
+    .actions{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      margin-top: 2px;
+    }
+    .btn{
+      appearance:none; border:none; cursor:pointer; user-select:none;
+      padding: 12px 16px; border-radius: 12px; font-weight:700; letter-spacing:.2px;
+      color:#0b0b12; background: #fff; transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); opacity:.95; }
+    .btn.primary{
+      color: #fff;
+      background: linear-gradient(120deg, var(--accent1), var(--accent2));
+      box-shadow: 0 10px 24px rgba(124,58,237,.25);
+    }
+    .btn.ghost{
+      color: var(--fg);
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--card-border);
+    }
+    .result-pane{
+      padding: 26px;
+      display:flex; flex-direction:column; justify-content:center; align-items:center; gap:18px;
+      position:relative;
+    }
+    .badge{
+      font-size: 12px; color: #fff; background: linear-gradient(120deg, var(--accent2), var(--accent3));
+      padding: 6px 10px; border-radius: 999px; border:1px solid rgba(255,255,255,.18);
+    }
+    .result{
+      font-size: clamp(28px, 6vw, 54px);
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-align:center;
+      text-shadow: 0 6px 24px rgba(34,211,238,.18);
+      min-height: 1.2em;
+    }
+    .result-sub{
+      color: var(--muted); font-size: 14px; text-align:center; margin-top:-10px;
+    }
+    .result-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+    .footnote{
+      font-size:12px; color: var(--muted); text-align:center; padding: 14px 10px 18px;
+      border-top:1px dashed var(--card-border);
+    }
+    .toast{
+      position: fixed; left:50%; bottom: 18px; transform: translateX(-50%) translateY(20px);
+      background: rgba(20,20,30,.88); color:#fff; border: 1px solid rgba(255,255,255,.1);
+      padding: 10px 14px; border-radius: 12px; opacity:0; pointer-events:none;
+      transition: transform var(--transition), opacity var(--transition);
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+    }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+    @media (prefers-reduced-motion: reduce){
+      *{ transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <h1>Rastgele Tarih & Saat Üretici</h1>
+          <p>3 mod: sadece Tarih, sadece Saat veya Tarih + Saat • Aralık seçimi opsiyonel</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid" role="region" aria-label="Rastgele tarih ve saat üretici">
+      <section class="pane" aria-label="Ayarlar">
+        <div class="controls">
+          <div>
+            <div class="segment" role="tablist" aria-label="Mod seçimi">
+              <input type="radio" name="mod" id="mod-tarih" value="date" checked>
+              <label for="mod-tarih" role="tab" aria-selected="true">Sadece Tarih</label>
+
+              <input type="radio" name="mod" id="mod-saat" value="time">
+              <label for="mod-saat" role="tab" aria-selected="false">Sadece Saat</label>
+
+              <input type="radio" name="mod" id="mod-tarih-saat" value="datetime">
+              <label for="mod-tarih-saat" role="tab" aria-selected="false">Tarih + Saat</label>
+            </div>
+          </div>
+
+          <div class="disclosure" id="disc-aralik" data-open="false">
+            <header role="button" tabindex="0" aria-expanded="false" aria-controls="disc-content">
+              <h3>Aralık (opsiyonel)</h3>
+              <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </header>
+            <div id="disc-content" class="content">
+              <div id="date-range" style="display:none;">
+                <label class="small">Tarih aralığı</label>
+                <div class="row">
+                  <div>
+                    <label class="small" for="start-date">Başlangıç tarihi</label>
+                    <input type="date" id="start-date" aria-label="Başlangıç tarihi">
+                  </div>
+                  <div>
+                    <label class="small" for="end-date">Bitiş tarihi</label>
+                    <input type="date" id="end-date" aria-label="Bitiş tarihi">
+                  </div>
+                </div>
+              </div>
+
+              <div id="time-range" style="display:none;">
+                <label class="small">Saat aralığı</label>
+                <div class="row">
+                  <div>
+                    <label class="small" for="start-time">Başlangıç saati</label>
+                    <input type="time" id="start-time" aria-label="Başlangıç saati" step="1">
+                  </div>
+                  <div>
+                    <label class="small" for="end-time">Bitiş saati</label>
+                    <input type="time" id="end-time" aria-label="Bitiş saati" step="1">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="btn-uret" aria-label="Rastgele üret">Üret</button>
+            <button class="btn ghost" id="btn-sifirla" aria-label="Aralıkları sıfırla">Aralıkları Sıfırla</button>
+          </div>
+
+          <p class="footnote">
+            Aralık girmezsen: tarih için 1970–2100, saat için 00:00:00–23:59:59 varsayılan alınır.
+          </p>
+        </div>
+      </section>
+
+      <section class="result-pane" aria-live="polite" aria-atomic="true">
+        <span class="badge" id="badge-mod">Sadece Tarih</span>
+        <div class="result" id="result">Hazır! Üret’e bas 😎</div>
+        <div class="result-sub" id="result-sub"></div>
+        <div class="result-actions">
+          <button class="btn ghost" id="btn-kopyala" aria-label="Sonucu kopyala">Kopyala</button>
+          <button class="btn ghost" id="btn-paylas" aria-label="Sonucu paylaş">Paylaş</button>
+          <button class="btn ghost" id="btn-yenile" aria-label="Tekrar üret">Tekrar</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Kopyalandı!</div>
+
+  <noscript style="color:white; text-align:center; display:block; margin-top: 10px;">
+    Bu araç JavaScript ile çalışır. Lütfen JavaScript’i etkinleştirin.
+  </noscript>
+
+  <script defer>
+    // Yardımcılar
+    const pad = n => String(n).padStart(2, '0');
+
+    // Tarihi güvenli üretmek için (sadece gün bazlı, DST etkisini minimize etmek adına UTC gün indeksini kullanır)
+    function parseDateInput(val){
+      if(!val) return null;
+      const [y,m,d] = val.split('-').map(Number);
+      if(!y || !m || !d) return null;
+      // UTC gün
+      return new Date(Date.UTC(y, m-1, d));
+    }
+    function dateToLocalYMD(utcDate){
+      // UTC formundan yerel yıl/ay/gün çıkarıp lokal 00:00 oluştur
+      const y = utcDate.getUTCFullYear();
+      const m = utcDate.getUTCMonth();
+      const d = utcDate.getUTCDate();
+      return new Date(y, m, d);
+    }
+    function formatDateDMY(date){
+      const y = date.getFullYear();
+      const m = date.getMonth()+1;
+      const d = date.getDate();
+      return `${pad(d)}.${pad(m)}.${y}`;
+    }
+    function formatTimeHMS(date){
+      return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+    function parseTimeToSeconds(val){
+      if(!val) return null;
+      const parts = val.split(':').map(Number);
+      const h = parts[0] ?? 0, m = parts[1] ?? 0, s = parts[2] ?? 0;
+      if(Number.isNaN(h) || Number.isNaN(m) || Number.isNaN(s)) return null;
+      return h*3600 + m*60 + s;
+    }
+    function secondsToHMS(sec){
+      sec = Math.max(0, Math.min(86399, Math.floor(sec)));
+      const h = Math.floor(sec/3600);
+      const m = Math.floor((sec%3600)/60);
+      const s = sec%60;
+      return {h,m,s};
+    }
+    function randomInt(min, max){ // inclusive
+      if(max < min) [min, max] = [max, min];
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function randomDateOnly(startUTC, endUTC){
+      const dayMs = 86400000;
+      const startDay = Math.floor(startUTC.getTime() / dayMs);
+      const endDay = Math.floor(endUTC.getTime() / dayMs);
+      const randDay = randomInt(startDay, endDay);
+      return new Date(randDay * dayMs); // UTC tabanlı tarih
+    }
+
+    // Elemanlar
+    const radios = Array.from(document.querySelectorAll('input[name="mod"]'));
+    const badge = document.getElementById('badge-mod');
+    const resultEl = document.getElementById('result');
+    const resultSubEl = document.getElementById('result-sub');
+
+    const disc = document.getElementById('disc-aralik');
+    const discHeader = disc.querySelector('header');
+    const dateRange = document.getElementById('date-range');
+    const timeRange = document.getElementById('time-range');
+
+    const startDateEl = document.getElementById('start-date');
+    const endDateEl = document.getElementById('end-date');
+    const startTimeEl = document.getElementById('start-time');
+    const endTimeEl = document.getElementById('end-time');
+
+    const btnUret = document.getElementById('btn-uret');
+    const btnSifirla = document.getElementById('btn-sifirla');
+    const btnKopyala = document.getElementById('btn-kopyala');
+    const btnPaylas = document.getElementById('btn-paylas');
+    const btnYenile = document.getElementById('btn-yenile');
+    const toast = document.getElementById('toast');
+
+    function currentMode(){
+      const checked = radios.find(r => r.checked);
+      return checked ? checked.value : 'date';
+    }
+    function updateModeUI(){
+      const mode = currentMode();
+      // Rozet metni
+      badge.textContent = mode === 'date' ? 'Sadece Tarih' : mode === 'time' ? 'Sadece Saat' : 'Tarih + Saat';
+      // Aralık alanlarını mod’a göre göster
+      dateRange.style.display = (mode === 'date' || mode === 'datetime') ? '' : 'none';
+      timeRange.style.display = (mode === 'time' || mode === 'datetime') ? '' : 'none';
+    }
+
+    radios.forEach(r => r.addEventListener('change', updateModeUI));
+    updateModeUI();
+
+    // Disclosure toggle
+    function toggleDisclosure(){
+      const isOpen = disc.getAttribute('data-open') === 'true';
+      disc.setAttribute('data-open', String(!isOpen));
+      discHeader.setAttribute('aria-expanded', String(!isOpen));
+    }
+    discHeader.addEventListener('click', toggleDisclosure);
+    discHeader.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDisclosure(); }
+    });
+
+    // Varsayılan aralıklar (kullanıcı girmezse)
+    function defaultDateRange(){
+      // 1970-01-01 — 2100-12-31
+      const start = new Date(Date.UTC(1970,0,1));
+      const end = new Date(Date.UTC(2100,11,31));
+      return [start, end];
+    }
+    function defaultTimeRange(){
+      return [0, 23*3600 + 59*60 + 59]; // 00:00:00 — 23:59:59
+    }
+
+    function sanitizeDateRange(){
+      const s = parseDateInput(startDateEl.value);
+      const e = parseDateInput(endDateEl.value);
+      let [startUTC, endUTC] = s && e ? [s, e] : defaultDateRange();
+      if(s && !e){ endUTC = s; }
+      if(!s && e){ startUTC = e; }
+      if(endUTC.getTime() < startUTC.getTime()){
+        // Swap ve input’ları da düzelt (daha anlaşılır olur)
+        const tmp = startUTC; startUTC = endUTC; endUTC = tmp;
+        if(startDateEl.value && endDateEl.value){
+          const t = startDateEl.value; startDateEl.value = endDateEl.value; endDateEl.value = t;
+        }
+      }
+      return [startUTC, endUTC];
+    }
+    function sanitizeTimeRange(){
+      const s = parseTimeToSeconds(startTimeEl.value);
+      const e = parseTimeToSeconds(endTimeEl.value);
+      let [startSec, endSec] = (s != null && e != null) ? [s, e] : defaultTimeRange();
+      if(s != null && e == null){ endSec = s; }
+      if(s == null && e != null){ startSec = e; }
+      if(endSec < startSec){
+        const tmp = startSec; startSec = endSec; endSec = tmp;
+        if(startTimeEl.value && endTimeEl.value){
+          const t = startTimeEl.value; startTimeEl.value = endTimeEl.value; endTimeEl.value = t;
+        }
+      }
+      return [startSec, endSec];
+    }
+
+    function generate(){
+      const mode = currentMode();
+      let output = '';
+      let sub = '';
+
+      if(mode === 'date'){
+        const [startUTC, endUTC] = sanitizeDateRange();
+        const utcRandom = randomDateOnly(startUTC, endUTC);
+        const localDate = dateToLocalYMD(utcRandom);
+        output = formatDateDMY(localDate);
+        sub = `Aralık: ${formatDateDMY(dateToLocalYMD(startUTC))} – ${formatDateDMY(dateToLocalYMD(endUTC))}`;
+      }
+      else if(mode === 'time'){
+        const [s, e] = sanitizeTimeRange();
+        const randSec = randomInt(s, e);
+        const {h,m,s:sx} = secondsToHMS(randSec);
+        const local = new Date();
+        local.setHours(h, m, sx, 0);
+        output = formatTimeHMS(local);
+        const {h:hs, m:ms, s:ss} = secondsToHMS(s);
+        const {h:he, m:me, s:se} = secondsToHMS(e);
+        sub = `Aralık: ${pad(hs)}:${pad(ms)}:${pad(ss)} – ${pad(he)}:${pad(me)}:${pad(se)}`;
+      }
+      else {
+        // datetime
+        const [startUTC, endUTC] = sanitizeDateRange();
+        const [s, e] = sanitizeTimeRange();
+        const utcRandom = randomDateOnly(startUTC, endUTC);
+        const dayLocal = dateToLocalYMD(utcRandom);
+        const randSec = randomInt(s, e);
+        const {h,m,s:sx} = secondsToHMS(randSec);
+        const dt = new Date(dayLocal.getFullYear(), dayLocal.getMonth(), dayLocal.getDate(), h, m, sx, 0);
+        output = `${formatDateDMY(dt)} ${formatTimeHMS(dt)}`;
+
+        const {h:hs, m:ms, s:ss} = secondsToHMS(s);
+        const {h:he, m:me, s:se} = secondsToHMS(e);
+        sub = `Tarih: ${formatDateDMY(dateToLocalYMD(startUTC))} – ${formatDateDMY(dateToLocalYMD(endUTC))} • Saat: ${pad(hs)}:${pad(ms)}:${pad(ss)} – ${pad(he)}:${pad(me)}:${pad(se)}`;
+      }
+
+      resultEl.textContent = output;
+      resultSubEl.textContent = sub;
+    }
+
+    function showToast(msg="Kopyalandı!"){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), 1400);
+    }
+
+    btnUret.addEventListener('click', generate);
+    btnYenile.addEventListener('click', generate);
+
+    btnSifirla.addEventListener('click', () => {
+      startDateEl.value = '';
+      endDateEl.value = '';
+      startTimeEl.value = '';
+      endTimeEl.value = '';
+      showToast('Aralıklar sıfırlandı');
+    });
+
+    btnKopyala.addEventListener('click', async () => {
+      const text = resultEl.textContent.trim();
+      if(!text || text.startsWith('Hazır')) return;
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Kopyalandı!');
+      }catch{
+        showToast('Kopyalanamadı 😕');
+      }
+    });
+
+    btnPaylas.addEventListener('click', async () => {
+      const text = resultEl.textContent.trim();
+      if(!text || text.startsWith('Hazır')) return;
+      if(navigator.share){
+        try{
+          await navigator.share({ title: 'Rastgele Tarih & Saat', text, url: location.href });
+        }catch{}
+      }else{
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Panoya kopyalandı (Paylaşım desteği yok)');
+        }catch{
+          showToast('Paylaşım kullanılamıyor');
+        }
+      }
+    });
+
+    // Enter ile hızlı üretim
+    document.addEventListener('keydown', (e) => {
+      const tag = (e.target && e.target.tagName) || '';
+      if(e.key === 'Enter' && (tag !== 'INPUT')){
+        generate();
+      }
+    });
+
+    // İlk yüklemede rozet/alanları mod’a göre ayarla
+    updateModeUI();
+  </script>
+</body>
+</html>
