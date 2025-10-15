@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
+  <title>Live Background Replacer | Webcam Arka Plan Değiştirici (Tarayıcıda)</title>
+  <meta name="description" content="Webcam arka planını tarayıcıda anlık değiştirin. Bulanık, renk, gradyan veya görsel arka plan seçenekleriyle, toplantı ve yayınlar için şık ve hızlı bir çözüm." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://example.com/live-background-replacer" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta property="og:title" content="Live Background Replacer – Tarayıcıda Webcam Arka Planı Değiştir" />
+  <meta property="og:description" content="Bulanık, renk, gradyan veya görsel arka planla canlı ve hızlı arka plan değişimi. Mobil uyumlu ve ücretsiz." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://example.com/live-background-replacer" />
+  <meta property="og:image" content="https://dummyimage.com/1200x630/0ea5e9/ffffff&text=Live+Background+Replacer" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Live Background Replacer – Tarayıcıda Webcam Arka Planı Değiştir" />
+  <meta name="twitter:description" content="Webcam arka planını anlık değiştirin: blur, renk, gradyan veya görsel." />
+  <meta name="twitter:image" content="https://dummyimage.com/1200x630/0ea5e9/ffffff&text=Live+Background+Replacer" />
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"Live Background Replacer",
+    "applicationCategory":"MultimediaApplication",
+    "operatingSystem":"Web",
+    "description":"Tarayıcıda çalışan canlı webcam arka plan değiştirici. Bulanık, renk, gradyan ve görsel arka plan seçenekleri.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: rgba(255,255,255,0.08);
+      --text: #eaf2ff;
+      --muted: #b8c3d6;
+      --accent: #0ea5e9;
+      --accent-2: #7c3aed;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --err: #ef4444;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html,body { height: 100%; }
+    body{
+      margin:0; color:var(--text); background:
+        radial-gradient(1200px 800px at 10% 10%, rgba(14,165,233,.25), transparent 60%),
+        radial-gradient(1200px 800px at 100% 100%, rgba(124,58,237,.20), transparent 60%),
+        linear-gradient(180deg, #0b1220, #0a0f1a);
+      font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Inter, system-ui, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    header{
+      padding: 24px 16px 8px;
+      text-align: center;
+    }
+    header h1{
+      margin: 10px auto 6px;
+      font-size: clamp(24px, 3.8vw, 44px);
+      letter-spacing: .3px;
+      line-height: 1.15;
+      font-weight: 800;
+      background: linear-gradient(90deg, #eaf2ff, #b9d8ff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    header p{ color: var(--muted); margin: 0 auto; max-width: 820px; }
+    .container{
+      max-width: 1100px; margin: 18px auto 60px; padding: 0 16px;
+      display: grid; grid-template-columns: 1fr; gap: 18px;
+    }
+    .card{
+      background: var(--card); border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius); box-shadow: var(--shadow); backdrop-filter: blur(10px);
+    }
+    .stage{
+      position: relative; padding: 10px;
+    }
+    .canvas-wrap{
+      position: relative; width: 100%;
+      aspect-ratio: 16/9; border-radius: 12px; overflow: hidden;
+      background: #0a0f1a;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    canvas{ width: 100%; height: 100%; display: block; }
+    video{ display:none; }
+    .overlay{
+      position:absolute; inset: 10px; pointer-events: none; display:flex; justify-content: space-between; align-items: start;
+    }
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      background: rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.12);
+      padding:8px 10px; border-radius: 999px; font-size: 12px; color: #d6e3ff;
+    }
+    .dot{ width:8px; height:8px; border-radius:999px; background: #ef4444; box-shadow: 0 0 10px #ef4444aa; }
+    .controls{
+      display: grid; grid-template-columns: 1fr; gap: 14px; padding: 14px; border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .row{ display:flex; flex-wrap:wrap; gap: 10px; align-items: center; }
+    .row label{ font-size: 13px; color: var(--muted); }
+    .group{
+      display:flex; gap:8px; flex-wrap: wrap;
+      background: rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.08);
+      padding: 8px; border-radius: 12px;
+    }
+    .btn{
+      appearance: none; border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      color: var(--text); border-radius: 10px; padding: 10px 12px;
+      font-weight: 600; cursor: pointer; transition: .2s ease; font-size: 14px;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.25); }
+    .btn.primary{ background: linear-gradient(180deg, #19b1f2, #0ea5e9); border-color: transparent; color: white; }
+    .btn.danger{ background: linear-gradient(180deg, #ff5a76, #ef4444); border-color: transparent; color: white; }
+    .btn.ghost{ background: rgba(255,255,255,.05); }
+    .toggle{
+      display:flex; align-items:center; gap:8px;
+      background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+      padding: 8px 10px; border-radius: 999px; cursor: pointer; user-select: none;
+    }
+    input[type="range"]{ width: 180px; }
+    input[type="color"]{
+      width: 38px; height: 32px; border: none; border-radius: 8px; background: transparent;
+    }
+    .bg-choice{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .chip{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 8px 10px; border-radius: 999px; cursor: pointer; font-size: 13px;
+    }
+    .chip.active{ outline: 2px solid var(--accent); border-color: transparent; }
+    .hint{ color: var(--muted); font-size: 12px; }
+    .hidden{ display: none !important; }
+
+    footer{
+      text-align:center; color: var(--muted); font-size: 12px; padding: 8px 16px 24px;
+    }
+
+    @media (min-width: 940px){
+      .container{ grid-template-columns: 1.15fr .85fr; }
+    }
+  </style>
+  <!-- Mediapipe Selfie Segmentation -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Live Background Replacer</h1>
+    <p>Webcam arka planını tarayıcıda anlık değiştir. Bulanık, renk, gradyan veya görsel arka planla toplantılarda ve yayınlarda tertemiz görün.</p>
+  </header>
+
+  <main class="container">
+    <section class="card stage" aria-label="Önizleme">
+      <div class="canvas-wrap">
+        <canvas id="output"></canvas>
+        <video id="input" playsinline muted></video>
+        <div class="overlay" aria-hidden="true">
+          <div class="badge" id="statusBadge"><span class="dot"></span> Canlı</div>
+          <div class="badge" id="fpsBadge">FPS: --</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="row">
+          <div class="group">
+            <button class="btn primary" id="startBtn">Kamerayı Başlat</button>
+            <button class="btn danger" id="stopBtn" disabled>Durdur</button>
+            <button class="btn ghost" id="switchBtn" disabled>Ön/Arka</button>
+          </div>
+          <div class="group">
+            <label class="toggle" id="mirrorToggle"><input type="checkbox" id="mirror" checked /> Ayna</label>
+            <label class="toggle" id="mirrorBgToggle"><input type="checkbox" id="mirrorBg" /> Arka planı da ayna</label>
+            <label class="toggle" id="qualityToggle">
+              Kalite:
+              <select id="quality">
+                <option value="0">Hızlı (Mobil)</option>
+                <option value="1" selected>Yüksek</option>
+              </select>
+            </label>
+          </div>
+          <div class="group">
+            <label>Maske yumuşatma: <input type="range" id="softness" min="0" max="3" step="0.2" value="1" /></label>
+            <span class="hint">Kenarları daha doğal gösterir</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>Arka Plan Modu:</label>
+          <div class="bg-choice" id="bgModes">
+            <button class="chip active" data-mode="blur">Bulanık</button>
+            <button class="chip" data-mode="color">Renk</button>
+            <button class="chip" data-mode="gradient">Gradyan</button>
+            <button class="chip" data-mode="image">Görsel</button>
+            <button class="chip" data-mode="none">Yok</button>
+          </div>
+        </div>
+
+        <div class="row" id="ctrl-blur">
+          <div class="group">
+            <label>Bulanıklık: <input type="range" id="blur" min="0" max="24" step="1" value="16" /></label>
+            <span class="hint">Yüksek değerler mobilde performansı düşürebilir</span>
+          </div>
+        </div>
+
+        <div class="row hidden" id="ctrl-color">
+          <div class="group">
+            <label>Renk: <input type="color" id="bgColor" value="#0a0f1a" /></label>
+          </div>
+        </div>
+
+        <div class="row hidden" id="ctrl-gradient">
+          <div class="group">
+            <label>Renk 1: <input type="color" id="g1" value="#0ea5e9" /></label>
+            <label>Renk 2: <input type="color" id="g2" value="#7c3aed" /></label>
+            <label>Açı: <input type="range" id="gAngle" min="0" max="360" step="1" value="45" /></label>
+            <label class="toggle">
+              <input type="checkbox" id="gAnimate" checked /> Animasyon
+            </label>
+          </div>
+        </div>
+
+        <div class="row hidden" id="ctrl-image">
+          <div class="group">
+            <label class="btn">Görsel Yükle
+              <input type="file" id="bgImageInput" accept="image/*" style="display:none" />
+            </label>
+            <span class="hint">Kendi görselinizi kullanabilirsiniz.</span>
+          </div>
+          <div class="group" id="samples">
+            <span class="hint">Örnekler:</span>
+            <button class="chip" data-sample="aurora">Aurora</button>
+            <button class="chip" data-sample="sunset">Sunset</button>
+            <button class="chip" data-sample="grid">Hologram</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <span class="hint">İpucu: HTTPS üzerinde çalıştırın, izin verin ve düşük ışıkta aydınlatmayı artırın. CPU zorlanırsa “Hızlı (Mobil)” seçin.</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card controls" aria-label="Açıklama">
+      <h3 style="margin:6px 0 0;">Nedir?</h3>
+      <p class="hint" style="line-height:1.6">
+        Live Background Replacer, tarayıcıda çalışan gerçek zamanlı bir arka plan değiştiricidir. MediaPipe Selfie Segmentation kullanır.
+        Toplantılar, yayınlar veya ekran kaydı için ideal; mobil uyumlu ve hızlıdır.
+      </p>
+      <h3 style="margin:12px 0 0;">Nasıl kullanılır?</h3>
+      <ol class="hint" style="line-height:1.6; padding-left:18px;">
+        <li>Kamerayı Başlat’a tıklayın ve izin verin.</li>
+        <li>Arka plan modunu seçin: bulanık, renk, gradyan veya görsel.</li>
+        <li>Opsiyonel: ayna, ön/arka kamera, kalite ve maske yumuşatma ayarlarını değiştirin.</li>
+      </ol>
+      <h3 style="margin:12px 0 0;">Gizlilik</h3>
+      <p class="hint" style="line-height:1.6">
+        Tüm işlemler tarayıcınızda yerel olarak yapılır. Hiçbir görüntü sunucuya gönderilmez.
+      </p>
+    </aside>
+  </main>
+
+  <footer>© 2025 Live Background Replacer · Hafif, hızlı ve mobil uyumlu</footer>
+
+  <script>
+  (() => {
+    'use strict';
+
+    // Elements
+    const video = document.getElementById('input');
+    const canvas = document.getElementById('output');
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const switchBtn = document.getElementById('switchBtn');
+    const statusBadge = document.getElementById('statusBadge');
+    const fpsBadge = document.getElementById('fpsBadge');
+
+    const mirrorEl = document.getElementById('mirror');
+    const mirrorBgEl = document.getElementById('mirrorBg');
+    const qualityEl = document.getElementById('quality');
+    const softnessEl = document.getElementById('softness');
+
+    const blurCtrl = document.getElementById('ctrl-blur');
+    const colorCtrl = document.getElementById('ctrl-color');
+    const gradientCtrl = document.getElementById('ctrl-gradient');
+    const imageCtrl = document.getElementById('ctrl-image');
+
+    const blurEl = document.getElementById('blur');
+    const colorEl = document.getElementById('bgColor');
+    const g1El = document.getElementById('g1');
+    const g2El = document.getElementById('g2');
+    const gAngleEl = document.getElementById('gAngle');
+    const gAnimateEl = document.getElementById('gAnimate');
+    const bgModes = document.getElementById('bgModes');
+    const bgImageInput = document.getElementById('bgImageInput');
+    const samples = document.getElementById('samples');
+
+    // State
+    let stream = null;
+    let running = false;
+    let facingMode = 'user'; // 'user' | 'environment'
+    let mirror = true;
+    let mirrorBg = false;
+    let modelSelection = 1; // 0 fast, 1 high
+    let maskSoftness = 1.0;
+    let bgMode = 'blur'; // 'blur' | 'color' | 'gradient' | 'image' | 'none'
+    let devicePixelRatioScale = 1;
+    let videoAspect = 16/9;
+
+    // Background state
+    let bgImage = null; // HTMLImageElement for user image
+    let sampleName = '';
+    let gradientT = 0; // animation time
+
+    // FPS measurements
+    let frames = 0, lastTime = performance.now(), fps = 0;
+
+    // Resize canvas to container while honoring DPR for sharpness
+    function fitCanvas() {
+      const wrap = canvas.parentElement;
+      const rect = wrap.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2); // limit for perf
+      devicePixelRatioScale = dpr;
+      // Maintain aspect ratio from video if available
+      const wCSS = rect.width;
+      const hCSS = wCSS / videoAspect;
+      canvas.style.width = wCSS + 'px';
+      canvas.style.height = hCSS + 'px';
+      canvas.width = Math.floor(wCSS * dpr);
+      canvas.height = Math.floor(hCSS * dpr);
+    }
+    window.addEventListener('resize', fitCanvas);
+
+    // Draw helpers
+    function drawImageCover(ctx, img, dx, dy, dw, dh, mirrorIt=false){
+      const iw = img.videoWidth || img.naturalWidth || img.width;
+      const ih = img.videoHeight || img.naturalHeight || img.height;
+      if (!iw || !ih) return;
+      const r = Math.max(dw/iw, dh/ih);
+      const nw = iw * r, nh = ih * r;
+      const nx = dx + (dw - nw)/2;
+      const ny = dy + (dh - nh)/2;
+      if (mirrorIt) {
+        ctx.save();
+        ctx.translate(dx+dw, dy);
+        ctx.scale(-1,1);
+        ctx.drawImage(img, 0, 0, iw, ih, (dx+dw) - (nx - dx) - nw, ny, nw, nh);
+        ctx.restore();
+      } else {
+        ctx.drawImage(img, 0, 0, iw, ih, nx, ny, nw, nh);
+      }
+    }
+
+    // Procedural sample backgrounds drawn into ctx
+    function drawSample(name, ctx, w, h, t){
+      if (name === 'aurora'){
+        const g = ctx.createLinearGradient(0, 0, w, h);
+        g.addColorStop(0, '#051421');
+        g.addColorStop(1, '#042029');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,w,h);
+        // moving blobs
+        for (let i=0;i<3;i++){
+          const x = (Math.sin(t*0.0004 + i)*0.5 + 0.5) * w;
+          const y = (Math.cos(t*0.0006 + i)*0.5 + 0.5) * h;
+          const r = Math.min(w,h) * (0.25 + 0.18*Math.sin(t*0.0005+i));
+          const grad = ctx.createRadialGradient(x,y,0,x,y,r);
+          grad.addColorStop(0, i===0 ? 'rgba(14,165,233,.35)' : i===1 ? 'rgba(124,58,237,.30)' : 'rgba(34,197,94,.25)');
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        }
+      } else if (name === 'sunset'){
+        const ang = (t*0.02) % 360;
+        const rad = ang * Math.PI/180;
+        const cx = w/2 + Math.cos(rad)*w*0.25;
+        const cy = h/2 + Math.sin(rad)*h*0.15;
+        const g = ctx.createRadialGradient(cx,cy,10, cx,cy, Math.max(w,h)*0.9);
+        g.addColorStop(0, '#ffb86b');
+        g.addColorStop(0.4, '#ff6b6b');
+        g.addColorStop(1, '#3b1c32');
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+      } else if (name === 'grid'){
+        const g = ctx.createLinearGradient(0,0,w,h);
+        g.addColorStop(0,'#0a0f1a'); g.addColorStop(1,'#121a2a');
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+        ctx.globalAlpha = 0.6;
+        ctx.strokeStyle = 'rgba(14,165,233,.25)';
+        const s = 40 * devicePixelRatioScale;
+        const phase = (t*0.1) % s;
+        ctx.beginPath();
+        for (let x = -phase; x < w; x += s) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+        for (let y = -phase; y < h; y += s) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        // glow sweep
+        const sweep = ctx.createLinearGradient(0,0,w,0);
+        sweep.addColorStop(0, 'rgba(124,58,237,0)');
+        sweep.addColorStop(0.5, 'rgba(124,58,237,.20)');
+        sweep.addColorStop(1, 'rgba(124,58,237,0)');
+        ctx.fillStyle = sweep;
+        const sx = (Math.sin(t*0.002)*0.5+0.5)*w;
+        ctx.fillRect(sx-0.1*w,0,0.2*w,h);
+      } else {
+        ctx.fillStyle = '#0a0f1a';
+        ctx.fillRect(0,0,w,h);
+      }
+    }
+
+    // Gradient background
+    function drawGradient(ctx, w, h, c1, c2, angleDeg){
+      const r = angleDeg * Math.PI/180;
+      const x = Math.cos(r), y = Math.sin(r);
+      const cx = w/2, cy = h/2;
+      const len = Math.max(w,h);
+      const x1 = cx - x * len, y1 = cy - y * len;
+      const x2 = cx + x * len, y2 = cy + y * len;
+      const g = ctx.createLinearGradient(x1,y1,x2,y2);
+      g.addColorStop(0, c1);
+      g.addColorStop(1, c2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,w,h);
+    }
+
+    // MediaPipe Selfie Segmentation
+    let selfieSegmentation = null;
+
+    function createSegmenter(){
+      if (!window.SelfieSegmentation) {
+        alert('Selfie Segmentation kütüphanesi yüklenemedi. İnternet bağlantınızı kontrol edin.');
+        return;
+      }
+      selfieSegmentation = new SelfieSegmentation.SelfieSegmentation({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
+      });
+      selfieSegmentation.setOptions({ modelSelection });
+      selfieSegmentation.onResults(onResults);
+    }
+
+    // Start / Stop camera
+    async function startCamera(){
+      try{
+        if (!selfieSegmentation) createSegmenter();
+        startBtn.disabled = true;
+
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode
+          },
+          audio: false
+        });
+        video.srcObject = stream;
+        await video.play();
+
+        videoAspect = (video.videoWidth || 1280) / (video.videoHeight || 720);
+        fitCanvas();
+
+        running = true;
+        stopBtn.disabled = false;
+        switchBtn.disabled = false;
+        statusBadge.innerHTML = '<span class="dot"></span> Canlı';
+        loop();
+      } catch (err){
+        console.error(err);
+        statusBadge.textContent = 'Kamera hatası';
+        statusBadge.style.background = 'rgba(239,68,68,.2)';
+        alert('Kamera açılamadı. İzinleri ve HTTPS bağlantısını kontrol edin.');
+        startBtn.disabled = false;
+      }
+    }
+
+    function stopCamera(){
+      running = false;
+      if (stream){
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+      }
+      stopBtn.disabled = true;
+      switchBtn.disabled = true;
+      startBtn.disabled = false;
+      statusBadge.textContent = 'Durduruldu';
+    }
+
+    async function switchCamera(){
+      facingMode = (facingMode === 'user') ? 'environment' : 'user';
+      stopCamera();
+      await new Promise(r => setTimeout(r, 150));
+      startCamera();
+    }
+
+    // Main loop
+    async function loop(){
+      if (!running || !selfieSegmentation) return;
+      // Send current video frame to segmenter
+      await selfieSegmentation.send({ image: video });
+      requestAnimationFrame(loop);
+    }
+
+    // Results drawing
+    function onResults(results){
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0,0,w,h);
+
+      // FPS
+      const now = performance.now();
+      frames++;
+      if (now - lastTime > 500) {
+        fps = Math.round(frames * 1000 / (now - lastTime));
+        fpsBadge.textContent = 'FPS: ' + fps;
+        lastTime = now; frames = 0;
+      }
+
+      // 1) Draw segmentation mask (optionally soften edges)
+      ctx.save();
+      if (mirror) {
+        ctx.translate(w, 0);
+        ctx.scale(-1, 1);
+      }
+      if (maskSoftness > 0) {
+        ctx.filter = `blur(${maskSoftness}px)`;
+      }
+      // Mask: bright = person, dark = background
+      ctx.drawImage(results.segmentationMask, 0, 0, w, h);
+      ctx.filter = 'none';
+
+      // 2) Keep only person
+      ctx.globalCompositeOperation = 'source-in';
+      drawImageCover(ctx, results.image, 0, 0, w, h, false);
+      ctx.restore();
+
+      // 3) Draw background behind the person
+      ctx.globalCompositeOperation = 'destination-over';
+
+      if (bgMode === 'blur') {
+        // Blurred version of original video
+        if ('filter' in ctx) {
+          ctx.save();
+          ctx.filter = `blur(${+blurEl.value}px)`;
+          drawImageCover(ctx, video, 0, 0, w, h, mirrorBg);
+          ctx.filter = 'none';
+          ctx.restore();
+        } else {
+          // Fallback: just draw without blur
+          drawImageCover(ctx, video, 0, 0, w, h, mirrorBg);
+        }
+      } else if (bgMode === 'color') {
+        ctx.fillStyle = colorEl.value;
+        ctx.fillRect(0,0,w,h);
+      } else if (bgMode === 'gradient') {
+        // Animate angle slightly for a living feel if enabled
+        if (gAnimateEl.checked) gradientT += 0.7;
+        const angle = (+gAngleEl.value + (gAnimateEl.checked ? (Math.sin(gradientT*0.01)*10) : 0)) % 360;
+        drawGradient(ctx, w, h, g1El.value, g2El.value, angle);
+      } else if (bgMode === 'image') {
+        if (bgImage && (bgImage.complete || bgImage.naturalWidth)) {
+          drawImageCover(ctx, bgImage, 0, 0, w, h, mirrorBg);
+        } else if (sampleName) {
+          drawSample(sampleName, ctx, w, h, performance.now());
+        } else {
+          ctx.fillStyle = '#0a0f1a'; ctx.fillRect(0,0,w,h);
+        }
+      } else {
+        // 'none' => original scene (no replacement)
+        drawImageCover(ctx, video, 0, 0, w, h, false);
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // UI bindings
+    startBtn.addEventListener('click', startCamera);
+    stopBtn.addEventListener('click', stopCamera);
+    switchBtn.addEventListener('click', switchCamera);
+
+    mirrorEl.addEventListener('change', e => { mirror = !!e.target.checked; });
+    mirrorBgEl.addEventListener('change', e => { mirrorBg = !!e.target.checked; });
+    qualityEl.addEventListener('change', e => {
+      modelSelection = +e.target.value;
+      if (selfieSegmentation) selfieSegmentation.setOptions({ modelSelection });
+    });
+    softnessEl.addEventListener('input', e => { maskSoftness = +e.target.value; });
+
+    // Mode switcher
+    function setMode(mode){
+      bgMode = mode;
+      for (const chip of bgModes.querySelectorAll('.chip')) {
+        chip.classList.toggle('active', chip.dataset.mode === mode);
+      }
+      blurCtrl.classList.toggle('hidden', mode !== 'blur');
+      colorCtrl.classList.toggle('hidden', mode !== 'color');
+      gradientCtrl.classList.toggle('hidden', mode !== 'gradient');
+      imageCtrl.classList.toggle('hidden', mode !== 'image');
+    }
+    bgModes.addEventListener('click', (e) => {
+      const btn = e.target.closest('.chip');
+      if (!btn) return;
+      setMode(btn.dataset.mode);
+    });
+
+    // Image upload
+    bgImageInput.addEventListener('change', () => {
+      const file = bgImageInput.files && bgImageInput.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      // For local file object URLs, CORS is not an issue
+      img.onload = () => {
+        bgImage = img;
+        sampleName = '';
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    });
+
+    // Sample backgrounds
+    samples.addEventListener('click', (e) => {
+      const btn = e.target.closest('.chip');
+      if (!btn) return;
+      sampleName = btn.dataset.sample;
+      bgImage = null;
+      for (const chip of samples.querySelectorAll('.chip')) {
+        chip.classList.toggle('active', chip === btn);
+      }
+    });
+
+    // Initial layout
+    setMode('blur');
+    fitCanvas();
+    createSegmenter();
+
+    // Accessibility / keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ' && !e.repeat) {
+        if (!running) startCamera(); else stopCamera();
+      }
+    });
+  })();
+  </script>
+</body>
+</html>
