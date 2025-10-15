@@ -56,6 +56,7 @@
     appearance:none;border:1px solid #0000;background:#1b1f29;color:var(--text);
     padding:8px 10px;border-radius:8px;cursor:pointer;
     transition:.15s transform, .15s background;
+    touch-action: manipulation;
   }
   [data-theme="light"] button{background:#f3f6ff;border-color:#dfe7ff}
   button:hover{transform:translateY(-1px);background:#2a2f3b}
@@ -72,7 +73,7 @@
   }
   textarea{
     flex:1;padding:18px 20px;background:transparent;color:var(--text);
-    border:none;outline:none;resize:none;font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
+    border:none;outline:none;resize:none;font: 16px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Courier New", monospace;
     tab-size:2;white-space:pre-wrap;word-break:break-word;
   }
   .stats{
@@ -88,7 +89,6 @@
   .status .dot{width:8px;height:8px;border-radius:50%}
   .dot.ok{background:var(--ok)} .dot.warn{background:var(--danger)}
   .pill{background:#00000020;border-radius:999px;padding:2px 8px;font-size:12px}
-  /* Modal */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;padding:20px}
   .modal-inner{background:var(--panel);border-radius:12px;box-shadow:var(--shadow);min-width:280px;max-width:520px;width:100%;padding:16px;display:flex;flex-direction:column;gap:10px}
   .modal input, .modal select{
@@ -100,6 +100,11 @@
     .main{grid-template-columns:1fr}
     .ribbon{gap:6px}
     .group{border-right:none}
+  }
+  @media (max-width: 600px){
+    .ribbon{gap:6px}
+    button{padding:10px 12px;font-size:15px}
+    .stats{order:3}
   }
 </style>
 </head>
@@ -119,28 +124,35 @@
   <div class="toolbar">
     <div class="ribbon">
       <div class="group">
-        <button id="newBtn" title="Temizle (Ctrl+N)" class="btn-danger">Yeni</button>
-        <label class="btn">
-          Aç (.dspx)
+        <button id="newBtn" title="Temizle (Ctrl+N)" class="btn-danger">🆕 Yeni</button>
+        <label class="btn" title="Aç (.dspx)">
+          📂 Aç
           <input type="file" id="openFile" accept=".dspx,application/vnd.dragaspetar.dspx" />
         </label>
-        <button id="saveDspxBtn" class="btn-accent" title="Kaydet .dspx (Ctrl+S)">Kaydet .dspx</button>
-        
+        <button id="saveDspxBtn" class="btn-accent" title="Kaydet .dspx (Ctrl+S)">💾 Kaydet .dspx</button>
       </div>
+
       <div class="group">
-        <button id="upperBtn" title="BÜYÜK (Alt+U)">BÜYÜK</button>
-        <button id="lowerBtn" title="küçük (Alt+L)">küçük</button>
-        <button id="titleBtn" title="Baş Harf (Alt+T)">Baş Harf</button>
-        <button id="cleanBtn" title="Boşlukları temizle (Ctrl+/)">Temizle</button>
+        <button id="undoBtn" title="Geri Al (Ctrl+Z)">↶</button>
+        <button id="redoBtn" title="İleri Al (Ctrl+Y)">↷</button>
       </div>
+
       <div class="group">
-        <button id="copyBtn" title="Panoya kopyala">Kopyala</button>
-        <button id="findBtn" title="Bul (Ctrl+F)">Bul</button>
-        <button id="replaceBtn" title="Değiştir (Ctrl+H)">Değiştir</button>
+        <button id="upperBtn" title="Seçili metni BÜYÜK yap (Alt+U)">A↑</button>
+        <button id="lowerBtn" title="Seçili metni küçük yap (Alt+L)">a↓</button>
+        <button id="titleBtn" title="Seçili metni Baş Harf (Alt+T)">Aa</button>
+        <button id="cleanBtn" title="Boşlukları temizle (Ctrl+/)">🧹</button>
       </div>
+
       <div class="group">
-        <button id="darkBtn" class="btn-ghost">Koyu/Açık</button>
-        <button id="wrapBtn" class="btn-ghost" title="Satır kaydırma">Kaydır: Açık</button>
+        <button id="copyBtn" title="Panoya kopyala">📋 Kopyala</button>
+        <button id="findBtn" title="Bul (Ctrl+F)">🔎 Bul</button>
+        <button id="replaceBtn" title="Değiştir (Ctrl+H)">♻️ Değiştir</button>
+      </div>
+
+      <div class="group">
+        <button id="darkBtn" class="btn-ghost" title="Koyu/Açık">🌗</button>
+        <button id="wrapBtn" class="btn-ghost" title="Satır kaydırma">⤵ Kaydır: Açık</button>
       </div>
     </div>
   </div>
@@ -198,7 +210,7 @@
       <span id="statusText">Hazır</span>
     </div>
     <div>
-      <span class="muted">Kısayollar: Ctrl+S .dspx · Ctrl+Shift+S .txt · Ctrl+F · Ctrl+H · Alt+U/L/T · Ctrl+/</span>
+      <span class="muted">Kısayollar: Ctrl+S .dspx · Ctrl+Shift+S .txt · Ctrl+F · Ctrl+H · Alt+U/L/T · Ctrl+/ · Ctrl+Z/Ctrl+Y</span>
     </div>
   </div>
 </div>
@@ -238,11 +250,14 @@
   let theme = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.body.dataset.theme = theme;
 
+  // Uygulama anahtarı (parola sormadan şifreleme için)
+  const APP_KEY_STR = 'dragaspetar-app-key-v1'; // gerekirse değiştir
+
   // Restore autosave
   const saved = localStorage.getItem('dspx_text');
   if(saved) ta.value = saved;
 
-  // UI updates
+  // UI utils
   const numFmt = n => n.toLocaleString('tr-TR');
   const debounce = (fn, ms=200)=>{let t; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms)}};
   const TURKISH_STOP = new Set([
@@ -261,16 +276,12 @@
     const paras = (text.split(/\n{2,}/).filter(p=>p.trim().length>0)).length || (text.trim()?1:0);
     const readSec = Math.max(1, Math.round((words/200)*60));
 
-    // Readability: basit sezgisel skor
     const avgWPS = sentences ? (words/sentences) : (words?words:0);
     const avgCPW = words ? (charsNo/words) : 0;
-    let score = 0;
-    // Düşük skor daha kolay – ters çevirip 0..100 arası normalize edelim:
-    //  ideal ~ 12 sözcük/cümle ve ~5-6 char/kelime civarı
-    const s1 = Math.max(0, 30 - Math.abs(12 - avgWPS)*3);  // 0..30
-    const s2 = Math.max(0, 30 - Math.abs(5.5 - avgCPW)*8); // 0..30
-    const s3 = Math.min(40, Math.max(0, 40 - Math.log10(Math.max(1, words))*10)); // 0..40
-    score = Math.min(100, s1+s2+s3);
+    const s1 = Math.max(0, 30 - Math.abs(12 - avgWPS)*3);
+    const s2 = Math.max(0, 30 - Math.abs(5.5 - avgCPW)*8);
+    const s3 = Math.min(40, Math.max(0, 40 - Math.log10(Math.max(1, words))*10));
+    const score = Math.min(100, s1+s2+s3);
     let label = 'Orta';
     if(score >= 70) label = 'Kolay';
     else if(score < 40) label = 'Zor';
@@ -290,7 +301,7 @@
     $('#readability').textContent = `${s.readability.label} (${Math.round(s.readability.score)}/100)`;
     $('#readBar').style.width = `${s.readability.score}%`;
 
-    // En çok kullanılan kelimeler (stopword filtreli)
+    // En çok kullanılan kelimeler
     const tokens = (ta.value.toLocaleLowerCase('tr').match(/\p{L}+/gu) || []).filter(w => !TURKISH_STOP.has(w) && w.length>=2);
     const freq = new Map();
     for(const t of tokens){ freq.set(t, (freq.get(t)||0)+1); }
@@ -298,7 +309,7 @@
     const total = tokens.length || 1;
     const ul = document.createElement('div');
     for(const [w,c] of top){
-      const pct = Math.min(100, Math.round((c/total)*100*4)); // görsel için büyüt
+      const pct = Math.min(100, Math.round((c/total)*100*4));
       const row = document.createElement('div');
       row.style.display='grid'; row.style.gridTemplateColumns='1fr auto'; row.style.gap='8px'; row.style.alignItems='center'; row.style.margin='4px 0';
       row.innerHTML = `<span>${w}</span><span class="muted">${c}</span>`;
@@ -313,7 +324,6 @@
     const tw = $('#topWords');
     tw.innerHTML=''; tw.appendChild(ul);
 
-    // Seçili metin
     updateSelectionStats();
   }
 
@@ -339,6 +349,8 @@
     saveLocal();
   });
   ta.addEventListener('select', updateSelectionStats);
+  ta.addEventListener('keyup', updateSelectionStats);
+  ta.addEventListener('mouseup', updateSelectionStats);
 
   // Initial render
   updateStats();
@@ -351,19 +363,23 @@
   });
   const cleanWhitespace = s => {
     return s
-      .replace(/[ \t]+/g,' ')       // çoklu boşluk -> tek boşluk
-      .replace(/[ \t]+\n/g,'\n')    // satır sonu boşluklarını kaldır
-      .replace(/\n{3,}/g,'\n\n')    // 2+ boş satırı 1 boş satıra indir
+      .replace(/[ \t]+/g,' ')
+      .replace(/[ \t]+\n/g,'\n')
+      .replace(/\n{3,}/g,'\n\n')
       .trim();
   }
 
   function replaceSelection(fn){
     const start = ta.selectionStart, end = ta.selectionEnd;
+    if(start === end){
+      statusText.textContent = 'İşlem için metin seçin';
+      return;
+    }
     const before = ta.value.slice(0,start);
     const mid = ta.value.slice(start,end);
     const after = ta.value.slice(end);
-    const next = before + fn(mid || ta.value) + after;
-    ta.value = next;
+    ta.value = before + fn(mid) + after;
+    ta.setSelectionRange(start, start + fn(mid).length);
     ta.focus();
     updateStats();
     saveLocal();
@@ -373,13 +389,28 @@
   $('#lowerBtn').onclick = ()=> replaceSelection(toLower);
   $('#titleBtn').onclick = ()=> replaceSelection(toTitle);
   $('#cleanBtn').onclick = ()=> { ta.value = cleanWhitespace(ta.value); updateStats(); saveLocal(); };
-  $('#copyBtn').onclick = async ()=> { await navigator.clipboard.writeText(ta.value); statusText.textContent='Panoya kopyalandı'; };
+
+  // Kopyala (fallback ile)
+  $('#copyBtn').onclick = async ()=>{
+    try{
+      await navigator.clipboard.writeText(ta.value);
+    }catch{
+      ta.select();
+      document.execCommand('copy');
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+    }
+    statusText.textContent='Panoya kopyalandı';
+  };
+
+  // Undo/Redo butonları
+  $('#undoBtn').onclick = ()=>{ ta.focus(); document.execCommand('undo'); };
+  $('#redoBtn').onclick = ()=>{ ta.focus(); document.execCommand('redo'); };
 
   // Wrap toggle
   wrapBtn.onclick = ()=>{
     wrapOn = !wrapOn;
     ta.style.whiteSpace = wrapOn ? 'pre-wrap' : 'pre';
-    wrapBtn.textContent = `Kaydır: ${wrapOn?'Açık':'Kapalı'}`;
+    wrapBtn.textContent = `⤵ Kaydır: ${wrapOn?'Açık':'Kapalı'}`;
   };
 
   // Theme
@@ -399,38 +430,61 @@
   $('#replaceBtn').onclick = openFind;
   $('#closeFindBtn').onclick = closeFind;
 
-  function findNext(){
-    const q = findInput.value;
-    if(!q) return;
-    const text = ta.value;
-    const start = ta.selectionEnd || 0;
-    const flags = caseChk.checked ? 'g' : 'gi';
-    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
-    re.lastIndex = start;
-    const m = re.exec(text) || re.exec(text.slice(0, start));
-    if(m){
-      const idx = m.index + (m.input===text ? 0 : 0);
-      ta.focus();
-      ta.setSelectionRange(idx, idx+m[0].length);
-      ta.scrollTop = ta.scrollHeight * (idx/text.length);
-    }
-  }
-  function replaceOne(){
-    if(ta.selectionStart === ta.selectionEnd){ findNext(); return; }
-    const repl = replaceInput.value ?? '';
-    const start = ta.selectionStart, end = ta.selectionEnd;
-    ta.setRangeText(repl, start, end, "end");
-    updateStats(); saveLocal();
-  }
-  function replaceAll(){
-    const q = findInput.value; if(!q) return;
-    const repl = replaceInput.value ?? '';
-    const flags = caseChk.checked ? 'g' : 'gi';
-    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
-    ta.value = ta.value.replace(re, repl);
-    updateStats(); saveLocal();
+function findNext(){
+  const q = findInput.value;
+  if(!q) return;
+  const text = ta.value;
+  const cs = caseChk.checked; // true => büyük/küçük harf duyarlı
+  const start = ta.selectionEnd || 0;
+
+  let idx;
+  if(cs){
+    idx = text.indexOf(q, start);
+    if(idx === -1) idx = text.indexOf(q, 0);
+  }else{
+    const tL = text.toLocaleLowerCase('tr');
+    const qL = q.toLocaleLowerCase('tr');
+    idx = tL.indexOf(qL, start);
+    if(idx === -1) idx = tL.indexOf(qL, 0);
   }
 
+  if(idx !== -1){
+    ta.focus();
+    ta.setSelectionRange(idx, idx + q.length);
+    // Yaklaşık konuma kaydır
+    const ratio = idx / Math.max(1, text.length);
+    ta.scrollTop = Math.max(0, (ta.scrollHeight - ta.clientHeight) * ratio);
+  }
+}
+
+function replaceAll(){
+  const q = findInput.value;
+  if(!q) return;
+  const repl = replaceInput.value ?? '';
+  let text = ta.value;
+
+  if(caseChk.checked){
+    // Duyarlı: direkt split/join
+    text = text.split(q).join(repl);
+  }else{
+    // Duyarsız: TR-locale indexOf ile döngü
+    const tL = text.toLocaleLowerCase('tr');
+    const qL = q.toLocaleLowerCase('tr');
+    let pos = 0, out = '';
+    while(true){
+      const i = tL.indexOf(qL, pos);
+      if(i === -1) break;
+      out += text.slice(pos, i) + repl;
+      pos = i + q.length;
+    }
+    out += text.slice(pos);
+    text = out;
+  }
+
+  ta.value = text;
+  updateStats();
+  saveLocal();
+}
   $('#findNextBtn').onclick = findNext;
   $('#replaceOneBtn').onclick = replaceOne;
   $('#replaceAllBtn').onclick = replaceAll;
@@ -447,6 +501,7 @@
     if(e.ctrlKey && e.key==='/'){ e.preventDefault(); ta.value = cleanWhitespace(ta.value); updateStats(); saveLocal(); }
     if(e.ctrlKey && e.key.toLowerCase()==='n'){ e.preventDefault(); newDoc(); }
     if(e.key==='Escape' && findModal.getAttribute('aria-hidden')==='false'){ e.preventDefault(); closeFind(); }
+    // Ctrl+Z ve Ctrl+Y tarayıcı tarafından doğal olarak çalışır, ekstra müdahale etmiyoruz.
   });
 
   $('#newBtn').onclick = newDoc;
@@ -469,7 +524,8 @@
     statusText.textContent='TXT indirildi';
     dirty = false; saveDot.className='dot ok';
   }
-  $('#saveTxtBtn').onclick = saveAsTxt;
+  // Eğer HTML'de saveTxtBtn yoksa burada hata oluşmasın:
+  const saveTxtEl = $('#saveTxtBtn'); if(saveTxtEl){ saveTxtEl.onclick = saveAsTxt; }
 
   // .dspx format v1: DSPX(4) | ver(1)=1 | flags(1) | reserved(2) | salt(16) | iv(12) | origLen(4) | ciphertext(...)
   const MAGIC = new TextEncoder().encode('DSPX');
@@ -496,7 +552,7 @@
     const header = new Uint8Array(40);
     header.set(MAGIC, 0);
     header[4] = 1; // version
-    header[5] = 0b00000010; // flags: bit1 => AES-GCM, bit0 => deflate (0=deflate default)
+    header[5] = 0b00000011; // flags: bit0=deflate, bit1=AES-GCM
     header[6] = 0; header[7] = 0; // reserved
     header.set(salt, 8);
     header.set(iv, 24);
@@ -516,10 +572,7 @@
   async function decodeDSPX(buf, password){
     const view = new Uint8Array(buf);
     if(view.length < 40) throw new Error('Dosya çok küçük');
-    if(view[0]!==77||view[1]!==83||view[2]!==80||view[3]!==88){ // 'DSPX'
-      // 68 83 80 88? Wait 'D'=68. But we used 'DSPX' which is 68,83,80,88
-    }
-    // safer check using TextDecoder:
+
     const magic = new TextDecoder().decode(view.slice(0,4));
     if(magic!=='DSPX') throw new Error('Geçersiz dosya (magic)');
 
@@ -543,38 +596,41 @@
     const raw = fflate.decompressSync(comp);
     const text = new TextDecoder().decode(raw);
     if(origLen && raw.length !== origLen){
-      // Uyuşmazlık durumunda yine de döndürüyoruz, sadece bilgi:
       console.warn('Uzunluk uyuşmazlığı', raw.length, origLen);
     }
     return text;
   }
 
+  // Kaydet .dspx (parola sormaz)
   async function saveAsDspx(){
-    const password = prompt('Bu .dspx dosyası için parola belirleyin (boş bırakırsanız kaydedilmez):', localStorage.getItem('dspx_default_pw')||'');
-    if(password==null) return;
-    if(!password){ alert('Güvenlik için parola önerilir.'); }
     try{
-      const blob = await encodeDSPX(ta.value, password || 'dragaspetar-default');
+      const blob = await encodeDSPX(ta.value, APP_KEY_STR);
       const name = `document_${new Date().toISOString().replace(/[:.]/g,'-')}.dspx`;
       dl(name, blob);
       statusText.textContent='DSPX kaydedildi';
       dirty=false; saveDot.className='dot ok';
-      if(password) localStorage.setItem('dspx_default_pw', password);
     }catch(e){
       console.error(e);
-      alert('Kaydetme sırasında hata: '+e.message);
+      alert('Kaydetme sırasında hata: '+e.message + '\nNot: AES-GCM için sayfanın HTTPS/localhost üzerinden çalışması gerekir.');
     }
   }
   $('#saveDspxBtn').onclick = saveAsDspx;
 
-  // Open .dspx
+  // Aç .dspx (önce uygulama anahtarıyla dener; olmazsa parola sorar)
   $('#openFile').addEventListener('change', async (e)=>{
     const f = e.target.files[0];
     if(!f) return;
-    const password = prompt('Dosya parolasını girin:', localStorage.getItem('dspx_default_pw')||'');
     try{
       const buf = await f.arrayBuffer();
-      const text = await decodeDSPX(buf, password || 'dragaspetar-default');
+      let text;
+      try{
+        text = await decodeDSPX(buf, APP_KEY_STR); // sessiz dene
+      }catch(err){
+        // Eski/parolalı dosyalar için fallback
+        const pw = prompt('Dosya parolasını girin (gerekliyse):','');
+        if(pw===null) throw err;
+        text = await decodeDSPX(buf, pw);
+      }
       ta.value = text; updateStats(); saveLocal();
       statusText.textContent = `Açıldı: ${f.name}`;
       dirty=false; saveDot.className='dot ok';
@@ -591,12 +647,19 @@
     e.preventDefault();
     const file = [...(e.dataTransfer?.files||[])].find(f=>f.name.endsWith('.dspx'));
     if(!file) return;
-    const pw = prompt('Dosya parolasını girin:', localStorage.getItem('dspx_default_pw')||'');
     try{
       const buf = await file.arrayBuffer();
-      const text = await decodeDSPX(buf, pw || 'dragaspetar-default');
+      let text;
+      try{
+        text = await decodeDSPX(buf, APP_KEY_STR);
+      }catch(err){
+        const pw = prompt('Dosya parolasını girin (gerekliyse):','');
+        if(pw===null) throw err;
+        text = await decodeDSPX(buf, pw);
+      }
       ta.value = text; updateStats(); saveLocal();
       statusText.textContent = `Açıldı: ${file.name}`;
+      dirty=false; saveDot.className='dot ok';
     }catch(err){ alert('Açılamadı: '+err.message); }
   });
 

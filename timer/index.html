@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Geri Sayım ve Kronometre | Online Zamanlayıcı</title>
+  <meta name="description" content="Havalı, mobil uyumlu ve SEO dostu online geri sayım ve kronometre. Etiket ekleyin, bildirim ve titreşim alın, tur kaydı yapın, paylaşın. Verileriniz tarayıcınızda kalır." />
+  <meta name="keywords" content="geri sayım, geri sayım sayacı, kronometre, online kronometre, zamanlayıcı, sayaç, stopwatch, countdown, tur, lap, alarm" />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0f142a" />
+  <meta name="color-scheme" content="light dark" />
+  <meta property="og:title" content="Geri Sayım ve Kronometre" />
+  <meta property="og:description" content="Hızlı, şık, mobil uyumlu online geri sayım ve kronometre." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2718%27 fill=%27%230f142a%27/%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2734%27 fill=%27%23222a4d%27/%3E%3Cpath d=%27M50 18v10M50 72v10M22 50h10M68 50h10M34 34l7 7M66 66l7 7M34 66l7-7M66 34l7-7%27 stroke=%27%23a9b8ff%27 stroke-width=%273%27 stroke-linecap=%27round%27/%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2728%27 fill=%27%23131b37%27 stroke=%27%238a7cff%27 stroke-width=%274%27/%3E%3Cpath d=%27M50 52L50 30%27 stroke=%27%23fff%27 stroke-width=%275%27 stroke-linecap=%27round%27/%3E%3Cpath d=%27M50 52L66 52%27 stroke=%27%23fff%27 stroke-width=%275%27 stroke-linecap=%27round%27/%3E%3C/svg%3E" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Geri Sayım ve Kronometre",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Web",
+    "description": "Online geri sayım ve kronometre: etiket desteği, bildirim, titreşim, tur kaydı, paylaşım, mobil uyum.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "TRY" }
+  }
+  </script>
+
+  <style>
+    /* Modern reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; line-height: 1.45; }
+
+    :root {
+      --bg: #0f142a;
+      --bg-2: #0b1020;
+      --paper: rgba(255,255,255,0.06);
+      --paper-2: rgba(255,255,255,0.08);
+      --fg: #e8eeff;
+      --muted: #a9b4d4;
+      --accent: #8a7cff;
+      --accent-2: #38d7ff;
+      --ok: #00d98b;
+      --warn: #ffb020;
+      --danger: #ff5c7c;
+      --ring: 0 0 0 3px rgba(138,124,255,.4);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f7f9fc;
+        --bg-2: #eef2f8;
+        --paper: rgba(255,255,255,0.9);
+        --paper-2: rgba(255,255,255,0.8);
+        --fg: #0f142a;
+        --muted: #516080;
+        --accent: #5a49ff;
+        --accent-2: #0077ff;
+      }
+    }
+    [data-theme="light"] {
+      --bg: #f7f9fc; --bg-2:#eef2f8; --paper: rgba(255,255,255,0.9);
+      --paper-2: rgba(255,255,255,0.8); --fg:#0f142a; --muted:#516080;
+      --accent:#5a49ff; --accent-2:#0077ff;
+    }
+    [data-theme="dark"] {
+      --bg: #0f142a; --bg-2:#0b1020; --paper: rgba(255,255,255,0.06);
+      --paper-2: rgba(255,255,255,0.08); --fg:#e8eeff; --muted:#a9b4d4;
+      --accent:#8a7cff; --accent-2:#38d7ff;
+    }
+
+    body {
+      color: var(--fg);
+      background:
+        radial-gradient(1200px 600px at 10% -20%, #3429ff1a, transparent 40%),
+        radial-gradient(800px 400px at 100% 0%, #38d7ff1a, transparent 35%),
+        linear-gradient(180deg, var(--bg-2), var(--bg));
+      background-attachment: fixed;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin-inline: auto;
+      padding: 20px;
+    }
+    header.site {
+      position: sticky; top: 0; z-index: 10;
+      background: linear-gradient(180deg, rgba(0,0,0,.28), transparent);
+      backdrop-filter: blur(10px);
+    }
+    .headbar {
+      display: flex; align-items: center; gap: 12px; padding: 14px 12px;
+      border-radius: 14px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;
+    }
+    .brand .logo {
+      width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 8px 24px rgba(104, 92, 255, .35);
+      color: #fff; font-weight: 800;
+    }
+    .brand h1 {
+      font-size: 18px; margin: 0; letter-spacing: .2px;
+    }
+    .grow { flex: 1; }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn {
+      appearance: none; border: 0; padding: 10px 14px; border-radius: 12px; cursor: pointer;
+      background: var(--paper); color: var(--fg); transition: transform .05s ease, background .2s ease, box-shadow .2s ease;
+    }
+    .btn:hover { background: var(--paper-2); }
+    .btn:active { transform: translateY(1px); }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff; box-shadow: 0 8px 22px rgba(104, 92, 255,.35);
+    }
+    .btn.ghost { background: transparent; border: 1px solid rgba(255,255,255,.15); }
+    .btn.danger { background: linear-gradient(135deg, #ff5c7c, #ff7f77); color: #fff; }
+    .btn.ok { background: linear-gradient(135deg, #00d98b, #2be6b2); color: #05322a; }
+
+    .tabs {
+      display: inline-flex; gap: 6px; padding: 6px; border-radius: 14px; background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .tabbtn {
+      padding: 10px 14px; border-radius: 10px; background: transparent; border: 0; color: var(--fg); cursor: pointer;
+    }
+    .tabbtn[aria-selected="true"] {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff; box-shadow: 0 8px 22px rgba(104,92,255,.3);
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .grid {
+      display: grid; gap: 14px;
+    }
+    @media (min-width: 860px) {
+      .grid.cols-2 { grid-template-columns: 1.2fr 1fr; }
+    }
+
+    .section-title {
+      margin: 6px 0 12px; font-size: 16px; color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .timer {
+      display: grid; gap: 8px;
+      justify-items: center;
+      padding: 12px;
+    }
+    .digits {
+      display: grid; grid-auto-flow: column; gap: 10px; align-items: end;
+      font-variant-numeric: tabular-nums; font-feature-settings: "tnum";
+      user-select: none;
+    }
+    .digits .block {
+      display: grid; padding: 10px 12px; border-radius: 14px; background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      min-width: 84px; text-align: center; position: relative;
+    }
+    .digits .block .label {
+      font-size: 12px; color: var(--muted); margin-bottom: 2px;
+    }
+    .digits .block .val {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-weight: 800; letter-spacing: .5px;
+      font-size: clamp(30px, 7vw, 48px);
+    }
+    .dots { font-size: clamp(24px, 6vw, 34px); opacity: .7; padding-bottom: 10px; }
+
+    .inputs { display: grid; gap: 12px; }
+    .row { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 560px) {
+      .row.cols-3 { grid-template-columns: repeat(3,1fr); }
+      .row.cols-2 { grid-template-columns: repeat(2,1fr); }
+      .row.auto { grid-template-columns: auto 1fr; align-items: center; }
+    }
+
+    label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; }
+    input[type="text"], input[type="number"], input[type="datetime-local"], select {
+      width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06); color: var(--fg);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    input::placeholder { color: #9aa6c4; opacity: .8; }
+    input:focus, select:focus { outline: none; box-shadow: var(--ring); border-color: transparent; }
+
+    .quick {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .chip {
+      padding: 8px 10px; border-radius: 999px; background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14); cursor: pointer; font-size: 13px;
+    }
+
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 8px; }
+    .meta { text-align: center; color: var(--muted); font-size: 13px; }
+
+    .opts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 6px; }
+    .toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); cursor: pointer; }
+    .toggle input { accent-color: var(--accent); transform: translateY(1px); }
+
+    .laps { max-height: 260px; overflow: auto; margin-top: 8px; padding-right: 6px; }
+    .lap {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center;
+      padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.06); margin-bottom: 6px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+    .lap .idx { color: var(--muted); min-width: 44px; }
+    .lap .delta { color: var(--ok); }
+    .lap .split { color: var(--fg); }
+
+    .hint { color: var(--muted); font-size: 12px; text-align: center; }
+
+    .success { color: var(--ok); }
+    .warn { color: var(--warn); }
+    .danger-txt { color: var(--danger); }
+
+    .finish {
+      display: none; text-align: center; margin-top: 6px; font-weight: 600;
+    }
+    .finish.show { display: block; }
+
+    .labelline {
+      display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap;
+      color: var(--muted); font-size: 13px;
+    }
+    .labelline strong { color: var(--fg); }
+
+    .seo { margin-top: 18px; }
+    details.faq { background: var(--paper); border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 10px 14px; }
+    details.faq + details.faq { margin-top: 8px; }
+
+    .kbd { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-weight: 700; background: rgba(255,255,255,.08); padding: 2px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,.12); }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    /* Finish pulse */
+    .pulse { animation: pulse 1.2s ease-in-out infinite; }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .digits .block { transition: none; }
+      .pulse { animation: none; }
+    }
+
+    noscript { display: block; background: #ffdede; color: #5a0000; padding: 12px; border-radius: 12px; margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap headbar">
+      <a class="brand" href="#" aria-label="Ana sayfa">
+        <div class="logo" aria-hidden="true">⏱</div>
+        <div>
+          <h1>Geri Sayım ve Kronometre</h1>
+          <div class="hint">Online zamanlayıcı — hızlı, şık, ücretsiz</div>
+        </div>
+      </a>
+      <div class="grow"></div>
+      <div class="top-actions">
+        <button class="btn" id="themeBtn" aria-label="Tema değiştir">
+          🌙/☀️
+        </button>
+        <div class="hint" id="nowTime" aria-live="polite"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <nav class="tabs" role="tablist" aria-label="Mod seçimi">
+      <button class="tabbtn" role="tab" id="tabbtn-countdown" aria-selected="true" aria-controls="tab-countdown">Geri Sayım</button>
+      <button class="tabbtn" role="tab" id="tabbtn-stopwatch" aria-selected="false" aria-controls="tab-stopwatch">Kronometre</button>
+    </nav>
+
+    <section id="tab-countdown" role="tabpanel" aria-labelledby="tabbtn-countdown" class="grid cols-2" style="margin-top:12px;">
+      <div class="card">
+        <div class="section-title">Zaman Ekranı</div>
+        <div class="timer" aria-live="polite">
+          <div class="digits" id="cdDigits">
+            <div class="block"><div class="label">Gün</div><div class="val" id="cdDays">00</div></div>
+            <div class="dots">:</div>
+            <div class="block"><div class="label">Saat</div><div class="val" id="cdHours">00</div></div>
+            <div class="dots">:</div>
+            <div class="block"><div class="label">Dakika</div><div class="val" id="cdMinutes">00</div></div>
+            <div class="dots">:</div>
+            <div class="block"><div class="label">Saniye</div><div class="val" id="cdSeconds">00</div></div>
+          </div>
+
+          <div class="labelline" id="cdLabelLine" aria-live="polite">
+            <span>Etiket:</span> <strong id="cdLabelShow">—</strong>
+          </div>
+
+          <div class="controls">
+            <button class="btn primary" id="cdStartBtn">
+              ▶ Başlat
+            </button>
+            <button class="btn" id="cdPauseBtn" disabled>
+              ⏸ Duraklat
+            </button>
+            <button class="btn ghost" id="cdResumeBtn" disabled>
+              ⏵ Devam
+            </button>
+            <button class="btn danger" id="cdResetBtn" disabled>
+              ⟲ Sıfırla
+            </button>
+            <button class="btn ghost" id="cdShareBtn" title="Bu geri sayımı paylaş">
+              🔗 Paylaş
+            </button>
+          </div>
+
+          <div class="opts">
+            <label class="toggle" title="Süre dolunca sesli uyarı">
+              <input type="checkbox" id="cdSound" checked /> Ses
+            </label>
+            <label class="toggle" title="Süre dolunca bildirim gönder">
+              <input type="checkbox" id="cdNotify" /> Bildirim
+            </label>
+            <label class="toggle" title="Süre dolunca titreşim">
+              <input type="checkbox" id="cdVibrate" checked /> Titreşim
+            </label>
+            <label class="toggle" title="Ekranı açık tutmaya çalış">
+              <input type="checkbox" id="cdWake" /> Ekran açık
+            </label>
+          </div>
+
+          <div class="finish" id="cdFinishedMsg">⏰ Süre doldu!</div>
+          <div class="hint">Kısayollar: <span class="kbd">Boşluk</span> Başlat/Duraklat, <span class="kbd">R</span> Sıfırla</div>
+          <div class="meta" id="cdMeta"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Ayarlar</div>
+        <div class="inputs">
+          <div>
+            <label for="cdMode">Geri sayım türü</label>
+            <select id="cdMode">
+              <option value="duration">Süre (H:M:S)</option>
+              <option value="datetime">Tarih & Saat (bitiş)</option>
+            </select>
+          </div>
+
+          <div id="cdDurationFields">
+            <div class="row cols-3">
+              <div>
+                <label for="cdH">Saat</label>
+                <input type="number" id="cdH" min="0" max="240" value="0" inputmode="numeric" />
+              </div>
+              <div>
+                <label for="cdM">Dakika</label>
+                <input type="number" id="cdM" min="0" max="59" value="5" inputmode="numeric" />
+              </div>
+              <div>
+                <label for="cdS">Saniye</label>
+                <input type="number" id="cdS" min="0" max="59" value="0" inputmode="numeric" />
+              </div>
+            </div>
+            <div class="quick" aria-label="Hızlı süreler">
+              <button class="chip" data-add="60">+1 dk</button>
+              <button class="chip" data-add="300">+5 dk</button>
+              <button class="chip" data-add="600">+10 dk</button>
+              <button class="chip" data-add="1800">+30 dk</button>
+              <button class="chip" data-add="3600">+1 saat</button>
+              <button class="chip" id="cdClear">Temizle</button>
+            </div>
+          </div>
+
+          <div id="cdDatetimeFields" style="display:none;">
+            <div>
+              <label for="cdDT">Bitiş tarihi ve saati</label>
+              <input type="datetime-local" id="cdDT" />
+            </div>
+            <div class="hint">İpucu: Bölgenize göre otomatik saat dilimi kullanılır.</div>
+          </div>
+
+          <div>
+            <label for="cdLabel">Etiket (isteğe bağlı)</label>
+            <input type="text" id="cdLabel" placeholder="Örn. Fırın / Toplantı / Egzersiz" maxlength="80" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-stopwatch" role="tabpanel" aria-labelledby="tabbtn-stopwatch" hidden class="grid cols-2" style="margin-top:12px;">
+      <div class="card">
+        <div class="section-title">Kronometre</div>
+        <div class="timer">
+          <div class="digits" id="swDigits" aria-live="polite">
+            <div class="block"><div class="label">Saat</div><div class="val" id="swH">00</div></div>
+            <div class="dots">:</div>
+            <div class="block"><div class="label">Dakika</div><div class="val" id="swM">00</div></div>
+            <div class="dots">:</div>
+            <div class="block"><div class="label">Saniye</div><div class="val" id="swS">00</div></div>
+            <div class="dots">.</div>
+            <div class="block"><div class="label">Salise</div><div class="val" id="swMS">00</div></div>
+          </div>
+
+          <div class="controls">
+            <button class="btn primary" id="swStartBtn">▶ Başlat</button>
+            <button class="btn" id="swPauseBtn" disabled>⏸ Duraklat</button>
+            <button class="btn ghost" id="swResumeBtn" disabled>⏵ Devam</button>
+            <button class="btn ok" id="swLapBtn" disabled>🏁 Tur</button>
+            <button class="btn danger" id="swResetBtn" disabled>⟲ Sıfırla</button>
+            <button class="btn ghost" id="swExportBtn" title="Turları panoya kopyala" disabled>📋 Dışa aktar</button>
+          </div>
+          <div class="opts">
+            <label class="toggle" title="Ekranı açık tut">
+              <input type="checkbox" id="swWake" /> Ekran açık
+            </label>
+            <label class="toggle" title="Her turda kısa ses">
+              <input type="checkbox" id="swBeepLap" /> Tur sesi
+            </label>
+          </div>
+          <div class="hint">Kısayollar: <span class="kbd">Boşluk</span> Başlat/Duraklat, <span class="kbd">L</span> Tur, <span class="kbd">R</span> Sıfırla</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Turlar</div>
+        <div class="laps" id="laps"></div>
+      </div>
+    </section>
+
+    <section class="seo">
+      <div class="card">
+        <h2 style="margin:4px 0 8px;">Online Geri Sayım ve Kronometre</h2>
+        <p>Bu araç; şık tasarım, mobil uyumluluk ve gizliliğe öncelik verir. Tüm verileriniz tarayıcınızda saklanır, sunucuya gönderilmez. Geri sayımı süreye veya belirli bir tarihe göre ayarlayabilir, bittiğinde ses, bildirim ve titreşim alabilirsiniz. Kronometrede tur kayıtlarını tutup dışa aktarabilirsiniz.</p>
+        <ul>
+          <li>Hızlı ön ayarlar, etiket ekleme ve paylaşılabilir bağlantı</li>
+          <li>Bildirim, titreşim, uyarı sesi ve ekran açık tutma</li>
+          <li>Klâvye kısayolları ve erişilebilir arayüz</li>
+          <li>SEO dostu içerik, yapılandırılmış veri ve semantik HTML</li>
+        </ul>
+
+        <details class="faq">
+          <summary><strong>SSS: Geri sayım bittiğinde bildirim alabilir miyim?</strong></summary>
+          <p>Evet. “Bildirim” seçeneğini açın. İlk seferde tarayıcınız izin isteyebilir. iOS’ta bildirimler ve ses için uygulama açık olmalıdır.</p>
+        </details>
+        <details class="faq">
+          <summary><strong>SSS: Verilerim nerede saklanıyor?</strong></summary>
+          <p>Ayarlar, etiket ve durum bilgileri yalnızca tarayıcınızdaki yerel depolamada saklanır.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <noscript>Bu uygulama JavaScript gerektirir. Lütfen tarayıcınızda JavaScript’i etkinleştirin.</noscript>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // Utils
+      const $ = sel => document.querySelector(sel);
+      const $$ = sel => Array.from(document.querySelectorAll(sel));
+      const pad2 = n => String(Math.floor(n)).padStart(2, '0');
+      const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+      const fmtHMSS = ms => {
+        const s = Math.max(0, Math.floor(ms / 1000));
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const ss = s % 60;
+        return `${pad2(h)}:${pad2(m)}:${pad2(ss)}`;
+      };
+      const fmtLap = ms => {
+        const h = Math.floor(ms / 3600000);
+        const m = Math.floor((ms % 3600000) / 60000);
+        const s = Math.floor((ms % 60000) / 1000);
+        const cs = Math.floor((ms % 1000) / 10);
+        return `${pad2(h)}:${pad2(m)}:${pad2(s)}.${pad2(cs)}`;
+      };
+
+      const state = {
+        theme: null,
+        wakeLock: null,
+        titleBase: document.title,
+        titleBlinkId: null,
+
+        // Countdown
+        cd: {
+          mode: 'duration', // 'duration' | 'datetime'
+          hours: 0, minutes: 5, seconds: 0,
+          dt: null, // ISO string or null
+          label: '',
+          running: false,
+          paused: false,
+          targetTs: null, // ms
+          remainingOnPause: null,
+          intervalId: null
+        },
+
+        // Stopwatch
+        sw: {
+          running: false,
+          startTs: null,
+          elapsedBefore: 0,
+          rafId: null,
+          laps: []
+        }
+      };
+
+      // DOM refs
+      const nowTime = $('#nowTime');
+      const themeBtn = $('#themeBtn');
+
+      // Tabs
+      const tabBtns = {
+        cd: $('#tabbtn-countdown'),
+        sw: $('#tabbtn-stopwatch')
+      };
+      const panels = {
+        cd: $('#tab-countdown'),
+        sw: $('#tab-stopwatch')
+      };
+
+      // Countdown DOM
+      const cdDays = $('#cdDays');
+      const cdHours = $('#cdHours');
+      const cdMinutes = $('#cdMinutes');
+      const cdSeconds = $('#cdSeconds');
+      const cdStartBtn = $('#cdStartBtn');
+      const cdPauseBtn = $('#cdPauseBtn');
+      const cdResumeBtn = $('#cdResumeBtn');
+      const cdResetBtn = $('#cdResetBtn');
+      const cdShareBtn = $('#cdShareBtn');
+
+      const cdSound = $('#cdSound');
+      const cdNotify = $('#cdNotify');
+      const cdVibrate = $('#cdVibrate');
+      const cdWake = $('#cdWake');
+
+      const cdFinishedMsg = $('#cdFinishedMsg');
+      const cdMeta = $('#cdMeta');
+      const cdLabelShow = $('#cdLabelShow');
+
+      const cdMode = $('#cdMode');
+      const cdDurationFields = $('#cdDurationFields');
+      const cdDatetimeFields = $('#cdDatetimeFields');
+      const cdH = $('#cdH');
+      const cdM = $('#cdM');
+      const cdS = $('#cdS');
+      const cdClear = $('#cdClear');
+      const cdDT = $('#cdDT');
+      const cdLabel = $('#cdLabel');
+
+      // Stopwatch DOM
+      const swH = $('#swH'), swM = $('#swM'), swS = $('#swS'), swMS = $('#swMS');
+      const swStartBtn = $('#swStartBtn');
+      const swPauseBtn = $('#swPauseBtn');
+      const swResumeBtn = $('#swResumeBtn');
+      const swResetBtn = $('#swResetBtn');
+      const swLapBtn = $('#swLapBtn');
+      const swExportBtn = $('#swExportBtn');
+
+      const swBeepLap = $('#swBeepLap');
+      const swWake = $('#swWake');
+      const lapsEl = $('#laps');
+
+      // Time now in header
+      function tickNow() {
+        const d = new Date();
+        const f = d.toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+        nowTime.textContent = f;
+      }
+      tickNow();
+      setInterval(tickNow, 15000);
+
+      // Theme
+      function applyTheme(t) {
+        if (!t) return;
+        document.documentElement.setAttribute('data-theme', t);
+        state.theme = t;
+        try { localStorage.setItem('timer-theme', t); } catch {}
+      }
+      (function initTheme() {
+        try {
+          const saved = localStorage.getItem('timer-theme');
+          if (saved) applyTheme(saved);
+        } catch {}
+      })();
+      themeBtn.addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme');
+        const next = cur === 'light' ? 'dark' : 'light';
+        applyTheme(next || (matchMedia('(prefers-color-scheme: dark)').matches ? 'light' : 'dark'));
+      });
+
+      // Wake Lock
+      async function requestWakeLock() {
+        try {
+          if ('wakeLock' in navigator) {
+            if (!state.wakeLock) {
+              state.wakeLock = await navigator.wakeLock.request('screen');
+              state.wakeLock.addEventListener('release', () => { state.wakeLock = null; });
+            }
+          }
+        } catch (e) {
+          // Ignore
+        }
+      }
+      function releaseWakeLock() {
+        try { if (state.wakeLock) { state.wakeLock.release(); state.wakeLock = null; } } catch {}
+      }
+
+      // Beep with WebAudio
+      async function beep(pattern = [600, 200, 800], durations = [120, 120, 350]) {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          for (let i = 0; i < pattern.length; i++) {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'sine';
+            o.frequency.value = pattern[i];
+            o.connect(g);
+            g.connect(ctx.destination);
+            g.gain.setValueAtTime(0.0001, ctx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+            o.start();
+            await new Promise(r => setTimeout(r, durations[i]));
+            o.stop();
+          }
+          ctx.close();
+        } catch {}
+      }
+
+      // Notifications
+      async function ensureNotificationPermission() {
+        if (!('Notification' in window)) return false;
+        if (Notification.permission === 'granted') return true;
+        if (Notification.permission === 'denied') return false;
+        try {
+          const p = await Notification.requestPermission();
+          return p === 'granted';
+        } catch { return false; }
+      }
+      function sendNotification(title, body) {
+        try {
+          if (!('Notification' in window)) return;
+          if (Notification.permission !== 'granted') return;
+          const n = new Notification(title, { body });
+          setTimeout(() => n.close(), 8000);
+        } catch {}
+      }
+
+      // Title blink
+      function startBlink(msg) {
+        stopBlink();
+        let on = false;
+        state.titleBlinkId = setInterval(() => {
+          document.title = on ? msg : state.titleBase;
+          on = !on;
+        }, 900);
+      }
+      function stopBlink() {
+        if (state.titleBlinkId) {
+          clearInterval(state.titleBlinkId);
+          state.titleBlinkId = null;
+          document.title = state.titleBase;
+        }
+      }
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) stopBlink();
+      });
+
+      // Countdown logic
+      function updateCdLabelLine() {
+        cdLabelShow.textContent = (state.cd.label || '—');
+      }
+      function renderCountdown(ms) {
+        if (ms < 0) ms = 0;
+        const s = Math.floor(ms / 1000);
+        const days = Math.floor(s / 86400);
+        const hrs = Math.floor((s % 86400) / 3600);
+        const mins = Math.floor((s % 3600) / 60);
+        const secs = s % 60;
+        cdDays.textContent = pad2(days);
+        cdHours.textContent = pad2(hrs);
+        cdMinutes.textContent = pad2(mins);
+        cdSeconds.textContent = pad2(secs);
+      }
+      function enableCdControls({ started = false, paused = false }) {
+        cdStartBtn.disabled = started;
+        cdPauseBtn.disabled = !started || paused;
+        cdResumeBtn.disabled = !paused;
+        cdResetBtn.disabled = !(started || paused);
+      }
+      function saveCdToStorage() {
+        try {
+          const obj = {
+            mode: state.cd.mode,
+            hours: state.cd.hours,
+            minutes: state.cd.minutes,
+            seconds: state.cd.seconds,
+            dt: state.cd.dt,
+            label: state.cd.label,
+            running: state.cd.running,
+            paused: state.cd.paused,
+            targetTs: state.cd.targetTs,
+            remainingOnPause: state.cd.remainingOnPause
+          };
+          localStorage.setItem('cd-state', JSON.stringify(obj));
+          localStorage.setItem('cd-opts', JSON.stringify({
+            sound: cdSound.checked, notify: cdNotify.checked, vibrate: cdVibrate.checked, wake: cdWake.checked
+          }));
+        } catch {}
+      }
+      function loadCdFromStorage() {
+        try {
+          const raw = localStorage.getItem('cd-state');
+          const opts = localStorage.getItem('cd-opts');
+          if (opts) {
+            const o = JSON.parse(opts);
+            cdSound.checked = !!o.sound;
+            cdNotify.checked = !!o.notify;
+            cdVibrate.checked = !!o.vibrate;
+            cdWake.checked = !!o.wake;
+          }
+          if (!raw) return;
+          const s = JSON.parse(raw);
+          Object.assign(state.cd, s);
+          cdMode.value = state.cd.mode;
+          cdH.value = state.cd.hours;
+          cdM.value = state.cd.minutes;
+          cdS.value = state.cd.seconds;
+          cdDT.value = state.cd.dt ? toLocalInputValue(new Date(state.cd.dt)) : '';
+          cdLabel.value = state.cd.label || '';
+          updateCdLabelLine();
+          switchModeUI();
+          if (state.cd.running && state.cd.targetTs) {
+            cdStartTicking();
+          } else if (state.cd.paused && typeof state.cd.remainingOnPause === 'number') {
+            renderCountdown(state.cd.remainingOnPause);
+            enableCdControls({ started: false, paused: true });
+            cdFinishedMsg.classList.remove('show');
+          }
+        } catch {}
+      }
+      function toLocalInputValue(d) {
+        const off = d.getTimezoneOffset();
+        const d2 = new Date(d.getTime() - off * 60000);
+        return d2.toISOString().slice(0,16);
+      }
+
+      function getDurationMsFromFields() {
+        const h = clamp(parseInt(cdH.value || '0', 10), 0, 240);
+        const m = clamp(parseInt(cdM.value || '0', 10), 0, 59);
+        const s = clamp(parseInt(cdS.value || '0', 10), 0, 59);
+        return ((h * 3600) + (m * 60) + s) * 1000;
+      }
+      function getTargetFromInputs() {
+        if (state.cd.mode === 'duration') {
+          const dur = getDurationMsFromFields();
+          if (dur <= 0) return null;
+          return Date.now() + dur;
+        } else {
+          if (!cdDT.value) return null;
+          const t = new Date(cdDT.value);
+          if (isNaN(t.getTime())) return null;
+          return t.getTime();
+        }
+      }
+
+      function clearCdInterval() {
+        if (state.cd.intervalId) {
+          clearInterval(state.cd.intervalId);
+          state.cd.intervalId = null;
+        }
+      }
+
+      function onCdFinish() {
+        state.cd.running = false;
+        state.cd.paused = false;
+        enableCdControls({ started: false, paused: false });
+        cdFinishedMsg.classList.add('show');
+        $('#cdDigits').classList.add('pulse');
+        cdMeta.textContent = 'Tamamlandı';
+        startBlink('⏰ Süre doldu!');
+        if (cdSound.checked) beep([800, 600, 800, 1000], [200, 120, 200, 350]);
+        if (cdVibrate.checked && 'vibrate' in navigator) navigator.vibrate([120, 60, 120, 240]);
+        if (cdNotify.checked) {
+          ensureNotificationPermission().then(ok => {
+            if (ok) {
+              const label = state.cd.label ? ' - ' + state.cd.label : '';
+              sendNotification('Süre doldu' + label, 'Geri sayım tamamlandı.');
+            }
+          });
+        }
+        releaseWakeLock();
+        saveCdToStorage();
+      }
+
+      function cdStartTicking() {
+        clearCdInterval();
+        cdFinishedMsg.classList.remove('show');
+        $('#cdDigits').classList.remove('pulse');
+        state.cd.running = true;
+        state.cd.paused = false;
+        enableCdControls({ started: true, paused: false });
+        if ((cdWake.checked)) requestWakeLock();
+        state.cd.intervalId = setInterval(() => {
+          const now = Date.now();
+          const left = (state.cd.targetTs || 0) - now;
+          renderCountdown(left);
+          if (left <= 0) {
+            clearCdInterval();
+            onCdFinish();
+          } else {
+            const msg = state.cd.mode === 'duration'
+              ? `Kalan: ${fmtHMSS(left)}`
+              : `Bitişe kalan: ${fmtHMSS(left)} (hedef: ${new Date(state.cd.targetTs).toLocaleString()})`;
+            cdMeta.textContent = msg;
+          }
+        }, 250);
+        saveCdToStorage();
+      }
+
+      // Countdown events
+      cdMode.addEventListener('change', () => {
+        state.cd.mode = cdMode.value;
+        switchModeUI();
+        saveCdToStorage();
+      });
+      function switchModeUI() {
+        if (state.cd.mode === 'duration') {
+          cdDurationFields.style.display = '';
+          cdDatetimeFields.style.display = 'none';
+        } else {
+          cdDurationFields.style.display = 'none';
+          cdDatetimeFields.style.display = '';
+        }
+      }
+
+      cdStartBtn.addEventListener('click', () => {
+        const target = getTargetFromInputs();
+        state.cd.label = cdLabel.value.trim();
+        updateCdLabelLine();
+        if (!target || (state.cd.mode === 'datetime' && target <= Date.now())) {
+          cdMeta.innerHTML = '<span class="danger-txt">Geçerli bir süre veya gelecek zaman seçin.</span>';
+          return;
+        }
+        state.cd.targetTs = target;
+        cdStartTicking();
+      });
+
+      cdPauseBtn.addEventListener('click', () => {
+        if (!state.cd.running) return;
+        const left = Math.max(0, (state.cd.targetTs || 0) - Date.now());
+        state.cd.remainingOnPause = left;
+        state.cd.running = false;
+        state.cd.paused = true;
+        clearCdInterval();
+        renderCountdown(left);
+        enableCdControls({ started: false, paused: true });
+        cdMeta.textContent = 'Duraklatıldı';
+        releaseWakeLock();
+        saveCdToStorage();
+      });
+
+      cdResumeBtn.addEventListener('click', () => {
+        if (!state.cd.paused) return;
+        state.cd.targetTs = Date.now() + (state.cd.remainingOnPause || 0);
+        cdStartTicking();
+      });
+
+      cdResetBtn.addEventListener('click', () => {
+        clearCdInterval();
+        state.cd.running = false;
+        state.cd.paused = false;
+        state.cd.targetTs = null;
+        state.cd.remainingOnPause = null;
+        renderCountdown(getDurationMsFromFields());
+        cdFinishedMsg.classList.remove('show');
+        $('#cdDigits').classList.remove('pulse');
+        enableCdControls({ started: false, paused: false });
+        cdMeta.textContent = '';
+        stopBlink();
+        releaseWakeLock();
+        saveCdToStorage();
+      });
+
+      cdShareBtn.addEventListener('click', async () => {
+        // Build shareable URL with params
+        const url = new URL(location.href);
+        url.searchParams.set('mode', 'countdown');
+        url.searchParams.set('cdMode', state.cd.mode);
+        url.searchParams.set('label', (cdLabel.value || '').trim());
+        if (state.cd.mode === 'duration') {
+          url.searchParams.set('h', cdH.value || '0');
+          url.searchParams.set('m', cdM.value || '0');
+          url.searchParams.set('s', cdS.value || '0');
+        } else {
+          if (cdDT.value) url.searchParams.set('at', new Date(cdDT.value).toISOString());
+        }
+        const text = 'Geri sayım bağlantısı';
+        try {
+          if (navigator.share) {
+            await navigator.share({ title: document.title, text, url: url.toString() });
+          } else if (navigator.clipboard) {
+            await navigator.clipboard.writeText(url.toString());
+            cdMeta.innerHTML = '<span class="success">Bağlantı panoya kopyalandı.</span>';
+          } else {
+            prompt('Bağlantıyı kopyalayın:', url.toString());
+          }
+        } catch {}
+      });
+
+      // Quick duration chips
+      $$('#cdDurationFields .chip[data-add]').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const add = parseInt(chip.getAttribute('data-add'), 10) * 1000;
+          const cur = getDurationMsFromFields();
+          const total = cur + add;
+          const h = Math.floor(total / 3600000);
+          const m = Math.floor((total % 3600000) / 60000);
+          const s = Math.floor((total % 60000) / 1000);
+          cdH.value = h;
+          cdM.value = m;
+          cdS.value = s;
+          renderCountdown(total);
+          saveCdToStorage();
+        });
+      });
+      cdClear.addEventListener('click', () => {
+        cdH.value = 0; cdM.value = 0; cdS.value = 0;
+        renderCountdown(0);
+        saveCdToStorage();
+      });
+
+      // Inputs update preview
+      [cdH, cdM, cdS].forEach(inp => {
+        inp.addEventListener('input', () => {
+          const ms = getDurationMsFromFields();
+          renderCountdown(ms);
+          saveCdToStorage();
+        });
+      });
+      cdDT.addEventListener('change', () => {
+        if (cdDT.value) {
+          const t = new Date(cdDT.value);
+          const left = t.getTime() - Date.now();
+          renderCountdown(Math.max(0, left));
+        }
+        saveCdToStorage();
+      });
+      cdLabel.addEventListener('input', () => {
+        state.cd.label = cdLabel.value.trim();
+        updateCdLabelLine();
+        saveCdToStorage();
+      });
+
+      // Init CD default preview
+      renderCountdown(getDurationMsFromFields());
+
+      // Stopwatch logic
+      function renderStopwatch(ms) {
+        const h = Math.floor(ms / 3600000);
+        const m = Math.floor((ms % 3600000) / 60000);
+        const s = Math.floor((ms % 60000) / 1000);
+        const cs = Math.floor((ms % 1000) / 10);
+        swH.textContent = pad2(h);
+        swM.textContent = pad2(m);
+        swS.textContent = pad2(s);
+        swMS.textContent = pad2(cs);
+      }
+      function enableSwControls({ started = false, paused = false }) {
+        swStartBtn.disabled = started;
+        swPauseBtn.disabled = !started || paused;
+        swResumeBtn.disabled = !paused;
+        swResetBtn.disabled = !(started || paused || state.sw.elapsedBefore > 0 || state.sw.laps.length);
+        swLapBtn.disabled = !started || paused;
+        swExportBtn.disabled = state.sw.laps.length === 0;
+      }
+      function saveSwToStorage() {
+        try {
+          const obj = {
+            running: state.sw.running,
+            elapsedBefore: state.sw.elapsedBefore,
+            laps: state.sw.laps
+          };
+          localStorage.setItem('sw-state', JSON.stringify(obj));
+          localStorage.setItem('sw-opts', JSON.stringify({ beepLap: swBeepLap.checked, wake: swWake.checked }));
+        } catch {}
+      }
+      function loadSwFromStorage() {
+        try {
+          const raw = localStorage.getItem('sw-state');
+          const opts = localStorage.getItem('sw-opts');
+          if (opts) {
+            const o = JSON.parse(opts);
+            swBeepLap.checked = !!o.beepLap;
+            swWake.checked = !!o.wake;
+          }
+          if (!raw) return;
+          const s = JSON.parse(raw);
+          state.sw.elapsedBefore = s.elapsedBefore || 0;
+          state.sw.laps = Array.isArray(s.laps) ? s.laps : [];
+          renderStopwatch(state.sw.elapsedBefore);
+          renderLaps();
+          enableSwControls({ started: false, paused: false });
+        } catch {}
+      }
+
+      function swTick() {
+        const now = performance.now();
+        const elapsed = state.sw.elapsedBefore + (now - state.sw.startTs);
+        renderStopwatch(elapsed);
+        state.sw.rafId = requestAnimationFrame(swTick);
+      }
+
+      function renderLaps() {
+        lapsEl.innerHTML = '';
+        if (!state.sw.laps.length) {
+          const empty = document.createElement('div');
+          empty.className = 'hint';
+          empty.textContent = 'Henüz tur yok.';
+          lapsEl.appendChild(empty);
+          swExportBtn.disabled = true;
+          return;
+        }
+        swExportBtn.disabled = false;
+        const fr = document.createDocumentFragment();
+        state.sw.laps.forEach((lap, i) => {
+          const row = document.createElement('div');
+          row.className = 'lap';
+          const idx = document.createElement('div');
+          idx.className = 'idx';
+          idx.textContent = `Tur ${i + 1}`;
+          const delta = document.createElement('div');
+          delta.className = 'delta';
+          delta.textContent = fmtLap(lap.delta);
+          const split = document.createElement('div');
+          split.className = 'split';
+          split.textContent = fmtLap(lap.split);
+          row.append(idx, delta, split);
+          fr.appendChild(row);
+        });
+        lapsEl.appendChild(fr);
+      }
+
+      swStartBtn.addEventListener('click', async () => {
+        if (swWake.checked) await requestWakeLock();
+        state.sw.running = true;
+        state.sw.startTs = performance.now();
+        state.sw.rafId = requestAnimationFrame(swTick);
+        enableSwControls({ started: true, paused: false });
+        saveSwToStorage();
+      });
+
+      swPauseBtn.addEventListener('click', () => {
+        if (!state.sw.running) return;
+        cancelAnimationFrame(state.sw.rafId);
+        state.sw.rafId = null;
+        state.sw.elapsedBefore += performance.now() - state.sw.startTs;
+        state.sw.running = false;
+        enableSwControls({ started: false, paused: true });
+        saveSwToStorage();
+        releaseWakeLock();
+      });
+
+      swResumeBtn.addEventListener('click', async () => {
+        if (swWake.checked) await requestWakeLock();
+        state.sw.running = true;
+        state.sw.startTs = performance.now();
+        state.sw.rafId = requestAnimationFrame(swTick);
+        enableSwControls({ started: true, paused: false });
+        saveSwToStorage();
+      });
+
+      swResetBtn.addEventListener('click', () => {
+        if (state.sw.rafId) cancelAnimationFrame(state.sw.rafId);
+        state.sw.running = false;
+        state.sw.rafId = null;
+        state.sw.elapsedBefore = 0;
+        state.sw.laps = [];
+        renderStopwatch(0);
+        renderLaps();
+        enableSwControls({ started: false, paused: false });
+        saveSwToStorage();
+        releaseWakeLock();
+      });
+
+      swLapBtn.addEventListener('click', () => {
+        let elapsed = state.sw.elapsedBefore + (performance.now() - state.sw.startTs);
+        const lastSplit = state.sw.laps.length ? state.sw.laps[state.sw.laps.length - 1].split : 0;
+        const delta = elapsed - lastSplit;
+        state.sw.laps.push({ split: elapsed, delta });
+        renderLaps();
+        saveSwToStorage();
+        if (swBeepLap.checked) beep([700], [120]);
+      });
+
+      swExportBtn.addEventListener('click', async () => {
+        if (!state.sw.laps.length) return;
+        let csv = 'Tur,Delta,Toplam\n';
+        state.sw.laps.forEach((lap, i) => {
+          csv += `${i+1},${fmtLap(lap.delta)},${fmtLap(lap.split)}\n`;
+        });
+        try {
+          await navigator.clipboard.writeText(csv);
+          toast('Turlar panoya kopyalandı.');
+        } catch {
+          prompt('CSV\'yi kopyalayın:', csv);
+        }
+      });
+
+      function toast(msg) {
+        cdMeta.innerHTML = `<span class="success">${msg}</span>`;
+        setTimeout(() => { if (cdMeta.textContent === msg) cdMeta.textContent = ''; }, 2500);
+      }
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+        if (e.code === 'Space') {
+          e.preventDefault();
+          if (!panels.cd.hidden) {
+            if (state.cd.running) cdPauseBtn.click();
+            else if (state.cd.paused) cdResumeBtn.click();
+            else cdStartBtn.click();
+          } else {
+            if (state.sw.running) swPauseBtn.click();
+            else if (state.sw.rafId === null && state.sw.elapsedBefore > 0) swResumeBtn.click();
+            else swStartBtn.click();
+          }
+        } else if (e.key.toLowerCase() === 'r') {
+          e.preventDefault();
+          if (!panels.cd.hidden) cdResetBtn.click();
+          else swResetBtn.click();
+        } else if (e.key.toLowerCase() === 'l') {
+          if (!panels.sw.hidden && state.sw.running) { e.preventDefault(); swLapBtn.click(); }
+        }
+      });
+
+      // Tabs behavior
+      function activateTab(which) {
+        const isCd = which === 'cd';
+        tabBtns.cd.setAttribute('aria-selected', String(isCd));
+        tabBtns.sw.setAttribute('aria-selected', String(!isCd));
+        panels.cd.hidden = !isCd;
+        panels.sw.hidden = isCd;
+        try { localStorage.setItem('active-tab', isCd ? 'cd' : 'sw'); } catch {}
+      }
+      tabBtns.cd.addEventListener('click', () => activateTab('cd'));
+      tabBtns.sw.addEventListener('click', () => activateTab('sw'));
+
+      // Parse share URL params
+      (function parseShare() {
+        const q = new URLSearchParams(location.search);
+        const mode = q.get('mode');
+        if (mode === 'countdown') {
+          activateTab('cd');
+          const cdModeQ = q.get('cdMode');
+          if (cdModeQ === 'duration' || cdModeQ === 'datetime') {
+            state.cd.mode = cdModeQ;
+            cdMode.value = cdModeQ;
+            switchModeUI();
+          }
+          const label = q.get('label') || '';
+          cdLabel.value = label;
+          state.cd.label = label;
+          updateCdLabelLine();
+          if (cdModeQ === 'duration') {
+            const h = parseInt(q.get('h') || '0', 10);
+            const m = parseInt(q.get('m') || '0', 10);
+            const s = parseInt(q.get('s') || '0', 10);
+            cdH.value = Math.max(0, h|0);
+            cdM.value = clamp(m|0, 0, 59);
+            cdS.value = clamp(s|0, 0, 59);
+            renderCountdown(getDurationMsFromFields());
+          } else if (cdModeQ === 'datetime') {
+            const at = q.get('at');
+            if (at) {
+              const t = new Date(at);
+              if (!isNaN(t.getTime())) {
+                cdDT.value = toLocalInputValue(t);
+                renderCountdown(Math.max(0, t.getTime() - Date.now()));
+              }
+            }
+          }
+        } else {
+          // restore active tab
+          try {
+            const saved = localStorage.getItem('active-tab');
+            if (saved === 'sw') activateTab('sw');
+          } catch {}
+        }
+      })();
+
+      // Init from storage
+      loadCdFromStorage();
+      loadSwFromStorage();
+
+      // Accessibility: ensure initial controls state
+      enableCdControls({ started: state.cd.running, paused: state.cd.paused });
+      enableSwControls({ started: state.sw.running, paused: false });
+
+      // Safety: stop blinking title when user interacts anywhere
+      document.addEventListener('pointerdown', stopBlink);
+      document.addEventListener('keydown', stopBlink);
+
+      // Cleanup on unload
+      window.addEventListener('pagehide', () => {
+        clearCdInterval();
+        if (state.sw.rafId) cancelAnimationFrame(state.sw.rafId);
+        releaseWakeLock();
+      });
+    })();
+  </script>
+</body>
+</html>

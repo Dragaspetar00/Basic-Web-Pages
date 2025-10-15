@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Retro Hesap Makinesi</title>
+<meta name="theme-color" content="#0b1118" />
+<style>
+  :root{
+    --bg: #070b10;
+    --grid: rgba(0, 255, 153, 0.08);
+    --panel: #0b1118;
+    --panel-edge: #0e1620;
+    --panel-light: #121b26;
+    --key: #1a2430;
+    --key-edge: #111922;
+    --key-top: #223042;
+    --key-fn: #2b3b4e;
+    --key-op: #3a244a;
+    --key-eq: #224a3b;
+
+    --text: #cfe6ff;
+    --muted: #9bb1c9;
+
+    --phosphor: #42ff88; /* varsayılan: yeşil fosfor */
+    --phosphor-dim: #2fe172;
+    --phosphor-glow: 0 0 6px rgba(66,255,136,.8), 0 0 18px rgba(66,255,136,.35), 0 0 36px rgba(66,255,136,.18);
+
+    --accent: #a36dff;
+
+    --radius: 14px;
+    --gap: 10px;
+    --btn-h: 60px;
+    --font-main: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  /* Tema çeşitleri */
+  [data-phosphor="amber"]{
+    --phosphor:#ffb14a; --phosphor-dim:#e09a3f;
+    --phosphor-glow: 0 0 6px rgba(255,177,74,.9), 0 0 18px rgba(255,177,74,.4), 0 0 36px rgba(255,177,74,.2);
+    --grid: rgba(255,177,74,0.08);
+  }
+  [data-phosphor="blue"]{
+    --phosphor:#6fd7ff; --phosphor-dim:#5dbfe4;
+    --phosphor-glow: 0 0 6px rgba(111,215,255,.9), 0 0 18px rgba(111,215,255,.4), 0 0 36px rgba(111,215,255,.2);
+    --grid: rgba(111,215,255,0.08);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% 120%, rgba(96, 0, 168, .08), transparent 60%),
+      radial-gradient(800px 400px at 10% 10%, rgba(0, 255, 153, .05), transparent 60%),
+      linear-gradient(180deg, #06080d, var(--bg));
+    color:var(--text);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    display:grid;
+    place-items:center;
+    padding:18px;
+  }
+
+  /* Neon grid zemini */
+  .grid-bg{
+    position:fixed; inset:0; pointer-events:none; opacity:.35;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(0,0,0,.4) 100%),
+      repeating-linear-gradient(to right, var(--grid) 0 1px, transparent 1px 40px),
+      repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 40px);
+    mask: radial-gradient(300px 200px at 50% 120%, rgba(0,0,0,1), rgba(0,0,0,.1) 60%, transparent 75%);
+  }
+
+  .frame{
+    width:min(420px, 94vw);
+    background:linear-gradient(180deg, var(--panel-light), var(--panel));
+    border-radius:calc(var(--radius) + 6px);
+    padding:14px;
+    border:1px solid #0e1620;
+    box-shadow:
+      0 30px 60px rgba(0,0,0,.55),
+      inset 0 1px 0 rgba(255,255,255,.04),
+      inset 0 -2px 0 rgba(0,0,0,.25);
+    position:relative;
+    overflow:hidden;
+  }
+  .frame::before{
+    content:"";
+    position:absolute; inset:0;
+    background: radial-gradient(800px 200px at 50% -60px, rgba(163,109,255,.18), transparent 60%);
+    pointer-events:none;
+  }
+
+  .head{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; margin-bottom:12px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight:700; letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#d7d0ff;
+  }
+  .led{
+    width:10px; height:10px; border-radius:50%;
+    background: radial-gradient(circle at 30% 30%, #70ffa8, #0d2c1f);
+    box-shadow: 0 0 10px rgba(66,255,136,.8);
+    border:1px solid #123b2a;
+  }
+  .controls{
+    display:flex; align-items:center; gap:8px; color:var(--muted); font-size:.9rem;
+  }
+  .select, .toggle{
+    background: #0e1620; color:#bed2ea;
+    border:1px solid #1b2937; border-radius:10px;
+    padding:6px 8px; font-size:.9rem;
+  }
+  .toggle{ display:flex; align-items:center; gap:6px; padding:6px 10px; }
+  .toggle input{ accent-color: var(--phosphor); }
+
+  .display{
+    position:relative;
+    background: radial-gradient(120% 180% at 50% -30%, #0c141d, #0a1219 60%, #091017 100%);
+    border:1px solid #12202e;
+    border-radius:var(--radius);
+    padding:16px 14px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.04),
+      inset 0 -2px 0 rgba(0,0,0,.35);
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .crt-overlay{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.6; mix-blend-mode:screen;
+    background:
+      repeating-linear-gradient(to bottom, rgba(255,255,255,.055) 0 1px, rgba(0,0,0,0) 1px 3px);
+  }
+  .display .prev{
+    font: 600 14px var(--font-main);
+    color: var(--phosphor-dim);
+    text-shadow: var(--phosphor-glow);
+    letter-spacing:.04em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    min-height: 18px;
+  }
+  .display .main{
+    font: 700 clamp(28px, 7vw, 44px) var(--font-main);
+    color: var(--phosphor);
+    text-shadow: var(--phosphor-glow);
+    letter-spacing:.02em;
+    line-height:1.2;
+    display:flex; justify-content:flex-end; align-items:flex-end;
+    min-height: 52px;
+    user-select:none;
+  }
+  .display .status{
+    position:absolute; left:10px; bottom:8px; display:flex; gap:10px; color:var(--muted); font: 600 11px var(--font-main);
+    opacity:.9;
+  }
+  .status .dot{
+    width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px;
+    background: #23313f; box-shadow: inset 0 0 2px rgba(0,0,0,.6);
+  }
+  .status .dot.on{
+    background: radial-gradient(circle at 35% 35%, var(--phosphor), #0a2b1d);
+    box-shadow: 0 0 10px color-mix(in oklab, var(--phosphor) 60%, transparent);
+  }
+
+  .keys{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap);
+  }
+  button.key{
+    height: var(--btn-h);
+    background: linear-gradient(180deg, var(--key-top), var(--key));
+    border: 1px solid var(--key-edge);
+    border-bottom-color:#0a1016;
+    color:#d7e6fa;
+    border-radius: 10px;
+    font: 700 16px var(--font-main);
+    letter-spacing:.02em;
+    box-shadow:
+      0 4px 0 #0a0f14,
+      0 12px 24px rgba(0,0,0,.25),
+      inset 0 1px 0 rgba(255,255,255,.05);
+    cursor:pointer;
+    position:relative;
+    transition: transform .03s ease, filter .1s ease, background .15s ease, box-shadow .15s ease;
+    outline:none;
+  }
+  button.key:active{
+    transform: translateY(2px);
+    box-shadow:
+      0 2px 0 #0a0f14,
+      0 6px 16px rgba(0,0,0,.2),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  button.key.fn{ background: linear-gradient(180deg, var(--key-fn), var(--key)); color:#dfe9f8; }
+  button.key.op{ background: linear-gradient(180deg, #3d2850, var(--key-op)); color:#f0dbff; }
+  button.key.eq{ background: linear-gradient(180deg, #25523f, var(--key-eq)); color:#d9ffef; }
+  button.key:hover{ filter: brightness(1.06); }
+  button.key:focus-visible{
+    box-shadow:
+      0 4px 0 #0a0f14,
+      0 0 0 2px #1b2937,
+      0 0 0 4px color-mix(in oklab, var(--phosphor) 45%, transparent),
+      inset 0 1px 0 rgba(255,255,255,.05);
+  }
+
+  .foot{
+    margin-top:10px; display:flex; justify-content:space-between; align-items:center;
+    color:var(--muted); font: 600 12px var(--font-main);
+    opacity:.8;
+  }
+  .kbd{
+    background:#0e1620; border:1px solid #182534; border-radius:6px; padding:4px 6px; color:#bed2ea;
+  }
+
+  /* küçük ekran iyileştirmeleri */
+  @media (max-width:380px){
+    :root{ --btn-h: 54px; }
+    .head{ flex-wrap:wrap; gap:6px; }
+  }
+</style>
+</head>
+<body data-phosphor="green">
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <div class="frame" id="app">
+    <div class="head">
+      <div class="brand">
+        <span class="led" aria-hidden="true"></span>
+        CALC‑80
+      </div>
+      <div class="controls">
+        <label class="toggle" title="Tık sesi">
+          <input type="checkbox" id="sfx" checked />
+          SFX
+        </label>
+        <select id="theme" class="select" title="Fosfor rengi">
+          <option value="green" selected>Yeşil</option>
+          <option value="amber">Amber</option>
+          <option value="blue">Mavi</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="display" role="status" aria-live="polite">
+      <div class="prev" id="prev"></div>
+      <div class="main" id="main">0</div>
+      <div class="crt-overlay" aria-hidden="true"></div>
+      <div class="status">
+        <span><span class="dot" id="mDot"></span>M</span>
+        <span><span class="dot on"></span>CRT</span>
+      </div>
+    </div>
+
+    <div class="keys" id="keys" role="group" aria-label="Hesap Makinesi Tuşları">
+      <!-- Bellek -->
+      <button class="key fn" data-action="mc" aria-label="Belleği Sil (MC)">MC</button>
+      <button class="key fn" data-action="mr" aria-label="Belleği Geri Çağır (MR)">MR</button>
+      <button class="key fn" data-action="mplus" aria-label="Belleğe Ekle (M+)">M+</button>
+      <button class="key fn" data-action="mminus" aria-label="Bellekten Çıkar (M-)">M-</button>
+
+      <!-- İşlevler -->
+      <button class="key fn" data-action="ac" aria-label="Tümü Temizle (AC)">AC</button>
+      <button class="key fn" data-action="c" aria-label="Girişi Temizle (C)">C</button>
+      <button class="key fn" data-action="percent" aria-label="Yüzde">%</button>
+      <button class="key op" data-op="divide" aria-label="Böl">÷</button>
+
+      <!-- Rakamlar ve işlemler -->
+      <button class="key" data-digit="7">7</button>
+      <button class="key" data-digit="8">8</button>
+      <button class="key" data-digit="9">9</button>
+      <button class="key op" data-op="multiply" aria-label="Çarp">×</button>
+
+      <button class="key" data-digit="4">4</button>
+      <button class="key" data-digit="5">5</button>
+      <button class="key" data-digit="6">6</button>
+      <button class="key op" data-op="subtract" aria-label="Çıkar">−</button>
+
+      <button class="key" data-digit="1">1</button>
+      <button class="key" data-digit="2">2</button>
+      <button class="key" data-digit="3">3</button>
+      <button class="key op" data-op="add" aria-label="Topla">+</button>
+
+      <button class="key fn" data-action="sign" aria-label="Artı/Eksi">±</button>
+      <button class="key" data-digit="0">0</button>
+      <button class="key" data-action="decimal" aria-label="Virgül">.</button>
+      <button class="key eq" data-action="equals" aria-label="Eşittir">=</button>
+    </div>
+
+    <div class="foot">
+      <span class="kbd">Klavye: 0–9 • + − × ÷ • Enter • Backspace • Esc</span>
+      <span>v1.0</span>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const mainEl = document.getElementById('main');
+  const prevEl = document.getElementById('prev');
+  const keysEl = document.getElementById('keys');
+  const mDot = document.getElementById('mDot');
+  const themeSel = document.getElementById('theme');
+  const sfxToggle = document.getElementById('sfx');
+  const root = document.body;
+
+  const state = {
+    display: '0',
+    firstOperand: null,
+    operator: null,
+    awaitingSecond: false,
+    memory: 0,
+    lastResult: null
+  };
+
+  // --- Ses (opsiyonel)
+  let audioCtx = null;
+  function ensureCtx(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  function beep(freq = 740, dur = 0.035, vol = 0.025){
+    if (!sfxToggle.checked) return;
+    try{
+      ensureCtx();
+      const t0 = audioCtx.currentTime;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = 'square';
+      o.frequency.value = freq;
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(vol, t0 + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.start(t0);
+      o.stop(t0 + dur + 0.02);
+    }catch(e){/* sessiz */}
+  }
+
+  // --- Sayı biçimleme ve hesaplama yardımcıları
+  const roundTo = (num, digits = 12) => {
+    const pow = Math.pow(10, digits);
+    return Math.round((num + Number.EPSILON) * pow) / pow;
+  };
+  function formatNumber(n){
+    if (!Number.isFinite(n)) return 'HATA';
+    const abs = Math.abs(n);
+    if (abs >= 1e12 || (abs !== 0 && abs < 1e-9)) {
+      return n.toExponential(6).replace('+','').toUpperCase();
+    }
+    let s = String(roundTo(n, 12));
+    if (s.includes('e')) return n.toExponential(6).replace('+','').toUpperCase();
+    if (s.indexOf('.') >= 0) {
+      s = s.replace(/(\.\d*?[1-9])0+$/,'$1').replace(/\.0+$/,'');
+    }
+    return s;
+  }
+  function setDisplay(v){
+    state.display = v;
+    mainEl.textContent = v;
+  }
+  function updatePrev(text){
+    prevEl.textContent = text || '';
+  }
+  function setMemoryIndicator(on){
+    mDot.classList.toggle('on', !!on);
+  }
+
+  // --- Ana mantık
+  function inputDigit(d){
+    if (state.awaitingSecond){
+      setDisplay(d);
+      state.awaitingSecond = false;
+    } else {
+      if (state.display === '0') setDisplay(d);
+      else setDisplay(state.display + d);
+    }
+  }
+  function inputDecimal(){
+    if (state.awaitingSecond){
+      setDisplay('0.');
+      state.awaitingSecond = false;
+      return;
+    }
+    if (!state.display.includes('.')){
+      setDisplay(state.display + '.');
+    }
+  }
+  function toggleSign(){
+    if (state.display === '0') return;
+    if (state.display.startsWith('-')) setDisplay(state.display.slice(1));
+    else setDisplay('-' + state.display);
+  }
+  function clearEntry(){
+    setDisplay('0');
+  }
+  function allClear(){
+    state.firstOperand = null;
+    state.operator = null;
+    state.awaitingSecond = false;
+    state.lastResult = null;
+    updatePrev('');
+    setDisplay('0');
+  }
+  function backspace(){
+    if (state.awaitingSecond) return;
+    if (state.display.length <= 1 || (state.display.length === 2 && state.display.startsWith('-'))){
+      setDisplay('0');
+    } else {
+      setDisplay(state.display.slice(0, -1));
+    }
+  }
+
+  const ops = {
+    add: (a,b) => a + b,
+    subtract: (a,b) => a - b,
+    multiply: (a,b) => a * b,
+    divide: (a,b) => b === 0 ? Infinity : a / b
+  };
+  const opSymbol = {
+    add: '+', subtract: '−', multiply: '×', divide: '÷'
+  };
+
+  function handleOperator(nextOp){
+    const inputVal = parseFloat(state.display);
+    if (state.operator && state.awaitingSecond){
+      // sadece operatör değişikliği
+      state.operator = nextOp;
+      updatePrev(`${formatNumber(state.firstOperand)} ${opSymbol[nextOp]}`);
+      return;
+    }
+    if (state.firstOperand == null){
+      state.firstOperand = inputVal;
+    } else if (state.operator){
+      const result = ops[state.operator](state.firstOperand, inputVal);
+      const fixed = roundTo(result, 12);
+      state.firstOperand = fixed;
+      setDisplay(formatNumber(fixed));
+    }
+    state.operator = nextOp;
+    state.awaitingSecond = true;
+    updatePrev(`${formatNumber(state.firstOperand)} ${opSymbol[state.operator]}`);
+  }
+
+  function equals(){
+    if (state.operator == null || state.awaitingSecond) return;
+    const a = state.firstOperand;
+    const b = parseFloat(state.display);
+    let result = ops[state.operator](a, b);
+    if (!Number.isFinite(result)){
+      setDisplay('HATA');
+      updatePrev('');
+      state.firstOperand = null;
+      state.operator = null;
+      state.awaitingSecond = false;
+      return;
+    }
+    result = roundTo(result, 12);
+    setDisplay(formatNumber(result));
+    updatePrev(`${formatNumber(a)} ${opSymbol[state.operator]} ${formatNumber(b)} =`);
+    state.firstOperand = result;
+    state.operator = null;
+    state.awaitingSecond = false;
+    state.lastResult = result;
+  }
+
+  function percent(){
+    const curr = parseFloat(state.display);
+    if (state.firstOperand != null && state.operator && !state.awaitingSecond){
+      // a op (a * b/100)
+      const val = state.firstOperand * (curr / 100);
+      setDisplay(formatNumber(val));
+    } else {
+      setDisplay(formatNumber(curr / 100));
+    }
+  }
+
+  // --- Bellek
+  function memAdd(){
+    const v = parseFloat(state.display);
+    state.memory = roundTo((state.memory || 0) + v, 12);
+    setMemoryIndicator(state.memory !== 0);
+  }
+  function memMinus(){
+    const v = parseFloat(state.display);
+    state.memory = roundTo((state.memory || 0) - v, 12);
+    setMemoryIndicator(state.memory !== 0);
+  }
+  function memRecall(){
+    const v = state.memory || 0;
+    setDisplay(formatNumber(v));
+    state.awaitingSecond = false;
+  }
+  function memClear(){
+    state.memory = 0;
+    setMemoryIndicator(false);
+  }
+
+  // --- UI bağlama
+  keysEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button.key');
+    if (!btn) return;
+
+    const digit = btn.dataset.digit;
+    const act = btn.dataset.action;
+    const op = btn.dataset.op;
+
+    if (digit != null){ inputDigit(digit); beep(); return; }
+    if (act){
+      switch(act){
+        case 'decimal': inputDecimal(); break;
+        case 'sign': toggleSign(); break;
+        case 'c': clearEntry(); break;
+        case 'ac': allClear(); break;
+        case 'equals': equals(); break;
+        case 'percent': percent(); break;
+        case 'mplus': memAdd(); break;
+        case 'mminus': memMinus(); break;
+        case 'mr': memRecall(); break;
+        case 'mc': memClear(); break;
+      }
+      beep();
+      return;
+    }
+    if (op){
+      handleOperator(op);
+      beep(600);
+      return;
+    }
+  });
+
+  // Klavye desteği
+  window.addEventListener('keydown', (e) => {
+    const k = e.key;
+    // Sayılar
+    if (/^\d$/.test(k)){ inputDigit(k); beep(); return; }
+    if (k === '.' || k === ','){ inputDecimal(); beep(); return; }
+    if (k === '+' ){ handleOperator('add'); beep(600); return; }
+    if (k === '-' ){ handleOperator('subtract'); beep(600); return; }
+    if (k === '*' ){ handleOperator('multiply'); beep(600); return; }
+    if (k === '/' ){ handleOperator('divide'); beep(600); return; }
+    if (k === 'Enter' || k === '='){ e.preventDefault(); equals(); beep(520); return; }
+    if (k === 'Backspace'){ backspace(); beep(420); return; }
+    if (k === 'Escape'){ allClear(); beep(380); return; }
+    if (k === '%'){ percent(); beep(520); return; }
+  });
+
+  // Tema
+  themeSel.addEventListener('change', () => {
+    root.setAttribute('data-phosphor', themeSel.value);
+  });
+
+  // Başlangıç
+  setDisplay('0');
+  updatePrev('');
+  setMemoryIndicator(false);
+})();
+</script>
+</body>
+</html>
