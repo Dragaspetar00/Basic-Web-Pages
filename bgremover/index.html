@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Arka Plan Kaldırıcı — Ücretsiz, Hızlı, Tarayıcıda</title>
+  <meta name="description" content="Görsellerin arka planını tek tıkla kaldırın. Hızlı, mobil uyumlu, SEO dostu ve tamamen tarayıcıda çalışır. Şeffaf PNG, renkli arka plan, bulanık zemin ve daha fazlası." />
+  <link rel="canonical" href="https://example.com/arka-plan-kaldirici" />
+  <meta name="theme-color" content="#7c3aed" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Arka Plan Kaldırıcı — Ücretsiz, Hızlı, Tarayıcıda" />
+  <meta property="og:description" content="Görsellerin arka planını tek tıkla kaldırın. Şeffaf PNG, düz renk veya bulanık arka plan. Tamamen tarayıcıda!" />
+  <meta property="og:image" content="https://picsum.photos/1200/630?blur=1" />
+  <meta property="og:url" content="https://example.com/arka-plan-kaldirici" />
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Arka Plan Kaldırıcı — Ücretsiz, Hızlı, Tarayıcıda" />
+  <meta name="twitter:description" content="Görsellerin arka planını tek tıkla kaldırın. Hızlı ve mobil uyumlu." />
+  <meta name="twitter:image" content="https://picsum.photos/1200/630?blur=1" />
+  <!-- Performance hints -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <style>
+    :root {
+      --bg: #0b0b10;
+      --card: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.08);
+      --text: #e8e8ef;
+      --muted: #b7b7c6;
+      --brand: #7c3aed;
+      --brand-2: #22d3ee;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --err: #ef4444;
+      --radius: 16px;
+      --shadow: 0 20px 40px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box }
+    html, body { height: 100% }
+    body {
+      margin: 0; font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% -10%, rgba(124,58,237,.25), transparent 60%),
+        radial-gradient(1000px 700px at 100% 0%, rgba(34,211,238,.15), transparent 65%),
+        radial-gradient(700px 500px at 50% 120%, rgba(124,58,237,.18), transparent 70%),
+        var(--bg);
+    }
+    header {
+      position: sticky; top: 0; backdrop-filter: saturate(140%) blur(14px);
+      background: linear-gradient(180deg, rgba(10,10,16,.7), rgba(10,10,16,.2));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      z-index: 50;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand {
+      display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing:.2px;
+    }
+    .logo {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: conic-gradient(from 180deg, var(--brand), var(--brand-2), var(--brand));
+      box-shadow: 0 10px 30px rgba(124,58,237,.45), inset 0 0 15px rgba(255,255,255,.2);
+    }
+    main .container { padding-block: 28px }
+    .hero {
+      text-align: center; margin-bottom: 18px;
+    }
+    h1 { margin: 10px 0 8px; font-size: clamp(26px, 4vw, 38px); line-height: 1.15; }
+    .subtitle { color: var(--muted); font-size: 15px }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 980px) {
+      .grid { grid-template-columns: 380px 1fr; align-items: start }
+    }
+    .card {
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    /* Uploader */
+    .drop {
+      border: 2px dashed rgba(255,255,255,.15);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align: center;
+      transition: .2s ease;
+      cursor: pointer;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    }
+    .drop:hover { border-color: rgba(124,58,237,.55); box-shadow: 0 0 0 4px rgba(124,58,237,.2) inset }
+    .drop.drag { border-color: var(--brand); background: rgba(124,58,237,.12) }
+    .drop small { color: var(--muted) }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px }
+    .btn {
+      appearance: none; border: 1px solid rgba(255,255,255,.1);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      color: var(--text); border-radius: 12px; padding: 10px 14px; cursor: pointer;
+      transition: .2s ease; font-weight: 600;
+    }
+    .btn[disabled] { opacity: .5; cursor: not-allowed }
+    .btn.primary {
+      background:
+        radial-gradient(100% 100% at 100% 0%, rgba(255,255,255,.18), transparent),
+        linear-gradient(135deg, var(--brand), #5b21b6);
+      border-color: rgba(124,58,237,.6);
+      box-shadow: 0 10px 30px rgba(124,58,237,.35), 0 1px 0 rgba(255,255,255,.15) inset;
+    }
+    .btn.ghost { background: transparent }
+    .hint { color: var(--muted); font-size: 13px }
+    .opt { display: grid; grid-template-columns: 1fr 100px; align-items: center; gap: 10px; margin: 10px 0 }
+    .opt label { color: var(--muted); font-size: 14px }
+    .opt input[type="range"] { width: 100% }
+    .opt input[type="color"] { width: 100%; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,.15); background: transparent }
+    select, input[type="file"] {
+      width: 100%; border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.03); color: var(--text);
+      border-radius: 10px; padding: 10px;
+    }
+    /* Preview */
+    .stage {
+      aspect-ratio: 16/10; width: 100%;
+      background:
+        linear-gradient(45deg, rgba(124,58,237,.12), transparent),
+        repeating-conic-gradient(#2b2b33 0% 25%, #22222a 0% 50%) 50% / 24px 24px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.08);
+      display: grid; place-items: center; overflow: hidden;
+      position: relative;
+    }
+    canvas { max-width: 100%; height: auto; image-rendering: optimizeQuality }
+    .status {
+      position: absolute; bottom: 10px; left: 10px; font-size: 12px; color: var(--muted);
+      background: rgba(0,0,0,.35); padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1)
+    }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background: rgba(255,255,255,.08); border-radius: 6px; padding: 2px 6px; border: 1px solid rgba(255,255,255,.1) }
+    footer { color: var(--muted); text-align: center; padding: 28px 12px }
+    a { color: #a78bfa; text-decoration: none }
+    a:hover { text-decoration: underline }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container row">
+      <div class="brand"><span class="logo" aria-hidden="true"></span> Arka Plan Kaldırıcı</div>
+      <div class="hint">Tamamen tarayıcıda • Ücretsiz</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="hero">
+        <h1>Görsellerin arka planını tek tıkla silin ✨</h1>
+        <p class="subtitle">Şeffaf PNG, düz renk veya bulanık zemin. Hızlı, mobil ve SEO uyumlu.</p>
+      </section>
+
+      <section class="grid">
+        <!-- Left: Controls -->
+        <div class="card">
+          <div id="drop" class="drop" role="button" tabindex="0" aria-label="Görsel yükleyin ya da sürükleyip bırakın">
+            <strong>Görsel yükleyin</strong> veya sürükleyip bırakın
+            <div style="height:8px"></div>
+            <small>Destek: JPG, PNG, WebP • En iyi sonuç: kişi (portre)</small>
+            <div style="height:10px"></div>
+            <input id="file" type="file" accept="image/*" />
+          </div>
+
+          <div class="actions">
+            <button id="removeBtn" class="btn primary" disabled>Arka Planı Kaldır 🚀</button>
+            <button id="downloadPng" class="btn" disabled>İndir PNG</button>
+            <button id="downloadJpg" class="btn" disabled>İndir JPG</button>
+            <button id="downloadWebp" class="btn" disabled>İndir WebP</button>
+          </div>
+
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0" />
+
+          <div class="opt">
+            <label>Arka plan</label>
+            <select id="bgMode">
+              <option value="transparent">Şeffaf</option>
+              <option value="solid" selected>Düz renk</option>
+              <option value="blur">Bulanık</option>
+              <option value="image">Görsel</option>
+            </select>
+          </div>
+
+          <div class="opt" id="colorRow">
+            <label>Renk</label>
+            <input id="bgColor" type="color" value="#111827" />
+          </div>
+
+          <div class="opt" id="bgImageRow" style="display:none">
+            <label>Zemin görseli</label>
+            <input id="bgImage" type="file" accept="image/*" />
+          </div>
+
+          <div class="opt" id="blurRow" style="display:none">
+            <label>Bulanıklık</label>
+            <input id="blurAmt" type="range" min="0" max="30" step="1" value="12" />
+          </div>
+
+          <div class="opt">
+            <label>Kenar yumuşatma</label>
+            <input id="feather" type="range" min="0" max="20" step="1" value="4" />
+          </div>
+
+          <div class="opt">
+            <label>Kalite</label>
+            <select id="quality">
+              <option value="general" selected>Hızlı</option>
+              <option value="landscape">Detaylı</option>
+            </select>
+          </div>
+
+          <div class="opt">
+            <label>Max boyut</label>
+            <select id="maxSize">
+              <option value="1280">1280 px</option>
+              <option value="1920" selected>1920 px</option>
+              <option value="2560">2560 px</option>
+              <option value="0">Orijinal</option>
+            </select>
+          </div>
+
+          <p class="hint">İpucu: <span class="kbd">Space</span> ile son çıktıyı indir, <span class="kbd">R</span> ile yeniden işle.</p>
+        </div>
+
+        <!-- Right: Preview -->
+        <div class="card">
+          <div class="stage">
+            <canvas id="outCanvas" aria-label="İşlenmiş önizleme"></canvas>
+            <div class="status" id="status" aria-live="polite">Hazır</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:16px">
+        <h2 style="margin:0 0 8px">SSS</h2>
+        <details>
+          <summary>Hangi fotoğraflarda iyi çalışır?</summary>
+          <p>Kişi/portre içeren görsellerde en iyi sonucu verir (MediaPipe Selfie Segmentation). Ürün/nesne fotoğrafları için farklı bir model gerekir.</p>
+        </details>
+        <details>
+          <summary>İşlem nerede yapılıyor?</summary>
+          <p>Tüm işlem tarayıcınızda, cihazınızda yapılır. Görselleriniz hiçbir yere yüklenmez.</p>
+        </details>
+        <details>
+          <summary>Çıktı formatı nedir?</summary>
+          <p>Varsayılan şeffaf PNG. Ayrıca JPG ve WebP indirebilirsiniz (şeffaflık yoktur, seçtiğiniz arka plan ile düzleştirilir).</p>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <small>© <span id="year"></span> Arka Plan Kaldırıcı — Tarayıcıda çalışan ücretsiz araç.</small>
+  </footer>
+
+  <noscript>Bu araç JavaScript gerektirir. Lütfen JavaScript'i etkinleştirin.</noscript>
+
+  <!-- Schema.org: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Arka Plan Kaldırıcı",
+    "applicationCategory": "Multimedia",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "description": "Görsellerin arka planını tek tıkla kaldırın. Hızlı, mobil uyumlu ve tarayıcıda çalışır.",
+    "url": "https://example.com/arka-plan-kaldirici"
+  }
+  </script>
+
+  <!-- TFJS + Body Segmentation (ESM) -->
+  <script type="module">
+    import * as tf from "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.17.0/dist/tf-core.esm.js";
+    import "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.17.0/dist/tf-converter.esm.js";
+    import "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.17.0/dist/tf-backend-webgl.esm.js";
+    import * as bodySegmentation from "https://cdn.jsdelivr.net/npm/@tensorflow-models/body-segmentation@0.1.4/dist/body-segmentation.esm.js";
+
+   // UI
+  const els = {
+    file: document.getElementById('file'),
+    drop: document.getElementById('drop'),
+    removeBtn: document.getElementById('removeBtn'),
+    downloadPng: document.getElementById('downloadPng'),
+    downloadJpg: document.getElementById('downloadJpg'),
+    downloadWebp: document.getElementById('downloadWebp'),
+    outCanvas: document.getElementById('outCanvas'),
+    status: document.getElementById('status'),
+    bgMode: document.getElementById('bgMode'),
+    bgColor: document.getElementById('bgColor'),
+    colorRow: document.getElementById('colorRow'),
+    blurRow: document.getElementById('blurRow'),
+    blurAmt: document.getElementById('blurAmt'),
+    bgImageRow: document.getElementById('bgImageRow'),
+    bgImage: document.getElementById('bgImage'),
+    feather: document.getElementById('feather'),
+    quality: document.getElementById('quality'),
+    maxSize: document.getElementById('maxSize')
+  };
+
+  const state = {
+    imgEl: null,
+    bgImgEl: null,
+    segmenter: null,
+    backend: null,
+    subjectCanvas: document.createElement('canvas'),
+    lastMaskCanvas: null,
+    working: false
+  };
+
+  const setStatus = (msg, tone='') => {
+    els.status.textContent = msg;
+    const colors = { ok: 'var(--ok)', warn: 'var(--warn)', err: 'var(--err)' };
+    els.status.style.borderColor = tone ? colors[tone] + '55' : 'rgba(255,255,255,.1)';
+  };
+  const busy = (on) => {
+    state.working = on;
+    els.removeBtn.disabled = on || !state.imgEl;
+    document.body.style.cursor = on ? 'progress' : 'default';
+  };
+  const drawFilled = (ctx, color, w, h) => { ctx.clearRect(0,0,w,h); ctx.fillStyle=color; ctx.fillRect(0,0,w,h); };
+  const fitSize = (nw, nh, maxDim) => {
+    if (!maxDim || maxDim <= 0) return [nw, nh];
+    const s = Math.min(1, maxDim / Math.max(nw, nh));
+    return [Math.round(nw*s), Math.round(nh*s)];
+  };
+  const imgFromFile = (file) => new Promise((res, rej) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); res(img); };
+    img.onerror = rej; img.src = url;
+  });
+
+  // Dynamic loader with CDN fallback + backend fallback
+  const CDN_LIST = ['https://cdn.jsdelivr.net/npm/', 'https://unpkg.com/'];
+  let libs = null; // { tf, bodySeg, wasm }
+  async function loadLibs() {
+    let lastErr = null;
+    for (const base of CDN_LIST) {
+      try {
+        setStatus(`Kütüphaneler yükleniyor… ${new URL(base).host}`);
+        const tf = await import(`${base}@tensorflow/tfjs-core@4.17.0/dist/tf-core.esm.js`);
+        await import(`${base}@tensorflow/tfjs-converter@4.17.0/dist/tf-converter.esm.js`);
+        await import(`${base}@tensorflow/tfjs-backend-cpu@4.17.0/dist/tf-backend-cpu.esm.js`);
+        await import(`${base}@tensorflow/tfjs-backend-webgl@4.17.0/dist/tf-backend-webgl.esm.js`);
+        const wasm = await import(`${base}@tensorflow/tfjs-backend-wasm@4.17.0/dist/tf-backend-wasm.esm.js`);
+        if (wasm.setWasmPaths) {
+          // point WASM binaries to the same CDN
+          wasm.setWasmPaths(`${base}@tensorflow/tfjs-backend-wasm@4.17.0/wasm/`);
+        }
+        const bodySeg = await import(`${base}@tensorflow-models/body-segmentation@0.1.4/dist/body-segmentation.esm.js`);
+        return { tf, bodySeg, wasm };
+      } catch (e) { lastErr = e; }
+    }
+    throw lastErr ?? new Error('Kütüphaneler yüklenemedi');
+  }
+
+  async function chooseBackend(tf) {
+    async function trySet(name) {
+      try {
+        const ok = await tf.setBackend(name);
+        if (!ok) return false;
+        await tf.ready();
+        return true;
+      } catch { return false; }
+    }
+    if (await trySet('webgl')) return 'webgl';
+    if (await trySet('wasm')) return 'wasm';
+    if (await trySet('cpu')) return 'cpu';
+    throw new Error('Uygun TensorFlow.js backend bulunamadı');
+  }
+
+  async function ensureModel() {
+    if (!libs) libs = await loadLibs();
+    if (!state.backend) {
+      setStatus('Çalışma motoru başlatılıyor…');
+      try {
+        state.backend = await chooseBackend(libs.tf);
+        setStatus(`Motor: ${state.backend.toUpperCase()}`, 'ok');
+      } catch (e) {
+        console.error(e);
+        setStatus('TFJS başlatılamadı. Tarayıcıyı güncelleyin veya farklı bir tarayıcı deneyin.', 'err');
+        throw e;
+      }
+    }
+    if (state.segmenter) return state.segmenter;
+    setStatus('Model yükleniyor…');
+    const model = libs.bodySeg.SupportedModels.MediaPipeSelfieSegmentation;
+    const cfg = { runtime: 'tfjs', modelType: els.quality.value }; // general | landscape
+    state.segmenter = await libs.bodySeg.createSegmenter(model, cfg);
+    setStatus('Hazır ✅', 'ok');
+    return state.segmenter;
+  }
+
+  async function process() {
+    if (!state.imgEl) return;
+    busy(true);
+    try {
+      await ensureModel();
+
+      const maxDim = parseInt(els.maxSize.value, 10);
+      const [W, H] = fitSize(state.imgEl.naturalWidth, state.imgEl.naturalHeight, maxDim);
+      const out = els.outCanvas; out.width = W; out.height = H;
+
+      setStatus('Arka plan kaldırılıyor…');
+      const people = await state.segmenter.segmentPeople(state.imgEl, { multiSegmentation: false });
+      if (!people || !people.length) setStatus('Kişi tespit edilemedi, daha belirgin bir portre deneyin.', 'warn');
+
+      const fg = { r:0,g:0,b:0,a:255 }, bg = { r:0,g:0,b:0,a:0 };
+      const maskImageData = await libs.bodySeg.toMask(people, fg, bg);
+
+      const maskCanvas = document.createElement('canvas');
+      maskCanvas.width = maskImageData.width; maskCanvas.height = maskImageData.height;
+      maskCanvas.getContext('2d').putImageData(maskImageData, 0, 0);
+      state.lastMaskCanvas = maskCanvas;
+
+      const subj = state.subjectCanvas; subj.width = W; subj.height = H;
+      const sctx = subj.getContext('2d');
+      sctx.clearRect(0,0,W,H);
+      sctx.drawImage(state.imgEl, 0, 0, W, H);
+      const feather = parseInt(els.feather.value, 10);
+      sctx.save();
+      sctx.globalCompositeOperation = 'destination-in';
+      if (feather > 0) sctx.filter = `blur(${feather}px)`;
+      sctx.drawImage(maskCanvas, 0, 0, W, H);
+      sctx.restore();
+
+      await composeOutput();
+      setStatus('Bitti ✅ İndirebilirsiniz.', 'ok');
+      els.downloadPng.disabled = els.downloadJpg.disabled = els.downloadWebp.disabled = false;
+    } catch (e) {
+      console.error(e);
+      setStatus('Bir şeyler ters gitti. Başka bir görsel ya da tarayıcı deneyin.', 'err');
+    } finally {
+      busy(false);
+    }
+  }
+
+  async function composeOutput() {
+    const out = els.outCanvas, ctx = out.getContext('2d');
+    const W = out.width, H = out.height;
+    ctx.clearRect(0,0,W,H);
+
+    const mode = els.bgMode.value;
+    if (mode === 'solid') {
+      drawFilled(ctx, els.bgColor.value, W, H);
+    } else if (mode === 'blur') {
+      const b = parseInt(els.blurAmt.value, 10);
+      if (b > 0) ctx.filter = `blur(${b}px)`;
+      ctx.drawImage(state.imgEl, 0, 0, W, H);
+      ctx.filter = 'none';
+      ctx.fillStyle = 'rgba(0,0,0,.08)'; ctx.fillRect(0,0,W,H);
+    } else if (mode === 'image' && state.bgImgEl) {
+      ctx.drawImage(state.bgImgEl, 0, 0, W, H);
+    }
+    // transparent: no fill
+    ctx.drawImage(state.subjectCanvas, 0, 0);
+  }
+
+  // Events
+  els.file.addEventListener('change', async e => {
+    const file = e.target.files?.[0]; if (!file) return;
+    state.imgEl = await imgFromFile(file);
+    els.removeBtn.disabled = false;
+    setStatus('Görsel yüklendi. Arka planı kaldırmaya hazır.');
+    process();
+  });
+  const drop = els.drop;
+  const prevent = e => { e.preventDefault(); e.stopPropagation(); };
+  ['dragenter','dragover','dragleave','drop'].forEach(evt => drop.addEventListener(evt, prevent));
+  drop.addEventListener('dragenter', () => drop.classList.add('drag'));
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+  drop.addEventListener('drop', async e => {
+    drop.classList.remove('drag');
+    const file = e.dataTransfer.files?.[0]; if (!file) return;
+    state.imgEl = await imgFromFile(file);
+    els.removeBtn.disabled = false;
+    setStatus('Görsel yüklendi. Arka planı kaldırmaya hazır.');
+    process();
+  });
+  drop.addEventListener('click', () => els.file.click());
+  drop.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') els.file.click(); });
+
+  els.removeBtn.addEventListener('click', process);
+  els.quality.addEventListener('change', async () => { state.segmenter = null; await ensureModel(); if (state.imgEl) process(); });
+  els.maxSize.addEventListener('change', () => state.imgEl && process());
+  els.bgMode.addEventListener('change', () => {
+    const mode = els.bgMode.value;
+    els.colorRow.style.display = mode === 'solid' ? '' : 'none';
+    els.blurRow.style.display = mode === 'blur' ? '' : 'none';
+    els.bgImageRow.style.display = mode === 'image' ? '' : 'none';
+    if (state.imgEl) composeOutput();
+  });
+  els.bgColor.addEventListener('input', () => state.imgEl && composeOutput());
+  els.blurAmt.addEventListener('input', () => state.imgEl && composeOutput());
+  els.feather.addEventListener('input', () => state.imgEl && process());
+  els.bgImage.addEventListener('change', async e => {
+    const f = e.target.files?.[0]; if (f) { state.bgImgEl = await imgFromFile(f); composeOutput(); }
+  });
+
+  function download(type='image/png', name='arka-plan-kaldirici.png', quality=0.92) {
+    const url = els.outCanvas.toDataURL(type, quality);
+    const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  }
+  els.downloadPng.addEventListener('click', () => download('image/png', 'arka-plan-kaldirici.png'));
+  els.downloadJpg.addEventListener('click', () => download('image/jpeg', 'arka-plan-kaldirici.jpg', 0.95));
+  els.downloadWebp.addEventListener('click', () => download('image/webp', 'arka-plan-kaldirici.webp', 0.95));
+
+  window.addEventListener('keydown', (e) => {
+    if (state.working) return;
+    if (e.code === 'Space') { e.preventDefault(); if (!els.downloadPng.disabled) els.downloadPng.click(); }
+    if (e.key.toLowerCase() === 'r') { if (state.imgEl) process(); }
+  });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+  setStatus('Hazır');
+
+  </script>
+</body>
+</html>

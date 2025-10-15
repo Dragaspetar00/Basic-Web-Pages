@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Rastgele Parola Üretici — Hızlı, Güvenli, Mobil Uyumlu</title>
+  <meta name="description" content="Hızlı ve güvenli rastgele parola üretici. Harf, sayı ve simge seçeneklerini belirle, uzunluğu seç, tek tıkla kopyala. Mobil ve SEO uyumlu.">
+  <link rel="canonical" href="https://ornek-site.com/rastgele-parola-uretici">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#0ea5e9">
+  <meta property="og:title" content="Rastgele Parola Üretici — Hızlı ve Güvenli">
+  <meta property="og:description" content="Harf, sayı, simge seç; uzunluk belirle; tek tıkla kopyala.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ornek-site.com/rastgele-parola-uretici">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Rastgele Parola Üretici">
+  <meta name="twitter:description" content="Hızlı ve güvenli parola oluştur.">
+  <style>
+    :root{
+      --bg1:#0ea5e9; --bg2:#6366f1; --card:rgba(255,255,255,.10);
+      --border:rgba(255,255,255,.22); --text:#0b1220; --muted:#41506b;
+      --white: #ffffff; --accent:#22c55e; --danger:#ef4444; --warn:#f59e0b;
+      --shadow: 0 10px 30px rgba(0,0,0,.15);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{ --text:#e8f0ff; --muted:#a5b4d6; --card:rgba(255,255,255,.08); --border:rgba(255,255,255,.18); }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(255,255,255,.25), transparent 60%),
+        radial-gradient(1200px 600px at 110% 110%, rgba(255,255,255,.2), transparent 60%),
+        linear-gradient(120deg, var(--bg1), var(--bg2));
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+      color-scheme: light dark;
+    }
+    .wrap{width:100%; max-width: 960px}
+    header{margin-bottom:18px; text-align:center}
+    h1{
+      margin:0 0 8px; font-size: clamp(22px, 3.2vw, 36px);
+      letter-spacing:.2px;
+      color:#fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,.25);
+    }
+    .subtitle{
+      margin:0 auto; max-width:720px; color:#eef6ff; opacity:.9; font-size:clamp(14px,2vw,16px)
+    }
+
+    .card{
+      backdrop-filter: saturate(140%) blur(8px);
+      -webkit-backdrop-filter: saturate(140%) blur(8px);
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius:18px; box-shadow:var(--shadow);
+      padding:20px;
+    }
+
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:18px}
+    @media (max-width: 840px){ .grid{grid-template-columns: 1fr} }
+
+    .out{
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      border-radius:14px; padding:14px;
+      display:flex; gap:10px; align-items:center;
+    }
+    .out input{
+      width:100%; border:0; outline:0; background:transparent;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: clamp(16px, 3.6vw, 22px);
+      color: var(--text);
+      letter-spacing:.6px;
+    }
+    .btn{
+      appearance:none; border:0; outline:0; cursor:pointer;
+      padding:10px 14px; border-radius:12px;
+      color:#fff; font-weight:600;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      transition: transform .06s ease, filter .2s ease;
+      box-shadow: 0 6px 18px rgba(16,185,129,.35);
+      white-space:nowrap;
+    }
+    .btn:hover{ filter: brightness(1.05) saturate(1.1)}
+    .btn:active{ transform: translateY(1px) scale(.99) }
+    .btn.secondary{
+      background: linear-gradient(135deg, #6366f1, #0ea5e9);
+      box-shadow: 0 6px 18px rgba(99,102,241,.35);
+    }
+    .btn.icon{display:inline-flex; align-items:center; gap:8px}
+
+    .controls{
+      display:grid; gap:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      border-radius:14px; padding:14px;
+    }
+    .row{display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap}
+    .len{
+      display:flex; align-items:center; gap:10px; width:100%;
+    }
+    .len .num{ width:84px; }
+    input[type="number"]{
+      width:100%;
+      border:1px solid var(--border); background: rgba(255,255,255,.08);
+      color:var(--text); border-radius:10px; padding:10px 12px; font-weight:600;
+      font-family:inherit;
+    }
+    input[type="range"]{
+      appearance:none; width:100%; height: 34px; background:transparent;
+    }
+    input[type="range"]::-webkit-slider-runnable-track{
+      height:8px; border-radius:999px; background: linear-gradient(90deg,#60a5fa,#22d3ee);
+      box-shadow: inset 0 0 0 1px var(--border);
+    }
+    input[type="range"]::-webkit-slider-thumb{
+      appearance:none; margin-top:-6px; width:20px; height:20px; border-radius:50%;
+      background:#fff; border:3px solid #0ea5e9; box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    }
+    input[type="range"]::-moz-range-track{
+      height:8px; border-radius:999px; background: linear-gradient(90deg,#60a5fa,#22d3ee);
+      box-shadow: inset 0 0 0 1px var(--border);
+    }
+    input[type="range"]::-moz-range-thumb{
+      width:20px; height:20px; border:none; border-radius:50%; background:#fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    }
+
+    .switches{display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px}
+    @media (max-width:460px){ .switches{grid-template-columns: 1fr} }
+    .switch{
+      display:flex; align-items:center; gap:10px; cursor:pointer;
+      user-select:none; padding:10px 12px; border-radius:12px;
+      border:1px solid var(--border); background: rgba(255,255,255,.05);
+    }
+    .switch input{ position:absolute; opacity:0; width:1px; height:1px; }
+    .toggle{
+      width:46px; height:26px; border-radius:999px; position:relative;
+      background: #0b1220; box-shadow: inset 0 0 0 1px var(--border);
+    }
+    .toggle::after{
+      content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+      background:#fff; transition: transform .2s ease, background .2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,.25);
+    }
+    .switch input:checked + .toggle{ background: linear-gradient(135deg,#22c55e,#06b6d4);}
+    .switch input:checked + .toggle::after{ transform: translateX(20px); background:#fff}
+
+    .hint{ color:var(--muted); font-size:13px; margin-top:6px}
+    .alert{ color:#fff; background: rgba(239,68,68,.9); padding:8px 10px; border-radius:10px; font-size:13px; display:none }
+    .alert.show{ display:block }
+
+    .strength{
+      display:grid; gap:8px; margin-top:10px
+    }
+    .bar{
+      height:12px; border-radius:999px;
+      background: linear-gradient(90deg, #ef4444, #f59e0b 30%, #eab308 55%, #22c55e 85%);
+      position:relative; overflow:hidden; border:1px solid var(--border)
+    }
+    .bar .fill{
+      position:absolute; inset:0 auto 0 0; width:0%; background: rgba(255,255,255,.6);
+      mix-blend-mode: overlay;
+    }
+    .slabel{font-weight:600; font-size:14px}
+
+    footer{
+      text-align:center; color:#eef6ff; opacity:.9; font-size:13px; margin-top:14px
+    }
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;}
+    .sr-only{ position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); border:0 }
+    @media (prefers-reduced-motion: reduce) {
+      *{ animation:none !important; transition:none !important }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Rastgele Parola Üretici",
+    "url":"https://ornek-site.com/rastgele-parola-uretici",
+    "applicationCategory":"SecurityApplication",
+    "operatingSystem":"Any",
+    "description":"Hızlı ve güvenli rastgele parola üretici. Harf, sayı ve simge seçenekleriyle güçlü parolalar oluşturun.",
+    "offers":{"@type":"Offer","price":"0","priceCurrency":"TRY"}
+  }
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Rastgele Parola Üretici</h1>
+      <p class="subtitle">Harf, sayı ve simge seçeneklerini belirle, uzunluğu seç, tek tıkla kopyala. Parolalar cihazında oluşturulur — sunucuya gönderilmez.</p>
+    </header>
+
+    <section class="card">
+      <div class="grid">
+        <div class="left">
+          <div class="out" aria-live="polite">
+            <input id="password" class="mono" type="text" readonly aria-label="Oluşturulan parola">
+            <button id="copyBtn" class="btn icon" type="button" title="Panoya kopyala">
+              <span aria-hidden="true">📋</span> Kopyala
+            </button>
+          </div>
+
+          <div class="strength" aria-live="polite">
+            <div class="bar" aria-hidden="true"><div class="fill" id="strengthFill"></div></div>
+            <div class="slabel" id="strengthText">Güç: —</div>
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="controls">
+            <div class="row len">
+              <label for="lengthRange" class="mono">Uzunluk</label>
+              <input id="lengthRange" type="range" min="6" max="64" value="16" step="1" aria-label="Parola uzunluğu">
+              <input id="lengthNumber" class="num" type="number" min="6" max="64" value="16">
+            </div>
+
+            <div id="alert" class="alert">En az bir karakter türü seçmelisiniz.</div>
+
+            <div class="switches">
+              <label class="switch">
+                <input id="lowercase" type="checkbox" checked>
+                <span class="toggle" aria-hidden="true"></span>
+                <span>Küçük harf (a-z)</span>
+              </label>
+              <label class="switch">
+                <input id="uppercase" type="checkbox" checked>
+                <span class="toggle" aria-hidden="true"></span>
+                <span>Büyük harf (A-Z)</span>
+              </label>
+              <label class="switch">
+                <input id="numbers" type="checkbox" checked>
+                <span class="toggle" aria-hidden="true"></span>
+                <span>Sayılar (0-9)</span>
+              </label>
+              <label class="switch">
+                <input id="symbols" type="checkbox" checked>
+                <span class="toggle" aria-hidden="true"></span>
+                <span>Simge (!@#$...)</span>
+              </label>
+              <label class="switch">
+                <input id="excludeSimilar" type="checkbox">
+                <span class="toggle" aria-hidden="true"></span>
+                <span>Benzerleri çıkar (l, I, 1, O, 0)</span>
+              </label>
+            </div>
+
+            <div class="row" style="justify-content:flex-end; gap:10px; margin-top:4px">
+              <button id="genBtn" class="btn secondary icon" type="button">
+                <span aria-hidden="true">⚡️</span> Oluştur
+              </button>
+            </div>
+            <div class="hint">İpucu: Ayarları değiştirince parola otomatik yenilenir. Enter ile de oluşturabilirsin.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>© <span id="year"></span> Güçlü Parola Aracı — Hızlı • Mobil • SEO uyumlu</footer>
+  </div>
+
+  <script>
+    (() => {
+      const els = {
+        pwd: document.getElementById('password'),
+        copy: document.getElementById('copyBtn'),
+        gen: document.getElementById('genBtn'),
+        lenRange: document.getElementById('lengthRange'),
+        lenNum: document.getElementById('lengthNumber'),
+        lower: document.getElementById('lowercase'),
+        upper: document.getElementById('uppercase'),
+        nums: document.getElementById('numbers'),
+        syms: document.getElementById('symbols'),
+        excl: document.getElementById('excludeSimilar'),
+        alert: document.getElementById('alert'),
+        sf: document.getElementById('strengthFill'),
+        st: document.getElementById('strengthText'),
+        year: document.getElementById('year')
+      };
+      els.year.textContent = new Date().getFullYear();
+
+      const LOWER = "abcdefghijklmnopqrstuvwxyz";
+      const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const NUMS  = "0123456789";
+      const SYMS  = "!@#$%^&*()-_=+[]{};:,.<>/?|~";
+      const SIMILAR = new Set(['i','I','l','L','1','o','O','0']);
+
+      function supportsCrypto(){ return typeof crypto !== 'undefined' && crypto.getRandomValues; }
+
+      function getRandomInt(max){
+        if (max <= 0) return 0;
+        if (!supportsCrypto()) return Math.floor(Math.random() * max);
+        const lim = Math.floor(0x100000000 / max) * max; // reject above lim to avoid bias
+        const buf = new Uint32Array(1);
+        let r;
+        do { crypto.getRandomValues(buf); r = buf[0]; } while (r >= lim);
+        return r % max;
+      }
+
+      function pick(str){ return str[getRandomInt(str.length)]; }
+
+      function shuffle(arr){
+        for (let i = arr.length - 1; i > 0; i--){
+          const j = getRandomInt(i + 1);
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function filterSimilar(str){
+        let out = "";
+        for (const ch of str){ if (!SIMILAR.has(ch)) out += ch; }
+        return out;
+      }
+
+      function currentOptions(){
+        const length = clamp(parseInt(els.lenRange.value,10) || 16, parseInt(els.lenRange.min,10), parseInt(els.lenRange.max,10));
+        let sets = [];
+        if (els.lower.checked) sets.push(LOWER);
+        if (els.upper.checked) sets.push(UPPER);
+        if (els.nums.checked)  sets.push(NUMS);
+        if (els.syms.checked)  sets.push(SYMS);
+        if (els.excl.checked) sets = sets.map(filterSimilar);
+        // remove any emptied set (possible when excluding similar and set is very small)
+        sets = sets.filter(s => s && s.length > 0);
+        return { length, sets };
+      }
+
+      function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+      function generate(){
+        const { length, sets } = currentOptions();
+
+        const valid = sets.length > 0;
+        els.alert.classList.toggle('show', !valid);
+        els.gen.disabled = !valid;
+        els.copy.disabled = !valid;
+
+        if(!valid){
+          els.pwd.value = "";
+          updateStrength("", sets);
+          return;
+        }
+
+        // Build combined pool
+        const pool = sets.join('');
+        let result = [];
+
+        // Ensure at least one from each set when possible
+        for (let i = 0; i < sets.length && i < length; i++){
+          result.push(pick(sets[i]));
+        }
+
+        // Fill the rest
+        for (let i = result.length; i < length; i++){
+          result.push(pick(pool));
+        }
+
+        // Shuffle for randomness
+        result = shuffle(result);
+        const password = result.join('');
+        els.pwd.value = password;
+        updateStrength(password, sets);
+      }
+
+      function updateStrength(password, sets){
+        // Entropy approximation: bits = length * log2(poolSize)
+        const poolSize = [...new Set(sets.join('').split(''))].length || 1;
+        const bits = Math.round((password.length * Math.log2(poolSize)) * 10) / 10;
+
+        let label = "Zayıf", pct = 15, color = "#ef4444";
+        if (bits >= 80){ label = "Çok güçlü"; pct = 100; color = "#22c55e";}
+        else if (bits >= 60){ label = "Güçlü"; pct = 75; color = "#84cc16";}
+        else if (bits >= 40){ label = "Orta"; pct = 50; color = "#f59e0b";}
+        els.st.textContent = password ? `Güç: ${label} • ~${bits} bit` : "Güç: —";
+        els.sf.style.width = pct + "%";
+        els.sf.style.background = color;
+        els.sf.parentElement.setAttribute('role','progressbar');
+        els.sf.parentElement.setAttribute('aria-valuemin','0');
+        els.sf.parentElement.setAttribute('aria-valuemax','100');
+        els.sf.parentElement.setAttribute('aria-valuenow', String(pct));
+        els.sf.parentElement.setAttribute('aria-label', `Parola gücü: ${label}`);
+      }
+
+      function copy(){
+        const text = els.pwd.value;
+        if(!text){ ping(els.copy, "Önce parola oluştur"); return; }
+        if (navigator.clipboard && window.isSecureContext){
+          navigator.clipboard.writeText(text).then(() => ping(els.copy, "Kopyalandı!")).catch(() => fallbackCopy(text));
+        } else {
+          fallbackCopy(text);
+        }
+      }
+
+      function fallbackCopy(text){
+        try{
+          const ta = document.createElement('textarea');
+          ta.value = text; ta.setAttribute('readonly','');
+          ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+          ta.select(); document.execCommand('copy');
+          document.body.removeChild(ta);
+          ping(els.copy, "Kopyalandı!");
+        }catch(e){ ping(els.copy, "Kopyalanamadı"); }
+      }
+
+      let revertTimer;
+      function ping(btn, msg){
+        const prev = btn.textContent;
+        btn.textContent = msg;
+        clearTimeout(revertTimer);
+        revertTimer = setTimeout(() => btn.textContent = prev, 1200);
+      }
+
+      // Sync length inputs
+      function syncFromRange(){ els.lenNum.value = els.lenRange.value; generate(); }
+      function syncFromNum(){
+        const v = clamp(parseInt(els.lenNum.value,10) || 16, parseInt(els.lenNum.min,10), parseInt(els.lenNum.max,10));
+        els.lenNum.value = v; els.lenRange.value = v; generate();
+      }
+
+      // Events
+      els.gen.addEventListener('click', generate);
+      els.copy.addEventListener('click', copy);
+      els.lenRange.addEventListener('input', syncFromRange);
+      els.lenNum.addEventListener('input', syncFromNum);
+      [els.lower, els.upper, els.nums, els.syms, els.excl].forEach(cb => cb.addEventListener('change', generate));
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){ e.preventDefault(); generate(); }
+      });
+
+      // First run
+      generate();
+    })();
+  </script>
+</body>
+</html>

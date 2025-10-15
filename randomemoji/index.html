@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Rastgele Emoji Üretici 🚀 | Hızlı, Mobil ve SEO Uyumlu</title>
+  <meta name="description" content="Tek dokunuşla rastgele emoji üret. Hızlı, mobil ve SEO uyumlu emoji üretici: kopyala, paylaş, favorilere ekle, geçmişe göz at." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <!-- TODO: Aşağıdaki canonical ve og:url değerlerini kendi alan adınıza göre güncelleyin -->
+  <link rel="canonical" href="https://ornek.site/emoji" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Rastgele Emoji Üretici 🚀" />
+  <meta property="og:description" content="Tek tıkla rastgele emoji üret, kopyala ve paylaş. Mobil ve SEO uyumlu." />
+  <meta property="og:url" content="https://ornek.site/emoji" />
+  <meta property="og:image" content="https://og-playground.vercel.app/api/og?title=Rastgele%20Emoji%20%C3%9Cretici&subtitle=Tek%20dokunu%C5%9Fla%20emoji%20%C3%BCret%2C%20kopyala%2C%20payla%C5%9F" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Rastgele Emoji Üretici 🚀" />
+  <meta name="twitter:description" content="Tek tıkla rastgele emoji üret, kopyala ve paylaş. Mobil ve SEO uyumlu." />
+  <meta name="twitter:image" content="https://og-playground.vercel.app/api/og?title=Rastgele%20Emoji%20%C3%9Cretici&subtitle=Tek%20dokunu%C5%9Fla%20emoji%20%C3%BCret%2C%20kopyala%2C%20payla%C5%9F" />
+  <!-- Emoji favicon (SVG) -->
+  <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="128" width="128"><rect width="100%25" height="100%25" rx="24" ry="24" fill="%230ea5e9"/><text x="50%25" y="56%25" dominant-baseline="middle" text-anchor="middle" font-size="86">🎲</text></svg>' />
+
+  <style>
+    :root{
+      --bg-1: #0ea5e9; /* sky-500 */
+      --bg-2: #9333ea; /* purple-600 */
+      --bg-3: #14b8a6; /* teal-500 */
+      --text: #0b1220;
+      --muted: #4b5563;
+      --card: rgba(255,255,255,0.75);
+      --border: rgba(255,255,255,0.35);
+      --btn: #0ea5e9;
+      --btn-text: #001018;
+      --ring: rgba(14,165,233,0.35);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --text: #eef2ff;
+        --muted: #9aa4b2;
+        --card: rgba(17,25,40,0.65);
+        --border: rgba(255,255,255,0.12);
+        --btn: #22d3ee; /* cyan-400 */
+        --btn-text: #061318;
+        --ring: rgba(34,211,238,0.35);
+      }
+    }
+    [data-theme="light"]{
+      --text: #0b1220;
+      --muted: #4b5563;
+      --card: rgba(255,255,255,0.75);
+      --border: rgba(0,0,0,0.08);
+      --btn: #0ea5e9;
+      --btn-text: #001018;
+      --ring: rgba(14,165,233,0.35);
+    }
+    [data-theme="dark"]{
+      --text: #eef2ff;
+      --muted: #9aa4b2;
+      --card: rgba(17,25,40,0.65);
+      --border: rgba(255,255,255,0.12);
+      --btn: #22d3ee;
+      --btn-text: #061318;
+      --ring: rgba(34,211,238,0.35);
+    }
+
+    *{ box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1250px 650px at 10% -10%, rgba(20,184,166,.35), transparent 60%),
+        radial-gradient(900px 600px at 110% 10%, rgba(147,51,234,.35), transparent 60%),
+        radial-gradient(900px 600px at -10% 110%, rgba(14,165,233,.35), transparent 60%),
+        linear-gradient(135deg, #0b1020, #0a0f1a 45%, #0b1320);
+      min-height:100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    @media (prefers-reduced-motion: no-preference){
+      body{
+        background-size: 200% 200%;
+        animation: bgShift 18s ease-in-out infinite;
+      }
+      @keyframes bgShift{
+        0%,100%{ background-position: 0% 50%, 100% 50%, 0% 100%, 0 0; }
+        50%{ background-position: 100% 50%, 0% 50%, 100% 0%, 0 0; }
+      }
+    }
+
+    .container{
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: clamp(16px, 3vw, 28px);
+    }
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom: 18px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo{
+      width:40px; height:40px; border-radius:12px;
+      display:grid; place-items:center; font-size:22px;
+      background: linear-gradient(145deg, rgba(255,255,255,.6), rgba(255,255,255,.25));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.6),
+        0 10px 30px rgba(14,165,233,.25);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+    }
+    h1{
+      margin:0;
+      font-size: clamp(22px, 3.2vw, 34px);
+      letter-spacing: .2px;
+      background: linear-gradient(90deg, #a5b4fc, #22d3ee, #f0abfc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .theme-toggle{
+      border:1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 999px;
+      padding:8px 12px;
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer;
+      backdrop-filter: blur(6px);
+    }
+    .theme-toggle:focus-visible{ outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    .hero{
+      display:grid; gap:16px;
+      grid-template-columns: 1fr;
+      margin-top: 8px;
+    }
+    .card{
+      border:1px solid var(--border);
+      background: var(--card);
+      border-radius: 16px;
+      padding: clamp(14px, 2.6vw, 20px);
+      backdrop-filter: blur(10px) saturate(120%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.25),
+        0 10px 35px rgba(0,0,0,.15);
+    }
+    .controls{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;
+    }
+    .left-controls, .right-controls{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .select{
+      appearance:none;
+      border:1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+      min-width: 210px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.2);
+    }
+    .select:focus-visible{ outline:3px solid var(--ring); outline-offset:2px; }
+
+    .emoji-stage{
+      display:grid; gap:14px; justify-items:center; text-align:center;
+      padding: clamp(10px, 1.5vw, 12px);
+    }
+    .emoji-card{
+      width: clamp(140px, 28vw, 220px);
+      height: clamp(140px, 28vw, 220px);
+      display:grid; place-items:center;
+      border-radius: 28px;
+      border:1px solid var(--border);
+      background:
+        radial-gradient(140% 120% at 30% 10%, rgba(255,255,255,.5), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.05));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.35),
+        0 20px 60px rgba(34, 211, 238, .20);
+      backdrop-filter: blur(8px) saturate(120%);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+    .emoji{
+      font-size: clamp(72px, 11vw, 120px);
+      line-height: 1;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,.25));
+    }
+    .hint{
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .btns{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;
+    }
+    .btn{
+      border:1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display:inline-flex; align-items:center; gap:8px;
+      cursor:pointer; background: var(--card); color: var(--text);
+      transition: transform .12s ease, box-shadow .15s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
+    }
+    .btn.primary{
+      background: linear-gradient(90deg, var(--btn), #a78bfa);
+      color: var(--btn-text);
+      border:0;
+      box-shadow: 0 12px 25px rgba(14,165,233,.25);
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+    .btn:focus-visible{ outline:3px solid var(--ring); outline-offset:2px; }
+
+    .chips{
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    }
+    .chip{
+      font-size: 13px; color: var(--muted);
+      border:1px dashed var(--border);
+      padding: 6px 10px; border-radius: 999px;
+    }
+
+    .lists{
+      display:grid; gap:14px;
+    }
+    .pill-title{
+      font-size: 14px; color: var(--muted);
+      display:flex; align-items:center; gap:8px;
+    }
+    .history, .favorites{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .mini{
+      border:1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      width:44px; height:44px; display:grid; place-items:center;
+      font-size: 22px; cursor: pointer;
+      transition: transform .12s ease;
+    }
+    .mini:hover{ transform: translateY(-2px); }
+    .fav-item{
+      position: relative;
+    }
+    .remove{
+      position:absolute; top:-7px; right:-7px;
+      width:22px; height:22px; border-radius:999px; border:1px solid var(--border);
+      background: rgba(0,0,0,.2); color:white;
+      display:grid; place-items:center; font-size:12px; cursor:pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,.2);
+    }
+    .toast{
+      position: fixed; left:50%; transform: translateX(-50%) translateY(20px);
+      bottom: 18px;
+      border:1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      padding: 10px 14px; border-radius: 12px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      opacity:0; pointer-events:none; transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+    details{ border:1px solid var(--border); border-radius:12px; padding:10px 12px; background: var(--card); }
+    summary{ cursor:pointer; font-weight:600; }
+    footer{ color: var(--muted); font-size:13px; text-align:center; padding: 16px 0; }
+
+    /* Pop animation */
+    @keyframes pop { 0%{ transform: scale(.9);} 60%{ transform: scale(1.03);} 100%{ transform: scale(1);} }
+    .pop{ animation: pop .28s ease-out; }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Rastgele Emoji Üretici",
+    "description":"Tek tıkla rastgele emoji üret. Kopyala, paylaş, favorilere ekle. Hızlı, mobil ve SEO uyumlu.",
+    "applicationCategory":"UtilityApplication",
+    "operatingSystem":"Web",
+    "url":"https://ornek.site/emoji",
+    "inLanguage":"tr-TR",
+    "offers": { "@type":"Offer", "price":"0", "priceCurrency":"TRY" },
+    "potentialAction": {
+      "@type":"Action",
+      "name":"Emoji Üret",
+      "target":"https://ornek.site/emoji"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a class="sr-only" href="#main">İçeriğe geç</a>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🎲</div>
+        <h1>Rastgele Emoji Üretici</h1>
+      </div>
+      <button id="themeToggle" class="theme-toggle" aria-pressed="false" title="Temayı değiştir (Açık/Koyu)">
+        <span id="themeIcon" aria-hidden="true">🌙</span>
+        <span class="label">Tema</span>
+      </button>
+    </header>
+
+    <main id="main" class="hero" role="main">
+      <section class="card">
+        <div class="controls">
+          <div class="left-controls">
+            <label for="category" class="sr-only">Kategori</label>
+            <select id="category" class="select" aria-label="Emoji kategorisi">
+              <option value="all">Tümü</option>
+            </select>
+            <div class="chips">
+              <span class="chip">Mobil uyumlu</span>
+              <span class="chip">Hızlı</span>
+              <span class="chip">SEO hazır</span>
+            </div>
+          </div>
+          <div class="right-controls">
+            <button id="generateBtn" class="btn primary" title="Yeni emoji üret (boşluk)">
+              🚀 Üret
+            </button>
+            <button id="copyBtn" class="btn" title="Emojiyi kopyala (Enter)">
+              📋 Kopyala
+            </button>
+            <button id="shareBtn" class="btn" title="Emojiyi paylaş">
+              📣 Paylaş
+            </button>
+            <button id="favBtn" class="btn" aria-pressed="false" title="Favorilere ekle/kaldır">
+              ⭐ Favori
+            </button>
+          </div>
+        </div>
+
+        <div class="emoji-stage">
+          <button id="emojiCard" class="emoji-card" aria-label="Seçili emoji" title="Tıkla: kopyala • Çift tık: üret">
+            <div id="emoji" class="emoji" aria-hidden="true">😀</div>
+          </button>
+          <div class="hint">İpucu: boşluk veya Enter ile üret • Tıkla ile kopyala</div>
+        </div>
+      </section>
+
+      <section class="card lists" aria-labelledby="historyTitle">
+        <div class="pill-title" id="historyTitle">🕒 Son üretilenler</div>
+        <div id="history" class="history" role="list"></div>
+      </section>
+
+      <section class="card lists" aria-labelledby="favoritesTitle">
+        <div class="pill-title" id="favoritesTitle">⭐ Favorilerim</div>
+        <div id="favorites" class="favorites" role="list"></div>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-top:0">Emoji Üretme Aracı Hakkında</h2>
+        <p>Bu araç, popüler kategorilerden rastgele emoji üretir. Ürettiğin emojiyi kopyalayabilir, cihazının paylaşım menüsüyle gönderebilir veya favorilerine ekleyebilirsin. Tümü tek sayfada, hızlı ve tamamen mobil uyumlu.</p>
+        <details>
+          <summary>SSS — Sık Sorulan Sorular</summary>
+          <ul>
+            <li>Nasıl kopyalarım? — Emojiye veya “Kopyala” butonuna dokunman yeterli.</li>
+            <li>Paylaş butonu ne yapar? — Destekleyen cihazlarda yerel paylaşım menüsünü açar; değilse otomatik kopyalar.</li>
+            <li>Favorilerim nerede saklanıyor? — Tarayıcında (localStorage). Silene kadar kalır.</li>
+            <li>Kısayollar? — Boşluk veya Enter: üret. Emojiye tıkla: kopyala.</li>
+          </ul>
+        </details>
+      </section>
+    </main>
+
+    <footer>
+      <span>🎯 Hızlı • 📱 Mobil • 🔍 SEO uyumlu</span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <style>
+    /* Erişilebilirlik için ekran okuyucu sınıfı */
+    .sr-only{ position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+  </style>
+
+  <script>
+    // Kategoriler ve emoji listeleri
+    const CATEGORIES = {
+      smileys: {
+        label: "Yüz İfadeleri",
+        list: ["😀","😁","😂","🤣","😃","😅","😉","😊","🙂","🙃","😋","😎","😍","😘","🥰","😗","😐","😑","😶","😏","🙄","🤐","🤨","🤔","🤗","🤭","🤫","😴","🤤","😪","😵","🤯","🤒","🤕","🤧","🤢","🤮","🥴","😷","😭","😮","😲","😳","😠","😡","🤬","😤","💀","👻","🎃","🤡"]
+      },
+      animals: {
+        label: "Hayvan & Doğa",
+        list: ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🙈","🙉","🙊","🐔","🐦","🐧","🦆","🦅","🦉","🦇","🐺","🦄","🐝","🦋","🐞","🐢","🐙","🐠","🐬","🐳","🦈","🐊","🦓","🦍","🐘","🦒","🦘","🐫","🐐","🐑","🦔","🌵","🌸","🌈"]
+      },
+      food: {
+        label: "Yiyecek & İçecek",
+        list: ["🍏","🍎","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🍆","🥑","🥦","🥬","🥒","🌶️","🫑","🌽","🥕","🧄","🧅","🥔","🍞","🥖","🥨","🧀","🥞","🍗","🥩","🥓","🍔","🍟","🍕","🌭","🌮","🌯","🍣","🍱","🍜","🍝","🍲","🍤","🍩","🍪","🎂","🧁","🍦","🍫","🍬"]
+      },
+      activity: {
+        label: "Aktivite",
+        list: ["⚽","🏀","🏈","⚾","🎾","🏐","🏉","🥏","🎱","🏓","🏸","🥅","🥊","🥋","🎽","🛹","🛼","⛸️","🧗‍♂️","🏄‍♀️","🏊‍♂️","🚴‍♀️","🚵‍♂️","🤸‍♂️","🤾‍♀️","🤽‍♂️","🧘‍♂️","🎯","♟️","🧩","🎮","🕹️","🎲","🧸","🎻","🎸","🥁","🎤","🎧","🎼","🎹","🎺","🎷","🎬","🎥"]
+      },
+      travel: {
+        label: "Seyahat & Yerler",
+        list: ["🚗","🚕","🚙","🚌","🚎","🏎️","🚓","🚑","🚒","🚐","🚚","🚛","🚜","🛴","🚲","🛵","🏍️","🚨","✈️","🛫","🛬","🛩️","🚁","🚟","🚠","🚡","🚀","🛸","⛵","🚤","🛥️","🚢","⚓","⛽","🗺️","🗽","🗼","🗻","⛰️","🏖️","🏝️","🏞️","🏛️","🏔️","🏙️","🏰","⛩️","🕌","⛪️","🕍"]
+      },
+      objects: {
+        label: "Objeler",
+        list: ["🔑","🔒","🔓","🔧","🔨","⚒️","⛏️","🪓","🧱","🔩","⚙️","🧲","🧪","🧬","💉","💊","🩺","🩹","🧯","🔬","🔭","💡","🔦","🕯️","📦","📫","📮","✉️","📧","📨","📩","📜","📃","📄","📊","📈","📉","🗂️","🗃️","🗄️","🗒️","🗓️","📆","📅","📇","📋","📁","📂","🗞️","📰","🖊️","✒️","🖌️","🖍️","📝","✏️","🖨️","💻","🖥️","🖱️","⌨️","🕹️","💽","💾","💿","📀","📸","📹","📷","🎥","🧮","📠","🔖","🔗","📎","🖇️","✂️","📏","📐"]
+      },
+      symbols: {
+        label: "Semboller",
+        list: ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","🔱","⭐️","🌟","✨","🔥","💧","❄️","🌈","⚡️","💥","🎉","🎊","🎈","🔔","🔕","🔇","🔈","🔉","🔊","✅","✔️","☑️","❌","➕","➖","➗","➰","➿","✳️","✴️","❇️","©️","®️","™️","➡️","⬅️","⬆️","⬇️","↗️","↘️","↙️","↖️","↔️","↕️","⤴️","⤵️","🔼","🔽","⏫","⏬","⏭️","⏮️","⏯️","⏸️","⏹️","⏺️","⏪","⏩","⏰","⏱️","⏲️","⏳","⌛️","♻️","🆕","🆒","🆓","🆘","🛑","🚫","⚠️","‼️","❓","❕","💯"]
+      },
+      flags: {
+        label: "Bayraklar",
+        list: ["🇹🇷","🇺🇸","🇬🇧","🇪🇺","🇩🇪","🇫🇷","🇪🇸","🇮🇹","🇨🇳","🇯🇵","🇰🇷","🇧🇷","🇨🇦","🇲🇽","🇮🇳","🇦🇪","🇸🇦","🇳🇱","🇸🇪","🇳🇴","🇫🇮","🇩🇰","🇵🇱","🇬🇷","🇵🇹","🇺🇦","🇨🇭","🇧🇪","🇦🇹","🇷🇴"]
+      }
+    };
+    const ALL = Object.values(CATEGORIES).flatMap(c => c.list);
+
+    // DOM
+    const categorySelect = document.getElementById('category');
+    const emojiEl = document.getElementById('emoji');
+    const emojiCard = document.getElementById('emojiCard');
+    const generateBtn = document.getElementById('generateBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const favBtn = document.getElementById('favBtn');
+    const historyEl = document.getElementById('history');
+    const favoritesEl = document.getElementById('favorites');
+    const toastEl = document.getElementById('toast');
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+
+    // State
+    let current = "😀";
+    const state = {
+      favorites: new Set(),
+      history: []
+    };
+
+    // Init category options
+    for (const [key, cat] of Object.entries(CATEGORIES)) {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = cat.label;
+      categorySelect.appendChild(opt);
+    }
+
+    // Theme
+    const applyThemeIcon = () => {
+      const dark = document.documentElement.dataset.theme === 'dark' ||
+                   (!document.documentElement.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      themeIcon.textContent = dark ? '🌞' : '🌙';
+      themeToggle.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    };
+    const loadTheme = () => {
+      const saved = localStorage.getItem('emoji-theme');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.dataset.theme = saved;
+      }
+      applyThemeIcon();
+    };
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.dataset.theme;
+      const next = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('emoji-theme', next);
+      applyThemeIcon();
+    });
+    loadTheme();
+
+    // Utils
+    const randOf = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const getPool = () => {
+      const val = categorySelect.value;
+      if (val === 'all') return ALL;
+      return CATEGORIES[val]?.list || ALL;
+    };
+    const popAnim = (el) => {
+      el.classList.remove('pop');
+      // Force reflow
+      void el.offsetWidth;
+      el.classList.add('pop');
+    };
+    const toast = (msg) => {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toastEl.classList.remove('show'), 1500);
+    };
+    const copy = async (text) => {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text; ta.setAttribute('readonly','');
+          ta.style.position='absolute'; ta.style.left='-9999px';
+          document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+        }
+        toast('Kopyalandı!');
+      } catch(e){ toast('Kopyalanamadı 😕'); }
+    };
+
+    // Core
+    const setEmoji = (e) => {
+      current = e;
+      emojiEl.textContent = e;
+      popAnim(emojiCard);
+      updateFavButton();
+    };
+    const generate = () => {
+      const pool = getPool();
+      let next = randOf(pool);
+      // Aynı emojiyi art arda verme olasılığını azalt
+      if (pool.length > 1 && next === current) next = randOf(pool);
+      setEmoji(next);
+      pushHistory(next);
+    };
+
+    // History
+    const pushHistory = (e) => {
+      // Baştansa sil
+      state.history.unshift(e);
+      // Tekilleştir
+      const seen = new Set();
+      state.history = state.history.filter(x => (seen.has(x) ? false : (seen.add(x), true)));
+      // Limit
+      state.history = state.history.slice(0, 16);
+      renderHistory();
+    };
+    const renderHistory = () => {
+      historyEl.innerHTML = '';
+      if (!state.history.length){
+        const empty = document.createElement('div');
+        empty.textContent = 'Henüz içerik yok. Hadi bir emoji üret!';
+        empty.style.color = 'var(--muted)';
+        historyEl.appendChild(empty);
+        return;
+      }
+      state.history.forEach(e => {
+        const b = document.createElement('button');
+        b.className = 'mini'; b.textContent = e; b.title = 'Tıkla: kopyala';
+        b.addEventListener('click', () => copy(e));
+        historyEl.appendChild(b);
+      });
+    };
+
+    // Favorites
+    const saveFavs = () => localStorage.setItem('emoji-favs-v1', JSON.stringify([...state.favorites]));
+    const loadFavs = () => {
+      try{
+        const raw = JSON.parse(localStorage.getItem('emoji-favs-v1') || '[]');
+        state.favorites = new Set(raw);
+      } catch{ state.favorites = new Set(); }
+      renderFavs();
+    };
+    const renderFavs = () => {
+      favoritesEl.innerHTML = '';
+      if (!state.favorites.size){
+        const empty = document.createElement('div');
+        empty.textContent = 'Favorin yok. ⭐ ile ekleyebilirsin.';
+        empty.style.color = 'var(--muted)';
+        favoritesEl.appendChild(empty);
+        return;
+      }
+      [...state.favorites].slice(0, 60).forEach(e => {
+        const wrap = document.createElement('div');
+        wrap.className = 'fav-item';
+        const b = document.createElement('button');
+        b.className = 'mini'; b.textContent = e; b.title = 'Tıkla: kopyala';
+        b.addEventListener('click', () => copy(e));
+        const rm = document.createElement('button');
+        rm.className = 'remove'; rm.setAttribute('aria-label','Favoriden kaldır'); rm.title='Kaldır';
+        rm.textContent = '×';
+        rm.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          state.favorites.delete(e); saveFavs(); renderFavs(); updateFavButton();
+        });
+        wrap.appendChild(b); wrap.appendChild(rm);
+        favoritesEl.appendChild(wrap);
+      });
+    };
+    const toggleFav = () => {
+      if (state.favorites.has(current)) {
+        state.favorites.delete(current);
+        toast('Favorilerden kaldırıldı');
+      } else {
+        state.favorites.add(current);
+        toast('Favorilere eklendi');
+      }
+      saveFavs(); renderFavs(); updateFavButton();
+    };
+    const updateFavButton = () => {
+      const active = state.favorites.has(current);
+      favBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      favBtn.innerHTML = (active ? '💛 Favori' : '⭐ Favori');
+    };
+
+    // Events
+    generateBtn.addEventListener('click', generate);
+    categorySelect.addEventListener('change', generate);
+    copyBtn.addEventListener('click', () => copy(current));
+    emojiCard.addEventListener('click', () => copy(current));
+    emojiCard.addEventListener('dblclick', generate);
+    favBtn.addEventListener('click', toggleFav);
+    shareBtn.addEventListener('click', async () => {
+      const text = current + ' — Rastgele Emoji Üretici';
+      const url = location.href;
+      if (navigator.share) {
+        try{ await navigator.share({ text, url }); } catch(e){}
+      } else {
+        copy(current);
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+        generate();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault(); toggleFav();
+      }
+    });
+
+    // Initial
+    loadFavs();
+    renderHistory();
+    // İlk üretim
+    generate();
+  </script>
+</body>
+</html>

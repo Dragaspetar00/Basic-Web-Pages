@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>PDF Birleştirici ve Bölücü | Hızlı, Ücretsiz, Güvenli</title>
+  <meta name="description" content="PDF birleştir, böl, sayfa çıkar ve sırala. Sürükle-bırak ile çalışır. Tamamen tarayıcıda, hızlı ve güvenli. Mobil uyumlu ve ücretsiz." />
+  <meta name="keywords" content="PDF birleştir, PDF böl, PDF sayfa çıkar, PDF sırala, PDF düzenle, online PDF birleştirici" />
+  <link rel="canonical" href="https://example.com/pdf-birlestirici-bolucu" />
+  <meta property="og:title" content="PDF Birleştirici ve Bölücü" />
+  <meta property="og:description" content="PDF sayfalarını birleştir, çıkar, sırala ve aralığa göre böl. Hızlı, güvenli ve tamamen tarayıcıda." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b0f1a;
+      --bg-2: #0f1526;
+      --panel: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.10);
+      --text: #e8eefc;
+      --muted: #a7b4d4;
+      --primary: #7c5cff;
+      --primary-2: #00d4ff;
+      --danger: #ff4d6d;
+      --ok: #20d38a;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background: radial-gradient(1200px 800px at 20% 0%, #101731 0%, var(--bg) 60%) fixed; color:var(--text); font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial; }
+    a{color:inherit}
+    .container{max-width:1200px;margin:0 auto;padding:24px 16px 64px}
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:14px;
+    }
+    .logo{
+      width:52px;height:52px; border-radius:14px;
+      background: linear-gradient(135deg,var(--primary),#5ce1e6);
+      box-shadow: 0 8px 30px rgba(124,92,255,.45), inset 0 0 18px rgba(0,0,0,.25);
+      display:flex; align-items:center; justify-content:center; color:white; font-weight:700;
+    }
+    h1{
+      margin:0;font-size:clamp(18px,3vw,28px);
+      background: linear-gradient(90deg, #ffffff 0%, #bcd5ff 50%, #7bdffd 100%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      letter-spacing:.2px
+    }
+    .tag{font-size:13px;color:var(--muted); margin-top:4px}
+    .top-actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:0; background:linear-gradient(135deg, #1a2040, #131a33);
+      color:var(--text); padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow: var(--shadow);
+      display:inline-flex; align-items:center; gap:8px; transition: transform .15s ease, background .2s ease, box-shadow .2s;
+      font-weight:600; font-size:14px;
+    }
+    .btn:hover{ transform: translateY(-1px); background:linear-gradient(135deg, #232b55, #172042); }
+    .btn:active{ transform: translateY(0); }
+    .btn.primary{ background: linear-gradient(135deg, #6a57ff, #00d1ff); color:#0b1020; }
+    .btn.primary:hover{ filter: brightness(1.05); }
+    .btn.danger{ background: linear-gradient(135deg, #3a1120, #250a14); color:#ffd6e0; }
+    .btn.ghost{ background: var(--panel); backdrop-filter: blur(8px); }
+    .btn.small{ padding:8px 12px; font-size:13px; border-radius:10px; }
+    .hidden{display:none !important}
+
+    /* Dropzone */
+    .dropzone{
+      margin:18px 0 22px; padding:20px; border:1px dashed rgba(255,255,255,0.2); border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(124,92,255,0.12), rgba(0,212,255,0.08));
+      position:relative; overflow:hidden;
+    }
+    .dropzone:hover{ border-color: rgba(255,255,255,0.35); }
+    .dz-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .dz-info{display:flex; align-items:center; gap:12px; color:#dbe7ff; }
+    .dz-info svg{opacity:.9}
+    .dz-note{color:var(--muted); font-size:13px}
+    .dropzone.dragover{ outline:2px solid var(--primary-2); box-shadow: 0 0 0 6px rgba(0,212,255,0.12) inset; }
+
+    /* Toolbar */
+    .toolbar{
+      position:sticky; top:8px; z-index:10; background:linear-gradient(135deg, rgba(15,21,38,.9), rgba(10,14,26,.9));
+      border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:10px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; backdrop-filter: blur(10px);
+    }
+    .stat{color:var(--muted); font-size:13px; padding:6px 10px; background:var(--panel); border-radius:10px}
+    .range{
+      display:flex; align-items:center; gap:8px; background:var(--panel); padding:8px 10px; border-radius:10px;
+    }
+    .range input{
+      background:transparent; border:0; outline:none; color:var(--text); min-width:160px;
+    }
+    .range small{color:var(--muted)}
+
+    /* Grid */
+    .grid{
+      margin-top:16px; display:grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:14px;
+    }
+    .card{
+      position:relative; border-radius:14px; overflow:hidden; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      border:1px solid rgba(255,255,255,0.08); box-shadow: var(--shadow);
+      cursor:grab; user-select:none; transition: transform .15s ease, box-shadow .15s ease;
+      min-height: 220px;
+    }
+    .card.dragging{ opacity:.75; transform: rotate(1deg) scale(.98); }
+    .thumb{
+      display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, #0a0f21, #0a0d18);
+      height:200px;
+    }
+    .thumb canvas, .thumb img{ width:100%; height:100%; object-fit:contain; display:block; }
+    .meta{
+      display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; font-size:12px; color:var(--muted);
+      background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.25));
+    }
+    .badge{
+      background: linear-gradient(135deg, rgba(124,92,255,.25), rgba(0,212,255,.25));
+      color:#cfe7ff; padding:4px 8px; border-radius:999px; font-weight:600; font-size:11px;
+      border:1px solid rgba(255,255,255,0.12);
+    }
+    .actions{
+      position:absolute; right:8px; top:8px; display:flex; gap:6px;
+    }
+    .icon-btn{
+      background: rgba(0,0,0,0.35); color:#e9f0ff; border:1px solid rgba(255,255,255,0.15); width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+      transition: transform .12s ease, background .12s ease; backdrop-filter: blur(6px);
+    }
+    .icon-btn:hover{ transform: translateY(-1px); background:rgba(255,255,255,0.18); }
+    .select{
+      position:absolute; left:8px; top:8px;
+      display:flex; align-items:center; gap:6px; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18);
+      padding:4px 6px; border-radius:10px; backdrop-filter: blur(8px);
+    }
+    .select input{ width:16px; height:16px }
+    .index-chip{
+      position:absolute; left:8px; bottom:8px; background:rgba(124,92,255,0.22); color:#dbe3ff; padding:4px 8px; border-radius:8px; font-weight:700; border:1px solid rgba(255,255,255,0.14); font-size:12px;
+      text-shadow: 0 2px 8px rgba(124,92,255,.5);
+    }
+
+    .empty{
+      text-align:center; color:var(--muted); padding:40px 10px; border:1px dashed rgba(255,255,255,0.15); border-radius:14px; background: var(--panel);
+    }
+
+    /* Busy overlay */
+    .busy{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(6,10,18,0.5); backdrop-filter: blur(3px); z-index: 999;
+    }
+    .busy.show{ display:flex; }
+    .spinner{
+      width:64px;height:64px;border-radius:50%;
+      border: 6px solid rgba(255,255,255,.15);
+      border-top-color: var(--primary-2); border-right-color: var(--primary);
+      animation: spin 1s linear infinite; margin-bottom:14px;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg)} }
+    .busy-panel{
+      background: linear-gradient(135deg, rgba(22,28,48,.9), rgba(10,14,26,.9)); border:1px solid rgba(255,255,255,.12);
+      border-radius:16px; padding:20px 24px; text-align:center; box-shadow: var(--shadow);
+    }
+    .busy-panel p{ margin:8px 0 0; color:#cfe0ff }
+
+    /* Toast */
+    .toast{
+      position: fixed; bottom:18px; left:50%; transform: translateX(-50%); padding:10px 14px; font-size:14px; color:#05101d;
+      background: linear-gradient(135deg, #7c5cff, #00d4ff); border-radius:999px; box-shadow: var(--shadow); display:none; z-index:9999;
+    }
+    .toast.show{ display:inline-flex; }
+
+    footer{ margin-top:32px; color:var(--muted); font-size:13px; line-height:1.65; }
+    footer .pill{ display:inline-block; background: rgba(255,255,255,0.08); padding:4px 10px; border-radius:999px; margin:6px 6px 0 0; border:1px solid rgba(255,255,255,0.12) }
+    @media (max-width:720px){
+      .dz-inner{flex-direction:column; align-items:flex-start}
+      .thumb{ height:180px }
+      .card{ min-height:200px }
+      .toolbar{ top:0 }
+    }
+  </style>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"PDF Birleştirici ve Bölücü",
+    "description":"PDF sayfalarını birleştir, çıkar, sırala ve aralığa göre böl. Tamamen tarayıcıda ve ücretsiz.",
+    "applicationCategory":"UtilitiesApplication",
+    "operatingSystem":"Any"
+  }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">PDF</div>
+        <div>
+          <h1>PDF Birleştirici ve Bölücü</h1>
+          <div class="tag">PDF sayfalarını sürükle-bırak ile birleştir, çıkar, sırala ve aralığa göre böl. Her şey tarayıcında.</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <label class="btn primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16" stroke="#061020" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          PDF Yükle
+          <input id="fileInput" type="file" accept="application/pdf" multiple class="hidden" />
+        </label>
+        <button class="btn ghost small" id="reverseBtn" title="Sıralamayı ters çevir">
+          ↕️ Ters Çevir
+        </button>
+        <button class="btn ghost small" id="autoSortBtn" title="Dosya ve sayfa sırasına göre yeniden sırala">
+          🔀 Otomatik Sırala
+        </button>
+        <button class="btn danger small" id="clearAllBtn">🧹 Tümünü Temizle</button>
+      </div>
+    </header>
+
+    <div class="dropzone" id="dropzone" aria-label="PDF sürükle ve bırak alanı">
+      <div class="dz-inner">
+        <div class="dz-info">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 12V3m0 9l-4-4m4 4l4-4M4 15v3a3 3 0 003 3h10a3 3 0 003-3v-3" stroke="#a7b4d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div>
+            <div style="font-weight:600;">PDF dosyalarını buraya bırak</div>
+            <div class="dz-note">Veya “PDF Yükle” butonunu kullan. Gizlilik: Dosyaların bilgisayarını terk etmez.</div>
+          </div>
+        </div>
+        <div class="top-actions">
+          <div class="stat"><span id="fileCount">0</span> dosya</div>
+          <div class="stat"><span id="pageCount">0</span> sayfa</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar" role="toolbar" aria-label="Araç çubuğu">
+      <div class="range">
+        <span>Aralık:</span>
+        <input id="rangeInput" type="text" placeholder="örn: 1-3,5,8-10" />
+        <small>(Geçerli sıraya göre)</small>
+      </div>
+      <button class="btn small" id="splitRangeBtn" title="Aralığa göre yeni PDF indir">✂️ Aralığa göre Böl</button>
+      <button class="btn small" id="extractSelectedBtn" title="Seçili sayfaları indir">📤 Seçilenleri Çıkar</button>
+      <button class="btn small" id="removeSelectedBtn" title="Seçili sayfaları listeden kaldır">🗑️ Seçilenleri Kaldır</button>
+      <button class="btn primary" id="mergeBtn" title="Mevcut sıraya göre tek PDF indir">💾 Birleştir ve İndir</button>
+    </div>
+
+    <div id="gridContainer">
+      <div class="empty" id="emptyState">
+        Henüz sayfa yok. PDF’lerini yükle, sayfaları sürükleyerek sırala; seçim yap, çıkar ya da böl ve indir.
+      </div>
+      <div class="grid" id="pagesGrid" aria-live="polite"></div>
+    </div>
+
+    <footer>
+      <p><strong>İpuçları:</strong> Kartlara tıklayarak seçim yap, sürükleyerek sırala. “Aralık” kutusuna 1-3,5,8-10 gibi değerler yazabilirsin. Tüm işlemler cihazında gerçekleşir.</p>
+      <p>
+        <span class="pill">PDF birleştir</span>
+        <span class="pill">PDF böl</span>
+        <span class="pill">PDF sayfa çıkar</span>
+        <span class="pill">PDF sırala</span>
+        <span class="pill">Tamamen tarayıcıda</span>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Busy overlay -->
+  <div class="busy" id="busy">
+    <div class="busy-panel">
+      <div class="spinner"></div>
+      <p id="busyText">İşleniyor...</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Hazır!</div>
+
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script>
+    // Worker ayarı (PDF.js)
+    if (window['pdfjsLib']) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+    }
+  </script>
+
+  <script>
+  (function(){
+    const $ = (sel, el=document)=> el.querySelector(sel);
+    const $$ = (sel, el=document)=> Array.from(el.querySelectorAll(sel));
+
+    // Elements
+    const fileInput = $('#fileInput');
+    const dropzone = $('#dropzone');
+    const pagesGrid = $('#pagesGrid');
+    const emptyState = $('#emptyState');
+    const fileCountEl = $('#fileCount');
+    const pageCountEl = $('#pageCount');
+
+    const removeSelectedBtn = $('#removeSelectedBtn');
+    const extractSelectedBtn = $('#extractSelectedBtn');
+    const splitRangeBtn = $('#splitRangeBtn');
+    const reverseBtn = $('#reverseBtn');
+    const autoSortBtn = $('#autoSortBtn');
+    const clearAllBtn = $('#clearAllBtn');
+    const mergeBtn = $('#mergeBtn');
+    const rangeInput = $('#rangeInput');
+    const busy = $('#busy');
+    const busyText = $('#busyText');
+    const toast = $('#toast');
+
+    // Data
+    let sources = new Map(); // id -> {id, name, bytes, pdfLibDoc, pdfjsDoc, numPages, fileIndex}
+    let pages = []; // {id, srcId, pageIndex, selected, thumbUrl}
+    let fileIndexCounter = 0;
+    let lastSelectedIndex = null;
+    let observer = null;
+
+    function uid(){ return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
+    function showBusy(text='İşleniyor...'){ busyText.textContent = text; busy.classList.add('show'); }
+    function hideBusy(){ busy.classList.remove('show'); }
+    function showToast(msg='Hazır!', timeout=1800){
+      toast.textContent = msg; toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), timeout);
+    }
+
+    function updateCounters(){
+      fileCountEl.textContent = sources.size;
+      pageCountEl.textContent = pages.length;
+      emptyState.style.display = pages.length ? 'none' : 'block';
+    }
+
+    async function handleFiles(fileList){
+      const files = Array.from(fileList).filter(f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
+      if(!files.length){ showToast('PDF bulunamadı.'); return; }
+      showBusy('PDF yükleniyor...');
+      for(const file of files){
+        try{
+          const bytes = new Uint8Array(await file.arrayBuffer());
+          // Load with pdf-lib for merging
+          const pdfLibDoc = await PDFLib.PDFDocument.load(bytes);
+          // Load with pdf.js for thumbnails
+          const pdfjsDoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+
+          const srcId = uid();
+          const numPages = pdfjsDoc.numPages;
+          sources.set(srcId, { id: srcId, name: file.name, bytes, pdfLibDoc, pdfjsDoc, numPages, fileIndex: fileIndexCounter++ });
+
+          for(let i=0;i<numPages;i++){
+            pages.push({ id: uid(), srcId, pageIndex: i, selected: false, thumbUrl: null });
+          }
+        }catch(err){
+          console.error(err);
+          showToast('Bir dosya yüklenemedi.');
+        }
+      }
+      renderPages();
+      updateCounters();
+      hideBusy();
+      showToast('PDF yüklendi ✅');
+    }
+
+    // Render grid
+    function renderPages(){
+      pagesGrid.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      for(let i=0;i<pages.length;i++){
+        const p = pages[i];
+        const src = sources.get(p.srcId);
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.setAttribute('draggable', 'true');
+        card.dataset.pid = p.id;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+        actions.innerHTML = `
+          <button class="icon-btn" title="Bu sayfayı kaldır" data-action="remove">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 7h12m-1 0l-1 12a2 2 0 01-2 2H9a2 2 0 01-2-2L6 7m3 0V5a2 2 0 012-2h2a2 2 0 012 2v2" stroke="#ffd6e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        `;
+
+        const select = document.createElement('div');
+        select.className = 'select';
+        select.innerHTML = `
+          <input type="checkbox" ${p.selected?'checked':''} aria-label="Seç"/>
+          <span style="font-size:12px;color:#d7e3ff">Seç</span>
+        `;
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb';
+        const img = document.createElement('img');
+        img.alt = `Önizleme: ${src?.name || 'PDF'} sayfa ${p.pageIndex+1}`;
+        img.style.opacity = .95;
+        thumb.appendChild(img);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `
+          <div class="badge" title="${src?.name || ''}">${truncate(src?.name || 'PDF', 18)}</div>
+          <div>#${p.pageIndex+1}</div>
+        `;
+
+        const idx = document.createElement('div');
+        idx.className = 'index-chip';
+        idx.textContent = (i+1).toString();
+
+        card.appendChild(actions);
+        card.appendChild(select);
+        card.appendChild(thumb);
+        card.appendChild(meta);
+        card.appendChild(idx);
+
+        // Events
+        select.querySelector('input').addEventListener('change', (e)=>{
+          p.selected = e.target.checked;
+          // visual emphasize
+          card.style.outline = p.selected ? '2px solid rgba(124,92,255,.9)' : '';
+          card.style.boxShadow = p.selected ? '0 0 0 6px rgba(124,92,255,.15), var(--shadow)' : 'var(--shadow)';
+        });
+
+        card.addEventListener('click', (e)=>{
+          // avoid clicks on buttons
+          if(e.target.closest('.icon-btn') || e.target.tagName === 'INPUT') return;
+          // toggle selection
+          p.selected = !p.selected;
+          select.querySelector('input').checked = p.selected;
+          card.style.outline = p.selected ? '2px solid rgba(124,92,255,.9)' : '';
+          card.style.boxShadow = p.selected ? '0 0 0 6px rgba(124,92,255,.15), var(--shadow)' : 'var(--shadow)';
+          // shift range select
+          const thisIndex = pages.findIndex(x => x.id === p.id);
+          if(e.shiftKey && lastSelectedIndex != null){
+            const [a,b] = [lastSelectedIndex, thisIndex].sort((x,y)=>x-y);
+            for(let j=a;j<=b;j++){ pages[j].selected = true; }
+            // re-render only selection outlines
+            $$('.card', pagesGrid).forEach((el, k)=>{
+              const pp = pages[k];
+              const chk = el.querySelector('.select input');
+              if(chk){ chk.checked = !!pp.selected; }
+              el.style.outline = pp.selected ? '2px solid rgba(124,92,255,.9)' : '';
+              el.style.boxShadow = pp.selected ? '0 0 0 6px rgba(124,92,255,.15), var(--shadow)' : 'var(--shadow)';
+            });
+          }
+          lastSelectedIndex = thisIndex;
+        });
+
+        actions.querySelector('[data-action="remove"]').addEventListener('click', (e)=>{
+          e.stopPropagation();
+          removePageById(p.id);
+        });
+
+        // Drag & drop
+        card.addEventListener('dragstart', (e)=>{
+          e.dataTransfer.setData('text/plain', p.id);
+          card.classList.add('dragging');
+        });
+        card.addEventListener('dragend', ()=> card.classList.remove('dragging'));
+        card.addEventListener('dragover', (e)=>{
+          e.preventDefault();
+          card.style.outline = '2px dashed rgba(0,212,255,.6)';
+        });
+        card.addEventListener('dragleave', ()=>{
+          card.style.outline = pages.find(x=>x.id===p.id)?.selected ? '2px solid rgba(124,92,255,.9)' : '';
+        });
+        card.addEventListener('drop', (e)=>{
+          e.preventDefault();
+          const fromId = e.dataTransfer.getData('text/plain');
+          const toId = p.id;
+          if(fromId && toId && fromId!==toId){
+            const cardRect = card.getBoundingClientRect();
+            const insertAfter = (e.clientY - cardRect.top) > (cardRect.height/2); // vertical insert
+            movePage(fromId, toId, insertAfter);
+          }
+          card.style.outline = pages.find(x=>x.id===p.id)?.selected ? '2px solid rgba(124,92,255,.9)' : '';
+        });
+
+        // Lazy thumbs
+        if(!observer){
+          observer = new IntersectionObserver(onIntersect, { root: null, rootMargin: '200px 0px', threshold: 0.01 });
+        }
+        img.dataset.pid = p.id;
+        observer.observe(img);
+
+        frag.appendChild(card);
+      }
+      pagesGrid.appendChild(frag);
+      refreshIndices();
+    }
+
+    function removePageById(id){
+      const idx = pages.findIndex(x=>x.id===id);
+      if(idx>-1){
+        pages.splice(idx,1);
+        renderPages();
+        updateCounters();
+      }
+    }
+
+    function refreshIndices(){
+      $$('.index-chip', pagesGrid).forEach((el, i)=> el.textContent = (i+1).toString());
+    }
+
+    async function onIntersect(entries){
+      for(const entry of entries){
+        if(entry.isIntersecting){
+          const img = entry.target;
+          const pid = img.dataset.pid;
+          const p = pages.find(x=>x.id===pid);
+          if(!p) continue;
+          if(p.thumbUrl){
+            img.src = p.thumbUrl;
+            observer.unobserve(img);
+            continue;
+          }
+          try {
+            const src = sources.get(p.srcId);
+            if(!src) continue;
+            const page = await src.pdfjsDoc.getPage(p.pageIndex+1);
+            const desiredWidth = 320; // retina için iyi
+            const viewport = page.getViewport({ scale: 1.0 });
+            const scale = desiredWidth / viewport.width;
+            const scaledVp = page.getViewport({ scale });
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d', { alpha: false });
+            canvas.width = Math.ceil(scaledVp.width);
+            canvas.height = Math.ceil(scaledVp.height);
+            await page.render({ canvasContext: ctx, viewport: scaledVp }).promise;
+            const url = canvas.toDataURL('image/webp', 0.9);
+            p.thumbUrl = url;
+            img.src = url;
+            observer.unobserve(img);
+          } catch (err){
+            console.warn('Thumb error', err);
+            img.removeAttribute('data-pid');
+            img.src = '';
+            observer.unobserve(img);
+          }
+        }
+      }
+    }
+
+    function truncate(str, len){
+      if(!str) return '';
+      return str.length>len ? (str.slice(0, len-3)+'...') : str;
+    }
+
+    function movePage(fromId, toId, insertAfter=false){
+      const fromIdx = pages.findIndex(x=>x.id===fromId);
+      const toIdx = pages.findIndex(x=>x.id===toId);
+      if(fromIdx<0 || toIdx<0) return;
+      const [item] = pages.splice(fromIdx,1);
+      let insertIndex = toIdx;
+      if(insertAfter) insertIndex = toIdx >= fromIdx ? toIdx : toIdx+1;
+      if(insertAfter && toIdx >= 0) insertIndex = toIdx + (toIdx < fromIdx ? 1 : 0);
+      if(!insertAfter && toIdx >= fromIdx) insertIndex = toIdx;
+      pages.splice(insertIndex, 0, item);
+      renderPages();
+    }
+
+    // Actions
+    removeSelectedBtn.addEventListener('click', ()=>{
+      const before = pages.length;
+      pages = pages.filter(p => !p.selected);
+      renderPages(); updateCounters();
+      showToast(`${before - pages.length} sayfa kaldırıldı`);
+    });
+
+    extractSelectedBtn.addEventListener('click', async ()=>{
+      const selected = pages.filter(p=>p.selected);
+      if(!selected.length){ showToast('Seçili sayfa yok'); return; }
+      await exportPages(selected, 'secilen-sayfalar.pdf', 'Seçilen sayfalar dışa aktarılıyor...');
+    });
+
+    splitRangeBtn.addEventListener('click', async ()=>{
+      const input = rangeInput.value.trim();
+      if(!input){ showToast('Aralık gir'); return; }
+      const indices = parseRange(input, pages.length);
+      if(!indices.length){ showToast('Geçersiz aralık'); return; }
+      const subset = indices.map(i=> pages[i]).filter(Boolean);
+      await exportPages(subset, 'araliga-gore-bolum.pdf', 'Aralığa göre PDF oluşturuluyor...');
+    });
+
+    reverseBtn.addEventListener('click', ()=>{
+      pages.reverse(); renderPages(); showToast('Sıra tersine çevrildi');
+    });
+
+    autoSortBtn.addEventListener('click', ()=>{
+      pages.sort((a,b)=>{
+        const sa = sources.get(a.srcId)?.fileIndex ?? 0;
+        const sb = sources.get(b.srcId)?.fileIndex ?? 0;
+        if(sa !== sb) return sa - sb;
+        return a.pageIndex - b.pageIndex;
+      });
+      renderPages(); showToast('Otomatik sıralandı');
+    });
+
+    clearAllBtn.addEventListener('click', ()=>{
+      if(!pages.length) return;
+      pages = [];
+      for(const s of sources.values()){
+        try{ s.pdfjsDoc?.destroy?.(); }catch{}
+      }
+      sources.clear();
+      renderPages(); updateCounters();
+      showToast('Temizlendi');
+    });
+
+    mergeBtn.addEventListener('click', async ()=>{
+      if(!pages.length){ showToast('Sayfa yok'); return; }
+      await exportPages(pages, suggestedMergedName(), 'Birleştiriliyor...');
+    });
+
+    function suggestedMergedName(){
+      const names = Array.from(sources.values()).slice(0,3).map(s=> s.name.replace(/\.pdf$/i,''));
+      const suffix = sources.size>3 ? `+${sources.size-3}` : '';
+      return (names.join('_') + suffix || 'birlestirilmis') + '.pdf';
+    }
+
+    function parseRange(text, max){
+      // support: "1-3,5, 8-10"
+      const clean = text.replace(/\s+/g,'');
+      if(!clean) return [];
+      const set = new Set();
+      const parts = clean.split(',');
+      for(const part of parts){
+        if(!part) continue;
+        if(/^\d+$/.test(part)){
+          const n = parseInt(part,10);
+          if(n>=1 && n<=max) set.add(n-1);
+        } else if(/^\d+-\d+$/.test(part)){
+          let [a,b] = part.split('-').map(x=>parseInt(x,10));
+          if(a>b) [a,b]=[b,a];
+          a = Math.max(1, a); b = Math.min(max, b);
+          for(let i=a;i<=b;i++) set.add(i-1);
+        }
+      }
+      return Array.from(set).sort((a,b)=>a-b);
+    }
+
+    async function exportPages(pageList, filename='cikti.pdf', busyMsg='Dışa aktarılıyor...'){
+      showBusy(busyMsg);
+      try{
+        const out = await PDFLib.PDFDocument.create();
+        // Cache source docs (already loaded)
+        for(const p of pageList){
+          const src = sources.get(p.srcId);
+          if(!src) continue;
+          const copied = await out.copyPages(src.pdfLibDoc, [p.pageIndex]);
+          out.addPage(copied[0]);
+        }
+        const pdfBytes = await out.save();
+        downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), filename);
+        hideBusy();
+        showToast('İndiriliyor 📥');
+      } catch (err){
+        console.error(err);
+        hideBusy();
+        showToast('Bir şeyler ters gitti');
+      }
+    }
+
+    function downloadBlob(blob, filename){
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=> URL.revokeObjectURL(url), 2000);
+    }
+
+    // Dropzone
+    dropzone.addEventListener('dragover', (e)=>{ e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', ()=> dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e)=>{
+      e.preventDefault(); dropzone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e)=> handleFiles(e.target.files));
+
+    // Keyboard: Ctrl/Cmd+A select all
+    document.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a'){
+        e.preventDefault();
+        pages.forEach(p=> p.selected = true);
+        $$('.card', pagesGrid).forEach(el=>{
+          el.style.outline = '2px solid rgba(124,92,255,.9)';
+          el.style.boxShadow = '0 0 0 6px rgba(124,92,255,.15), var(--shadow)';
+          const inp = el.querySelector('.select input'); if(inp) inp.checked = true;
+        });
+      }
+    });
+
+    // Initial
+    updateCounters();
+
+  })();
+  </script>
+</body>
+</html>

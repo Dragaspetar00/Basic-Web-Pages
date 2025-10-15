@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <meta name="description" content="Password Strength Tester: Şifrenizin gücünü anlık analiz edin. Entropi, tahmini kırılma süresi, uyarılar ve öneriler. Hızlı, mobil uyumlu ve SEO dostu." />
+  <meta name="keywords" content="password strength tester, şifre gücü, şifre analizi, parola güvenliği, entropy, crack time" />
+  <meta name="author" content="Password Strength Tester" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <title>Password Strength Tester | Şifre Güvenliği Analizi</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Password Strength Tester | Şifre Güvenliği Analizi" />
+  <meta property="og:description" content="Şifrenizin gücünü anlık analiz edin. Entropi, tahmini kırılma süresi, uyarılar ve öneriler." />
+  <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'></svg>" />
+  <meta property="og:url" content="." />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Password Strength Tester | Şifre Güvenliği Analizi" />
+  <meta name="twitter:description" content="Şifrenizin gücünü anlık analiz edin. Entropi, tahmini kırılma süresi, uyarılar ve öneriler." />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Password Strength Tester",
+    "applicationCategory": "SecurityApplication",
+    "operatingSystem": "Web",
+    "description": "Şifre gücünü anlık analiz eden, mobil ve SEO uyumlu web aracı.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg: #0b1220;
+      --bg2: #0f172a;
+      --text: #e6f0ff;
+      --muted: #9fb0c8;
+      --card: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.14);
+      --shadow: 0 10px 40px rgba(0,0,0,0.35);
+      --accent1: #06b6d4; /* cyan */
+      --accent2: #7c3aed; /* purple */
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad:  #ef4444;
+      --ring: 0deg; /* dynamic */
+      --ring-color: #ef4444; /* dynamic */
+      --bar: 0%; /* dynamic */
+      --bar-color: #ef4444; /* dynamic */
+      --focus: 0 0 0 3px rgba(14,165,233,0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 20% 0%, #0a1a34, transparent),
+                  radial-gradient(800px 500px at 80% 0%, #160a2b, transparent),
+                  linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow-x: hidden;
+    }
+
+    /* animated ambient glow */
+    .glow {
+      position: fixed;
+      inset: -20% -10%;
+      z-index: -1;
+      filter: blur(80px) saturate(120%);
+      opacity: .45;
+      pointer-events: none;
+      background:
+        radial-gradient(400px 300px at 20% 20%, rgba(6,182,212,.5), transparent 60%),
+        radial-gradient(400px 300px at 80% 10%, rgba(124,58,237,.5), transparent 60%);
+      animation: float 16s ease-in-out infinite alternate;
+    }
+    @keyframes float {
+      0% { transform: translateY(-2%) scale(1); }
+      100% { transform: translateY(2%) scale(1.03); }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .glow { animation: none; }
+    }
+
+    .container{
+      max-width: 980px;
+      margin: clamp(18px, 4vw, 36px) auto;
+      padding: 20px;
+    }
+    header{
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    h1{
+      font-size: clamp(24px, 3.4vw, 38px);
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .subtitle{
+      color: var(--muted);
+      font-size: clamp(14px, 2vw, 16px);
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: clamp(14px, 3vw, 22px);
+    }
+
+    .input-row{
+      position: relative;
+      display: grid;
+      gap: 10px;
+    }
+    label{
+      font-weight: 600;
+      font-size: 14px;
+      color: #cfe2ff;
+      letter-spacing: .02em;
+    }
+    .pw-wrap{
+      position: relative;
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+    input[type="password"], input[type="text"]{
+      flex: 1;
+      background: rgba(17,24,39,.6);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 14px 44px 14px 14px;
+      font-size: 16px;
+      outline: none;
+      transition: box-shadow .2s, border-color .2s, background .2s;
+    }
+    input::placeholder{ color: #8da4c7; }
+    input:focus{ box-shadow: var(--focus); border-color: rgba(14,165,233,.6); background: rgba(17,24,39,.75); }
+
+    .icon-btn{
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: #d3e1ff;
+      cursor: pointer;
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+    }
+    .icon-btn:hover{ background: rgba(255,255,255,.06); }
+    .actions{
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 10px;
+    }
+    .btn{
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: linear-gradient(90deg, rgba(6,182,212,.14), rgba(124,58,237,.14));
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .2s, border-color .2s, background .2s;
+    }
+    .btn:hover{
+      border-color: rgba(255,255,255,0.28);
+      box-shadow: 0 6px 20px rgba(6,182,212,.15), 0 6px 20px rgba(124,58,237,.12);
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .grid{
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+    @media (max-width: 720px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .gauge{
+      width: 140px; height: 140px;
+      display: grid; place-items: center;
+      position: relative;
+    }
+    .ring{
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background:
+        radial-gradient(closest-side, rgba(16,23,41,1) 78%, transparent 80% 100%),
+        conic-gradient(var(--ring-color) var(--ring), rgba(255,255,255,0.08) 0);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 0 0 3px rgba(255,255,255,0.04);
+    }
+    .ring::after{
+      content: "";
+      position: absolute; inset: 10px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      pointer-events: none;
+    }
+    .score-label{
+      position: absolute;
+      display: grid; place-items: center;
+      text-align: center;
+      font-weight: 800;
+      letter-spacing: .03em;
+      font-size: 14px;
+      width: 100%; height: 100%;
+      color: var(--text);
+      text-shadow: 0 1px 0 rgba(0,0,0,.25);
+    }
+    .score-label small{
+      display: block;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .results{
+      display: grid; gap: 12px;
+    }
+
+    .meter{
+      position: relative;
+      height: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .meter > span{
+      display: block;
+      height: 100%;
+      width: var(--bar);
+      background: linear-gradient(90deg, var(--bar-color), var(--accent2));
+      transition: width .25s ease, background .25s ease;
+    }
+    .facts{
+      display: grid; gap: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .facts strong{ color: #d9e7ff; }
+
+    .checks{
+      display: grid; gap: 8px; margin-top: 4px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .check{
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .check.ok{ color: #c7ffdb; border-color: rgba(34,197,94,.35); background: rgba(34,197,94,.08); }
+    .check.warn{ color: #ffe1b3; border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.08); }
+    .check.bad{ color: #ffd0d0; border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.08); }
+    .check svg{ flex: 0 0 auto; }
+
+    .suggestions{
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(255,255,255,.16);
+    }
+    .suggestions h3{
+      margin: 0 0 8px 0; font-size: 14px; color: #cfe2ff;
+    }
+    .suggestions ul{
+      margin: 0; padding-left: 18px; color: var(--muted);
+    }
+    .suggestions li{ margin: 6px 0; }
+
+    footer{
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .note{
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: rgba(14,165,233,.08);
+      border: 1px solid rgba(14,165,233,.28);
+      border-radius: 10px;
+      color: #cfefff;
+    }
+    .inline-icon{
+      width: 18px; height: 18px;
+      vertical-align: -3px; margin-right: 6px;
+      opacity: .95;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="container">
+    <header>
+      <h1>Password Strength Tester – Şifre Güvenliği Analizi</h1>
+      <p class="subtitle">Şifrenizi yazın; entropi, tahmini kırılma süresi, uyarılar ve akıllı önerileri anında görün. Tüm işlemler cihazınızda, çevrimdışı çalışır.</p>
+    </header>
+
+    <section class="card" aria-label="Şifre test aracı">
+      <div class="input-row">
+        <label for="pw">Şifreniz</label>
+        <div class="pw-wrap">
+          <input id="pw" type="password" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Şifrenizi yazın veya güçlü bir şifre üretin…" aria-describedby="helper" aria-label="Şifre girişi" />
+          <button class="icon-btn" id="toggle" aria-label="Şifreyi göster/gizle" title="Göster/Gizle">
+            <svg id="eye" width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke="currentColor" stroke-width="1.6"/>
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+          </button>
+        </div>
+        <div id="helper" class="actions" aria-live="polite">
+          <button class="btn" id="gen" title="Güçlü şifre üret">
+            <svg class="inline-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            Güçlü Şifre Üret
+          </button>
+          <button class="btn" id="copy" title="Kopyala">
+            <svg class="inline-icon" viewBox="0 0 24 24" fill="none">
+              <rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/>
+              <rect x="4" y="4" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6" opacity=".7"/>
+            </svg>
+            Kopyala
+          </button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="gauge" aria-hidden="false">
+          <div class="ring" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Şifre gücü göstergesi"></div>
+          <div class="score-label" id="scoreLabel">
+            —
+            <small>Güç</small>
+          </div>
+        </div>
+
+        <div class="results">
+          <div class="meter" aria-hidden="true"><span></span></div>
+
+          <div class="facts" aria-live="polite">
+            <div>Entropi: <strong id="entropy">0</strong> bit</div>
+            <div>Tahmini kırılma süresi (offline GPU ~10¹⁰/s): <strong id="time">anında</strong></div>
+          </div>
+
+          <div class="checks" id="checks">
+            <div class="check" id="c-length">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              En az 12 karakter
+            </div>
+            <div class="check" id="c-lower">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 12c0-3 2-5 5-5s5 2 5 5v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Küçük harf içeriyor
+            </div>
+            <div class="check" id="c-upper">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 17l5-10 5 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Büyük harf içeriyor
+            </div>
+            <div class="check" id="c-digit">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 7h8l-2 10H6l2-10Z" stroke="currentColor" stroke-width="1.8"/></svg>
+              Rakam içeriyor
+            </div>
+            <div class="check" id="c-symbol">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Sembol içeriyor
+            </div>
+            <div class="check" id="c-seq">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 16l4-8 4 8 4-8 4 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Sıralı/klavye deseni yok
+            </div>
+            <div class="check" id="c-repeat">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h10a5 5 0 1 1-3.5 8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Tekrarlayan desen yok
+            </div>
+            <div class="check" id="c-common">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M7 7h10M9 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Yaygın/kolay tahmin edilebilir değil
+            </div>
+          </div>
+
+          <div class="suggestions">
+            <h3>Öneriler</h3>
+            <ul id="tips">
+              <li>En az 12–16 karakter kullanın, farklı karakter türlerini karıştırın.</li>
+              <li>Sıralı (abc, 123) ve tekrarlayan kalıplardan kaçının.</li>
+              <li>Her site için benzersiz şifre kullanın ve bir parola yöneticisi tercih edin.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="note">
+          Bu araç tamamen tarayıcınızda çalışır — şifreniz hiçbir yere gönderilmez.
+        </div>
+      </footer>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <h2 style="margin:0 0 8px 0; font-size:18px;">Neden önemli?</h2>
+      <p style="margin:0; color:var(--muted);">
+        Zayıf şifreler, çevrimdışı kaba kuvvet saldırılarıyla saniyeler içinde kırılabilir. Uzun ve rastgele şifreler entropiyi artırır ve kırılma süresini astronomik seviyelere taşır. Bu araç, pratik ipuçlarıyla birlikte yaklaşık entropi ve kırılma süresi tahmini sunar.
+      </p>
+    </section>
+
+    <noscript>
+      <p style="margin-top:12px; color:#ffd0d0;">Bu aracı kullanmak için JavaScript etkin olmalıdır.</p>
+    </noscript>
+  </div>
+
+  <script>
+    // Utility: clamp
+    const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+
+    // Common passwords and dangerous patterns
+    const commonList = [
+      "123456","123456789","12345678","12345","123123","1234","111111","000000","qwerty","qwerty123",
+      "password","passw0rd","password1","admin","iloveyou","welcome","dragon","sunshine","monkey",
+      "abc123","letmein","football","baseball","1q2w3e4r","zaq12wsx","qweasd","azerty","princess",
+      "login","starwars","freedom","shadow","hello","whatever","trustno1","superman","pokemon",
+      "şifre","sifre","kullanici","kullanıcı","asdasd","deneme","istanbul","turkiye","galatasaray"
+    ];
+
+    // Leetspeak normalization for common check
+    function normalizeLeet(s){
+      return s
+        .toLowerCase()
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g,'') // strip accents
+        .replace(/[@4]/g,'a')
+        .replace(/[!|lİı]/g,'i')
+        .replace(/3/g,'e')
+        .replace(/5/g,'s')
+        .replace(/7/g,'t')
+        .replace(/0/g,'o')
+        .replace(/[\W_]+/g,''); // remove non-word
+    }
+
+    // Detect simple ascending/descending sequences and keyboard patterns
+    const alpha = "abcdefghijklmnopqrstuvwxyz";
+    const keyboard = "qwertyuiopasdfghjklzxcvbnm";
+    function hasSequence(str){
+      const s = str.toLowerCase();
+      if (s.length < 3) return false;
+      const seqs = [alpha, [...alpha].reverse().join(""), keyboard, [...keyboard].reverse().join(""), "0123456789", "9876543210"];
+      for (const seq of seqs){
+        for (let i=0; i<=seq.length-3; i++){
+          const sub = seq.slice(i, i+3);
+          if (s.includes(sub)) return true;
+        }
+      }
+      // Adjacent char code step of +1 or -1 for 3 in a row (generic)
+      let stepRun = 1, stepRunNeg = 1;
+      for (let i=1; i<s.length; i++){
+        if (s.charCodeAt(i) - s.charCodeAt(i-1) === 1) { stepRun++; if (stepRun>=3) return true; }
+        else stepRun = 1;
+        if (s.charCodeAt(i) - s.charCodeAt(i-1) === -1) { stepRunNeg++; if (stepRunNeg>=3) return true; }
+        else stepRunNeg = 1;
+      }
+      return false;
+    }
+
+    // Detect repeating characters and repeating patterns (e.g., abab, xyzxyz)
+    function repeatingInfo(str){
+      if (!str) return {maxRun:0, hasRepeatPattern:false};
+      // Longest run of the same char
+      let maxRun = 1, run = 1;
+      for (let i=1; i<str.length; i++){
+        if (str[i] === str[i-1]) { run++; maxRun = Math.max(maxRun, run); }
+        else run = 1;
+      }
+      // Repeating substring pattern check
+      let hasRepeatPattern = false;
+      for (let size=1; size<=Math.floor(str.length/2); size++){
+        const piece = str.slice(0, size);
+        if (piece.repeat(Math.floor(str.length/size)) === str) { hasRepeatPattern = true; break; }
+      }
+      return {maxRun, hasRepeatPattern};
+    }
+
+    // Character classes
+    const reLower = /[\p{Ll}]/u; // any lowercase letter (unicode)
+    const reUpper = /[\p{Lu}]/u; // any uppercase letter (unicode)
+    const reDigit = /\d/;
+    const reSymbol = /[^\p{L}\d\s]/u;
+
+    function analyzePassword(pw){
+      const len = pw.length;
+      const lower = reLower.test(pw);
+      const upper = reUpper.test(pw);
+      const digit = reDigit.test(pw);
+      const symbol = reSymbol.test(pw);
+      const space = /\s/.test(pw);
+
+      // Base character set size approximation
+      let N = 0;
+      if (lower) N += 26;
+      if (upper) N += 26;
+      if (digit) N += 10;
+      if (symbol) N += 33;
+      if (space) N += 1;
+      if (N === 0 && len>0) N = 10; // fallback
+
+      // Base entropy
+      let entropy = len * Math.log2(N);
+
+      // Penalties & flags
+      let penalty = 0;
+      const flags = {
+        tooShort: len < 12,
+        lower, upper, digit, symbol, space
+      };
+
+      // Common / easy checks
+      const normalized = normalizeLeet(pw);
+      const isCommon = commonList.some(c => normalized === normalizeLeet(c) || normalized.includes(normalizeLeet(c)));
+      if (isCommon) penalty += 40;
+
+      // Sequence check
+      const seq = hasSequence(pw);
+      if (seq) penalty += 18;
+
+      // Repeats
+      const rep = repeatingInfo(pw);
+      if (rep.maxRun >= 3) penalty += (rep.maxRun - 2) * 3; // incremental penalty
+      if (rep.hasRepeatPattern) penalty += 16;
+
+      // Low uniqueness
+      const uniques = new Set([...pw]).size;
+      if (len > 0 && uniques/len < 0.5) penalty += 10;
+
+      // Very short
+      if (len <= 6) penalty += 22;
+      else if (len < 10) penalty += 10;
+
+      // Do not allow negative entropy
+      const effEntropy = Math.max(0, entropy - penalty);
+
+      // Score mapping (0-4)
+      // ref: <28 very weak, 28-35 weak, 36-59 fair, 60-127 strong, >=128 very strong
+      let score = 0;
+      if (effEntropy >= 128) score = 4;
+      else if (effEntropy >= 60) score = 3;
+      else if (effEntropy >= 36) score = 2;
+      else if (effEntropy >= 28) score = 1;
+      else score = 0;
+
+      // If common or contains heavy sequence and short, clamp to worst
+      if (isCommon && len < 12) score = 0;
+
+      // Crack time estimate (offline 1e10 guesses/sec, average half the space)
+      const guessesPerSec = 1e10;
+      const expectedGuesses = Math.pow(2, effEntropy - 1); // /2
+      const seconds = expectedGuesses / guessesPerSec;
+
+      return {
+        len, lower, upper, digit, symbol, space,
+        N, entropy: entropy, effEntropy, penalty,
+        isCommon, seq, rep, uniques,
+        score, seconds
+      };
+    }
+
+    // Humanize seconds
+    function humanTime(sec){
+      if (!isFinite(sec) || sec <= 0.5) return "anında";
+      const units = [
+        {s: 1, n: "saniye"},
+        {s: 60, n: "dakika"},
+        {s: 3600, n: "saat"},
+        {s: 86400, n: "gün"},
+        {s: 86400*30, n: "ay"},
+        {s: 86400*365, n: "yıl"},
+        {s: 86400*365*100, n: "yüzyıl"}
+      ];
+      let value = sec, name = "saniye";
+      for (let i=0; i<units.length; i++){
+        const next = units[i+1];
+        if (!next || sec < next.s) { value = sec/units[i].s; name = units[i].n; break; }
+      }
+      if (value > 1e9) return "hesaplanamayacak kadar uzun";
+      return `${value >= 100 ? Math.round(value) : value >= 10 ? value.toFixed(1) : value.toFixed(2)} ${name}`;
+    }
+
+    function scoreText(score){
+      return ["Çok Zayıf","Zayıf","Orta","Güçlü","Çok Güçlü"][score] || "—";
+    }
+
+    function scoreColor(score){
+      switch(score){
+        case 0: return "#ef4444"; // red
+        case 1: return "#f97316"; // orange
+        case 2: return "#f59e0b"; // amber
+        case 3: return "#10b981"; // emerald
+        case 4: return "#22c55e"; // green
+      }
+      return "#ef4444";
+    }
+
+    // Suggestions
+    function buildSuggestions(a){
+      const tips = [];
+      if (a.len < 12) tips.push("Uzunluğu artırın (12+ tercih, 16+ harika).");
+      if (!(a.lower && a.upper)) tips.push("Hem küçük hem büyük harf kullanın.");
+      if (!a.digit) tips.push("En az bir rakam ekleyin.");
+      if (!a.symbol) tips.push("!, %, @ gibi bir sembol ekleyin.");
+      if (a.seq) tips.push("Sıralı/klavye desenlerini kırın (örn. abc, 123, qwe).");
+      if (a.rep.maxRun >= 3 || a.rep.hasRepeatPattern) tips.push("Tekrarlayan karakter/desenleri değiştirin.");
+      if (a.isCommon) tips.push("Yaygın/parola listelerinde geçen kelimelerden kaçının.");
+      if (a.len >= 12 && a.lower && a.upper && a.digit && a.symbol && !a.seq && !a.isCommon) {
+        tips.push("Harika! Yine de her site için benzersiz şifre kullanın.");
+      }
+      // Limit to 4 suggestions
+      return tips.slice(0,4);
+    }
+
+    // Password generator (no ambiguous chars)
+    function generatePassword(length=18){
+      const sets = {
+        upper: "ABCDEFGHJKLMNPQRSTUVWXYZ",
+        lower: "abcdefghijkmnopqrstuvwxyz",
+        digit: "23456789",
+        symbol: "!@#$%^&*()-_=+[]{};:,.?"
+      };
+      const all = sets.upper + sets.lower + sets.digit + sets.symbol;
+      const arr = new Uint32Array(length);
+      crypto.getRandomValues(arr);
+
+      // Ensure at least one from each
+      const required = [
+        sets.upper[arr[0] % sets.upper.length],
+        sets.lower[arr[1] % sets.lower.length],
+        sets.digit[arr[2] % sets.digit.length],
+        sets.symbol[arr[3] % sets.symbol.length]
+      ];
+
+      const out = [];
+      for (let i=0; i<length-4; i++){
+        out.push(all[arr[i+4] % all.length]);
+      }
+      // Merge and shuffle
+      const full = required.concat(out);
+      for (let i=full.length-1; i>0; i--){
+        const j = arr[i % arr.length] % (i+1);
+        [full[i], full[j]] = [full[j], full[i]];
+      }
+      return full.join("");
+    }
+
+    // DOM
+    const elPw = document.getElementById('pw');
+    const elToggle = document.getElementById('toggle');
+    const elGen = document.getElementById('gen');
+    const elCopy = document.getElementById('copy');
+    const ring = document.querySelector('.ring');
+    const meterBar = document.querySelector('.meter > span');
+    const scoreLabel = document.getElementById('scoreLabel');
+    const entropyEl = document.getElementById('entropy');
+    const timeEl = document.getElementById('time');
+
+    const c = {
+      length: document.getElementById('c-length'),
+      lower: document.getElementById('c-lower'),
+      upper: document.getElementById('c-upper'),
+      digit: document.getElementById('c-digit'),
+      symbol: document.getElementById('c-symbol'),
+      seq: document.getElementById('c-seq'),
+      repeat: document.getElementById('c-repeat'),
+      common: document.getElementById('c-common'),
+    };
+    const tipsEl = document.getElementById('tips');
+
+    function setCheck(el, state){
+      el.classList.remove('ok','warn','bad');
+      if (state === 'ok') el.classList.add('ok');
+      else if (state === 'warn') el.classList.add('warn');
+      else if (state === 'bad') el.classList.add('bad');
+    }
+
+    function update(){
+      const pw = elPw.value || "";
+      const a = analyzePassword(pw);
+
+      // Compute UI numbers
+      const percent = clamp(Math.round((a.score/4)*100), 0, 100);
+      const color = scoreColor(a.score);
+
+      // Update gauge ring
+      const deg = Math.round(360 * (percent/100));
+      document.documentElement.style.setProperty('--ring', deg + 'deg');
+      document.documentElement.style.setProperty('--ring-color', color);
+      ring.setAttribute('aria-valuenow', String(percent));
+      scoreLabel.innerHTML = `${scoreText(a.score)}<small>${a.len ? a.len + " karakter" : "Güç"}</small>`;
+
+      // Update meter
+      document.documentElement.style.setProperty('--bar', percent + '%');
+      document.documentElement.style.setProperty('--bar-color', color);
+
+      // Entropy & time
+      entropyEl.textContent = a.effEntropy.toFixed(1);
+      timeEl.textContent = humanTime(a.seconds);
+
+      // Checks
+      setCheck(c.length, a.len >= 12 ? 'ok' : a.len >= 10 ? 'warn' : 'bad');
+      setCheck(c.lower, a.lower ? 'ok' : 'bad');
+      setCheck(c.upper, a.upper ? 'ok' : 'bad');
+      setCheck(c.digit, a.digit ? 'ok' : 'bad');
+      setCheck(c.symbol, a.symbol ? 'ok' : 'warn');
+      setCheck(c.seq, a.seq ? 'bad' : 'ok');
+      setCheck(c.repeat, (a.rep.maxRun >= 3 || a.rep.hasRepeatPattern) ? 'warn' : 'ok');
+      setCheck(c.common, a.isCommon ? 'bad' : 'ok');
+
+      // Suggestions
+      const tips = buildSuggestions(a);
+      tipsEl.innerHTML = tips.map(t => `<li>${t}</li>`).join("");
+
+      // Accessibility: if empty, neutral state
+      if (!pw.length){
+        document.documentElement.style.setProperty('--ring', '0deg');
+        document.documentElement.style.setProperty('--bar', '0%');
+        scoreLabel.innerHTML = `—<small>Güç</small>`;
+        entropyEl.textContent = '0';
+        timeEl.textContent = 'anında';
+        Object.values(c).forEach(el => el.classList.remove('ok','warn','bad'));
+      }
+    }
+
+    // Event listeners
+    elPw.addEventListener('input', update);
+
+    elToggle.addEventListener('click', () => {
+      const type = elPw.getAttribute('type') === 'password' ? 'text' : 'password';
+      elPw.setAttribute('type', type);
+      // Toggle icon (simple stroke swap)
+      const eye = document.getElementById('eye');
+      if (type === 'text'){
+        eye.innerHTML = `
+          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M3 3l18 18" stroke="currentColor" stroke-width="1.6"/>
+        `;
+      } else {
+        eye.innerHTML = `
+          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/>
+        `;
+      }
+      elPw.focus();
+    });
+
+    elGen.addEventListener('click', () => {
+      const pw = generatePassword(20);
+      elPw.value = pw;
+      update();
+    });
+
+    elCopy.addEventListener('click', async () => {
+      const val = elPw.value || "";
+      if (!val) return;
+      try{
+        await navigator.clipboard.writeText(val);
+        elCopy.innerHTML = `
+          <svg class="inline-icon" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Kopyalandı
+        `;
+        setTimeout(() => {
+          elCopy.innerHTML = `
+            <svg class="inline-icon" viewBox="0 0 24 24" fill="none">
+              <rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/>
+              <rect x="4" y="4" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6" opacity=".7"/>
+            </svg>
+            Kopyala
+          `;
+        }, 1400);
+      }catch(e){
+        alert('Kopyalama başarısız. Tarayıcı izinlerini kontrol edin.');
+      }
+    });
+
+    // Initialize
+    update();
+  </script>
+</body>
+</html>
