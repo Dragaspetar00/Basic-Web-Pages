@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>QR Oluşturucu — Modern</title>
-  <meta name="description" content="Saf HTML/CSS/JS QR kod oluşturucu: canlı önizleme, PNG/SVG indirme, logo ve stil.">
-  <!-- QRCode Styling (SVG/Canvas + logo/stil) -->
+  <title>QR Oluşturucu — Gelişmiş</title>
+  <meta name="description" content="Modern HTML/CSS/JS QR kod oluşturucu: canlı önizleme, PNG/SVG indirme, geniş özelleştirme, logo efektleri.">
+  <!-- QRCode Styling -->
   <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
-  <!-- qrcode-generator (sürüm/kapasite tahmini) -->
+  <!-- qrcode-generator (kapasite/versiyon tahmini) -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
   <style>
     :root{
       --bg: #0b0f15;
       --bg2: #0e1420;
       --glass: rgba(255,255,255,0.06);
-      --border: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.10);
       --text: #e6ecf3;
       --muted:#a6b2c3;
       --primary:#7aa2ff;
@@ -28,8 +28,8 @@
     }
     @media (prefers-color-scheme: light){
       :root{
-        --bg:#f6f8ff; --bg2:#eef2ff; --glass:rgba(255,255,255,0.8);
-        --border: rgba(0,0,0,0.08);
+        --bg:#f6f8ff; --bg2:#eef2ff; --glass:rgba(255,255,255,0.85);
+        --border: rgba(0,0,0,0.10);
         --text:#0f172a; --muted:#4b5563; --primary:#3b82f6; --primary2:#a855f7;
         --shadow: 0 10px 25px rgba(0,0,0,0.08);
         --focus:#2563eb;
@@ -50,11 +50,11 @@
 
     header{
       position:sticky; top:0; z-index:20;
-      backdrop-filter: saturate(1.4) blur(10px);
+      backdrop-filter: saturate(1.3) blur(10px);
       background: linear-gradient(90deg, rgba(122,162,255,0.12), rgba(167,123,255,0.10));
       border-bottom:1px solid var(--border);
     }
-    .wrap{max-width:1180px; margin:0 auto; padding:14px 16px}
+    .wrap{max-width:1240px; margin:0 auto; padding:14px 16px}
     .row{display:flex; align-items:center; justify-content:space-between; gap:12px}
     .brand{display:flex; align-items:center; gap:12px}
     .logo{
@@ -62,10 +62,12 @@
       display:grid; place-items:center; font-weight:800; color:white;
       background: conic-gradient(from 210deg, var(--primary), var(--primary2), var(--primary));
       box-shadow: 0 6px 18px rgba(122,162,255,0.35);
+      user-select:none
     }
     .brand-name{font-weight:800; letter-spacing:.2px}
     .brand-sub{color:var(--muted); font-size:12px}
 
+    .lang-toggle{display:flex; gap:6px}
     .lang-toggle button{
       border:1px solid var(--border); background:var(--glass); color:var(--muted);
       padding:6px 10px; border-radius:999px; cursor:pointer;
@@ -77,8 +79,8 @@
       display:grid; gap:16px;
       grid-template-columns: 1fr;
     }
-    @media(min-width:980px){
-      .grid{grid-template-columns: 1.05fr 0.95fr;}
+    @media(min-width:1080px){
+      .grid{grid-template-columns: 1.1fr 0.9fr;}
     }
 
     section.card{
@@ -95,7 +97,7 @@
     .field{display:flex; flex-direction:column; gap:6px; margin-bottom:12px}
     label{font-weight:600}
     textarea{
-      min-height:130px; resize:vertical; border-radius:12px;
+      min-height:120px; resize:vertical; border-radius:12px;
       border:1px solid var(--border); background: rgba(255,255,255,0.04);
       color:var(--text); padding:10px;
     }
@@ -104,31 +106,59 @@
       background: rgba(255,255,255,0.04); padding:8px 10px; color:var(--text);
     }
     input[type="color"]{width:46px;height:34px;padding:0;border-radius:10px;border:1px solid var(--border);background:transparent}
+    input[type="range"]{width:100%}
     .row-fields{display:grid; gap:10px; grid-template-columns: 1fr 1fr}
-    @media(min-width:980px){ .row-fields{grid-template-columns: repeat(3, minmax(0,1fr));} }
+    .row-3{display:grid; gap:10px; grid-template-columns: 1fr 1fr 1fr}
+    .row-4{display:grid; gap:10px; grid-template-columns: repeat(4, 1fr)}
+    @media(min-width:980px){
+      .row-fields{grid-template-columns: repeat(3, minmax(0,1fr));}
+      .row-3{grid-template-columns: repeat(3, minmax(0,1fr))}
+      .row-4{grid-template-columns: repeat(6, minmax(0,1fr))}
+    }
 
     .controls{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
     .btn{
       border:1px solid var(--border); background: rgba(255,255,255,0.05);
       color:var(--text); border-radius:12px; padding:9px 12px; cursor:pointer;
-      transition: transform .05s ease, background .2s ease;
+      transition: transform .05s ease, background .2s ease; user-select:none
     }
     .btn.primary{background: linear-gradient(90deg, var(--primary), var(--primary2)); color:white; border-color:transparent}
     .btn:active{transform: translateY(1px)}
     .btn:focus{outline:2px solid var(--focus); outline-offset:2px}
 
+    .hr{height:1px;background:var(--border);margin:10px 0}
+
     .preview{
-      display:grid; place-items:center; min-height:360px;
+      display:grid; place-items:center; min-height:380px;
       border:1px dashed var(--border); border-radius:14px; padding:12px;
       background: rgba(0,0,0,0.12);
+      position:relative; overflow:auto
     }
+    /* QR sarmalayıcı: arka plan resmi burada */
+    #qrWrap{
+      position:relative; display:inline-block;
+      background-position:center; background-repeat:no-repeat;
+      border-radius:12px; overflow:hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+    #qrWrap .qrc{display:block}
+    /* drag & drop görsel ipucu */
+    .drop-hint{
+      position:absolute; inset:8px; border:2px dashed rgba(255,255,255,0.25);
+      border-radius:12px; display:none; place-items:center; color:#fff; font-weight:700;
+      background: rgba(0,0,0,0.25)
+    }
+    .preview.dragover .drop-hint{display:grid}
+
     .meta{display:flex; flex-wrap:wrap; gap:8px; font-size:12.5px; margin-top:8px}
-    .pill{border:1px solid var(--border); border-radius:999px; padding:4px 8px; color:var(--muted)}
+    .pill{border:1px solid var(--border); border-radius:999px; padding:4px 8px; color:var(--muted); white-space:nowrap}
     .pill.ok{border-color:var(--ok); color:var(--ok)}
     .pill.warn{border-color:var(--warn); color:var(--warn)}
     .pill.err{border-color:var(--err); color:var(--err)}
 
-    details summary{cursor:pointer; font-weight:700}
+    details summary{cursor:pointer; font-weight:700; list-style:none}
+    details summary::-webkit-details-marker{display:none}
+    details{border:1px dashed var(--border); border-radius:12px; padding:10px; background: rgba(255,255,255,0.03); margin-bottom:10px}
     .alert{
       background: rgba(255,85,85,0.12); border:1px solid rgba(255,85,85,0.35);
       color:#ff9aa8; padding:10px; border-radius:10px; font-size:14px; margin-top:8px;
@@ -140,10 +170,9 @@
       background: rgba(0,0,0,0.78); color:#fff; padding:10px 14px; border-radius:10px; z-index:9999
     }
 
-    /* Mobil rahatlık */
-    @media(max-width:480px){
-      .preview{min-height:300px}
-      textarea{min-height:110px}
+    @media(max-width:520px){
+      .preview{min-height:320px}
+      textarea{min-height:100px}
       .controls{position:sticky; bottom:10px; background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.25) 100%); padding-top:6px}
     }
   </style>
@@ -155,10 +184,10 @@
         <div class="logo">QR</div>
         <div>
           <div class="brand-name">QR Oluşturucu</div>
-          <div class="brand-sub" data-i18n="subtitle">Saf HTML/CSS/JS — canlı önizleme, PNG & SVG indirme</div>
+          <div class="brand-sub">Gelişmiş özelleştirme — canlı önizleme, PNG/SVG</div>
         </div>
       </div>
-      <div class="lang-toggle" aria-label="Dil seçimi">
+      <div class="lang-toggle" aria-label="Dil">
         <button id="langTr" class="active" data-lang="tr" aria-pressed="true">TR</button>
         <button id="langEn" data-lang="en" aria-pressed="false">EN</button>
       </div>
@@ -169,97 +198,257 @@
     <div class="wrap grid">
       <!-- Sol: Girdi & Ayarlar -->
       <section class="card" aria-labelledby="sec-input">
-        <h2 id="sec-input" data-i18n="inputs">Girdi & Ayarlar</h2>
+        <h2 id="sec-input">Girdi & Ayarlar</h2>
 
         <div class="field">
-          <label for="textInput" data-i18n="textLabel">Metin</label>
-          <textarea id="textInput" placeholder="Metni buraya yaz..." aria-describedby="textHint"></textarea>
-          <div class="muted" id="textHint" data-i18n="textHint">Uzun/çok satırlı metin desteklenir.</div>
+          <label for="dataType">Veri türü</label>
+          <select id="dataType">
+            <option value="text" selected>Düz Metin / URL</option>
+            <option value="wifi">Wi‑Fi</option>
+            <option value="tel">Telefon</option>
+            <option value="sms">SMS</option>
+            <option value="email">E‑posta</option>
+            <option value="geo">Konum</option>
+            <option value="vcard">vCard</option>
+          </select>
+        </div>
+
+        <div id="builder" style="display:none">
+          <div id="bWifi" class="row-fields" style="display:none">
+            <div class="field"><label>SSID</label><input id="wifiSsid" type="text" placeholder="Ağ adı" /></div>
+            <div class="field"><label>Şifre</label><input id="wifiPass" type="text" placeholder="Şifre (varsa)" /></div>
+            <div class="field"><label>Şifreleme</label>
+              <select id="wifiEnc">
+                <option value="WPA">WPA/WPA2</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">Yok</option>
+              </select>
+            </div>
+            <div class="field"><label>Gizli SSID</label><select id="wifiHidden"><option value="false">Hayır</option><option value="true">Evet</option></select></div>
+          </div>
+
+          <div id="bTel" class="row-fields" style="display:none">
+            <div class="field"><label>Telefon</label><input id="telNum" type="text" placeholder="+90..." /></div>
+          </div>
+
+          <div id="bSms" class="row-fields" style="display:none">
+            <div class="field"><label>Telefon</label><input id="smsNum" type="text" placeholder="+90..." /></div>
+            <div class="field" style="grid-column: span 2"><label>Mesaj</label><input id="smsMsg" type="text" placeholder="Mesaj içeriği" /></div>
+          </div>
+
+          <div id="bEmail" class="row-fields" style="display:none">
+            <div class="field"><label>Kime</label><input id="emailTo" type="text" placeholder="mail@ornek.com" /></div>
+            <div class="field"><label>Konu</label><input id="emailSub" type="text" placeholder="Konu" /></div>
+            <div class="field" style="grid-column: span 3"><label>İçerik</label><input id="emailBody" type="text" placeholder="Mesaj" /></div>
+          </div>
+
+          <div id="bGeo" class="row-fields" style="display:none">
+            <div class="field"><label>Enlem</label><input id="geoLat" type="text" placeholder="41.015" /></div>
+            <div class="field"><label>Boylam</label><input id="geoLng" type="text" placeholder="28.979" /></div>
+          </div>
+
+          <div id="bVcard" class="row-fields" style="display:none">
+            <div class="field"><label>Ad</label><input id="vName" type="text" placeholder="Ad Soyad" /></div>
+            <div class="field"><label>Unvan</label><input id="vTitle" type="text" placeholder="Unvan" /></div>
+            <div class="field"><label>Şirket</label><input id="vOrg" type="text" placeholder="Şirket" /></div>
+            <div class="field"><label>Telefon</label><input id="vTel" type="text" placeholder="+90..." /></div>
+            <div class="field"><label>E‑posta</label><input id="vEmail" type="text" placeholder="mail@..." /></div>
+            <div class="field"><label>Web</label><input id="vUrl" type="text" placeholder="https://..." /></div>
+            <div class="field" style="grid-column: span 3"><label>Adres</label><input id="vAddr" type="text" placeholder="Adres" /></div>
+          </div>
+
+          <div class="controls">
+            <button class="btn" id="btnBuild">Oluştur ve uygula</button>
+          </div>
+          <div class="hr"></div>
+        </div>
+
+        <div class="field">
+          <label for="textInput">Metin</label>
+          <textarea id="textInput" placeholder="Metin / URL / Wi‑Fi ..."></textarea>
+          <div class="muted" id="textHint">Uzun/çok satırlı metin desteklenir. Üstteki hızlı oluşturucuyla otomatik doldurabilirsin.</div>
         </div>
 
         <details open>
-          <summary data-i18n="settings">Ayarlar</summary>
+          <summary>Temel Ayarlar</summary>
           <div class="row-fields" style="margin-top:10px">
-            <div class="field">
-              <label for="size" data-i18n="size">Boyut (px)</label>
-              <input id="size" type="number" min="150" max="3000" step="10" value="512" />
+            <div class="field"><label for="size">Boyut (px)</label><input id="size" type="number" min="150" max="4096" step="10" value="512" /></div>
+            <div class="field"><label for="margin">Boşluk (px)</label><input id="margin" type="number" min="0" max="100" step="1" value="8" /></div>
+            <div class="field"><label for="ecLevel">Hata Düzeltme</label>
+              <select id="ecLevel"><option value="L">L</option><option value="M" selected>M</option><option value="Q">Q</option><option value="H">H</option></select>
             </div>
-            <div class="field">
-              <label for="margin" data-i18n="margin">Margin (px)</label>
-              <input id="margin" type="number" min="0" max="50" step="1" value="8" />
-            </div>
-            <div class="field">
-              <label for="ecLevel" data-i18n="ecLevel">Hata Düzeltme</label>
-              <select id="ecLevel">
-                <option value="L">L (düşük)</option>
-                <option value="M" selected>M</option>
-                <option value="Q">Q</option>
-                <option value="H">H (yüksek)</option>
-              </select>
-            </div>
-            <div class="field">
-              <label data-i18n="fgColor">Ön plan rengi</label>
-              <div style="display:flex;align-items:center;gap:8px">
-                <input id="fgColor" type="color" value="#000000" aria-label="Ön plan rengi" />
-                <input id="fgHex" type="text" value="#000000" aria-label="Ön plan hex" />
-              </div>
-            </div>
-            <div class="field">
-              <label data-i18n="bgColor">Arka plan rengi</label>
-              <div style="display:flex;align-items:center;gap:8px">
-                <input id="bgColor" type="color" value="#ffffff" aria-label="Arka plan rengi" />
-                <input id="bgHex" type="text" value="#ffffff" aria-label="Arka plan hex" />
-              </div>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-                <input type="checkbox" id="bgTransparent" />
-                <label for="bgTransparent" data-i18n="transparentBg">Şeffaf arka plan</label>
-              </div>
-            </div>
-            <div class="field">
-              <label for="moduleStyle" data-i18n="moduleStyle">Modül stili</label>
+            <div class="field"><label for="moduleStyle">Modül stili</label>
               <select id="moduleStyle">
-                <option value="square" selected>Kare</option>
-                <option value="dots">Nokta</option>
+                <option value="square">Square</option>
+                <option value="dots">Dots</option>
+                <option value="rounded">Rounded</option>
+                <option value="extra-rounded" selected>Extra Rounded</option>
+                <option value="classy">Classy</option>
+                <option value="classy-rounded">Classy Rounded</option>
               </select>
-            </div>
-            <div class="field">
-              <label for="finderStyle" data-i18n="finderStyle">Köşe (finder) stili</label>
-              <select id="finderStyle">
-                <option value="square" selected>Kare</option>
-                <option value="dot">Nokta</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="logoFile" data-i18n="logo">Logo (opsiyonel)</label>
-              <input id="logoFile" type="file" accept="image/png,image/jpeg,image/svg+xml" />
-              <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
-                <input type="range" id="logoScale" min="0" max="40" step="1" value="20" />
-                <span class="muted" data-i18n="logoScale">Logo boyutu (% QR genişliği)</span>
-              </div>
-              <div class="muted" data-i18n="logoNote">Logo için H hata düzeltme önerilir.</div>
-              <div id="logoPreview" class="muted"></div>
             </div>
           </div>
         </details>
 
+        <details>
+          <summary>Renkler (Modüller)</summary>
+          <div class="row-fields" style="margin-top:10px">
+            <div class="field">
+              <label>Modül Boyaması</label>
+              <select id="fgMode">
+                <option value="solid" selected>Solid</option>
+                <option value="gradient">Gradient</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Renk</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input id="fgColor" type="color" value="#000000" />
+                <input id="fgHex" type="text" value="#000000" />
+              </div>
+            </div>
+            <div class="field grad fgGrad" style="display:none">
+              <label>2. Renk</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input id="fgColor2" type="color" value="#3b82f6" />
+                <input id="fgHex2" type="text" value="#3b82f6" />
+              </div>
+            </div>
+            <div class="field grad fgGrad" style="display:none">
+              <label>Gradient tipi</label>
+              <select id="fgGradType"><option value="linear" selected>Linear</option><option value="radial">Radial</option></select>
+            </div>
+            <div class="field grad fgGrad" style="display:none">
+              <label>Açı (°)</label>
+              <input id="fgGradAngle" type="number" min="0" max="360" step="1" value="0" />
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Gözler (Finder)</summary>
+          <div class="row-fields" style="margin-top:10px">
+            <div class="field"><label>Dış kare</label>
+              <select id="eyeOuterType"><option value="square" selected>Square</option><option value="dot">Dot</option><option value="extra-rounded">Extra Rounded</option></select>
+            </div>
+            <div class="field"><label>Dış boyama</label>
+              <select id="eyeOuterMode"><option value="solid" selected>Solid</option><option value="gradient">Gradient</option></select>
+            </div>
+            <div class="field"><label>Dış renk</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="eyeOuterColor" type="color" value="#000000"/><input id="eyeOuterHex" type="text" value="#000000"/></div>
+            </div>
+            <div class="field grad outerGrad" style="display:none"><label>Dış 2. renk</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="eyeOuterColor2" type="color" value="#3b82f6"/><input id="eyeOuterHex2" type="text" value="#3b82f6"/></div>
+            </div>
+            <div class="field grad outerGrad" style="display:none"><label>Tip</label><select id="eyeOuterGradType"><option value="linear">Linear</option><option value="radial">Radial</option></select></div>
+            <div class="field grad outerGrad" style="display:none"><label>Açı (°)</label><input id="eyeOuterGradAngle" type="number" min="0" max="360" step="1" value="0"/></div>
+
+            <div class="field"><label>İç nokta</label>
+              <select id="eyeInnerType"><option value="square">Square</option><option value="dot" selected>Dot</option><option value="extra-rounded">Extra Rounded</option></select>
+            </div>
+            <div class="field"><label>İç boyama</label>
+              <select id="eyeInnerMode"><option value="solid" selected>Solid</option><option value="gradient">Gradient</option></select>
+            </div>
+            <div class="field"><label>İç renk</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="eyeInnerColor" type="color" value="#000000"/><input id="eyeInnerHex" type="text" value="#000000"/></div>
+            </div>
+            <div class="field grad innerGrad" style="display:none"><label>İç 2. renk</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="eyeInnerColor2" type="color" value="#3b82f6"/><input id="eyeInnerHex2" type="text" value="#3b82f6"/></div>
+            </div>
+            <div class="field grad innerGrad" style="display:none"><label>Tip</label><select id="eyeInnerGradType"><option value="linear">Linear</option><option value="radial">Radial</option></select></div>
+            <div class="field grad innerGrad" style="display:none"><label>Açı (°)</label><input id="eyeInnerGradAngle" type="number" min="0" max="360" step="1" value="0"/></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Arka Plan</summary>
+          <div class="row-fields" style="margin-top:10px">
+            <div class="field"><label>Arka plan</label>
+              <select id="bgMode"><option value="solid" selected>Solid</option><option value="gradient">Gradient</option><option value="transparent">Şeffaf</option></select>
+            </div>
+            <div class="field bgSolid">
+              <label>Renk</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="bgColor" type="color" value="#ffffff"/><input id="bgHex" type="text" value="#ffffff"/></div>
+            </div>
+            <div class="field grad bgGrad" style="display:none"><label>2. renk</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="bgColor2" type="color" value="#ffffff"/><input id="bgHex2" type="text" value="#ffffff"/></div>
+            </div>
+            <div class="field grad bgGrad" style="display:none"><label>Tip</label><select id="bgGradType"><option value="linear">Linear</option><option value="radial">Radial</option></select></div>
+            <div class="field grad bgGrad" style="display:none"><label>Açı (°)</label><input id="bgGradAngle" type="number" min="0" max="360" step="1" value="0"/></div>
+
+            <div class="field" style="grid-column: span 3">
+              <label>Arka plan resmi (opsiyonel)</label>
+              <input id="bgImageFile" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+              <div class="row-fields" style="margin-top:6px">
+                <div class="field"><label>Fit</label>
+                  <select id="bgFit"><option value="cover" selected>Cover</option><option value="contain">Contain</option><option value="stretch">Stretch</option></select>
+                </div>
+                <div class="field"><label>Opaklık</label><input id="bgImageOpacity" type="range" min="0" max="100" value="100" /><div class="muted" id="bgImageOpacLabel">100%</div></div>
+              </div>
+              <div class="muted">Arka plan resmi hem önizlemede hem PNG dışa aktarımda uygulanır.</div>
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary>Logo</summary>
+          <div class="row-fields" style="margin-top:10px">
+            <div class="field" style="grid-column: span 3">
+              <label>Logo (opsiyonel)</label>
+              <input id="logoFile" type="file" accept="image/png,image/jpeg,image/svg+xml" />
+              <div id="logoPreview" class="muted" style="margin-top:6px"></div>
+            </div>
+            <div class="field"><label>Logo boyutu (% QR)</label><input type="range" id="logoScale" min="0" max="40" step="1" value="20"/><div class="muted" id="logoScaleLabel">20%</div></div>
+            <div class="field"><label>Güvenli boşluk (% logo)</label><input type="range" id="logoPad" min="0" max="30" step="1" value="8"/><div class="muted" id="logoPadLabel">8%</div></div>
+            <div class="field"><label>Şekil</label>
+              <select id="logoShape"><option value="none" selected>Yok</option><option value="rounded">Yuvarlatılmış</option><option value="circle">Daire</option><option value="squircle">Squircle</option></select>
+            </div>
+            <div class="field"><label>Arka plan rengi</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="logoBg" type="color" value="#ffffff"/><input id="logoBgHex" type="text" value="#ffffff"/></div>
+            </div>
+            <div class="field"><label>Arka plan opaklık</label><input type="range" id="logoBgAlpha" min="0" max="100" value="90"/><div class="muted" id="logoBgAlphaLabel">90%</div></div>
+            <div class="field"><label>Kenarlık (px)</label><input type="range" id="logoBorderW" min="0" max="20" value="0"/><div class="muted" id="logoBorderWLabel">0px</div></div>
+            <div class="field"><label>Kenarlık rengi</label>
+              <div style="display:flex;align-items:center;gap:8px"><input id="logoBorderColor" type="color" value="#000000"/><input id="logoBorderHex" type="text" value="#000000"/></div>
+            </div>
+            <div class="field"><label><input type="checkbox" id="logoShadow" /> Gölge</label></div>
+            <div class="field"><label><input type="checkbox" id="hideBgDots" /> Logo altında nokta gizle</label></div>
+          </div>
+          <div class="muted">Logo ile kullanımda EC=H önerilir.</div>
+        </details>
+
+        <details>
+          <summary>Dışa Aktarım</summary>
+          <div class="row-fields" style="margin-top:10px">
+            <div class="field"><label>PNG Ölçek (x)</label><input id="exportScale" type="number" min="1" max="8" value="2"/></div>
+            <div class="field"><label>Dosya adı</label><input id="exportName" type="text" value="qr"/></div>
+          </div>
+        </details>
+
         <div class="controls" role="toolbar" aria-label="İşlemler">
-          <button id="btnCopy" class="btn" data-i18n="copyText">Kopyala Metin</button>
-          <button id="btnClear" class="btn" data-i18n="clear">Temizle</button>
+          <button id="btnCopy" class="btn">Metni Kopyala</button>
+          <button id="btnClear" class="btn">Temizle</button>
           <span class="muted" aria-hidden="true">|</span>
-          <button id="btnDownloadPNG" class="btn primary" data-i18n="downloadPng">İndir PNG</button>
-          <button id="btnDownloadSVG" class="btn" data-i18n="downloadSvg">İndir SVG</button>
+          <button id="btnDownloadPNG" class="btn primary">PNG İndir</button>
+          <button id="btnDownloadSVG" class="btn">SVG İndir</button>
+          <button id="btnCopySVG" class="btn">SVG Kopyala</button>
         </div>
 
         <div id="warnings"></div>
       </section>
 
-      <!-- Sağ: Önizleme (tek) + Kamera test -->
+      <!-- Sağ: Önizleme + Kamera -->
       <section class="card" aria-labelledby="sec-preview">
-        <h2 id="sec-preview" data-i18n="preview">Önizleme</h2>
-        <div id="preview" class="preview" aria-live="polite"></div>
+        <h2 id="sec-preview">Önizleme</h2>
+        <div id="preview" class="preview" aria-live="polite">
+          <div id="qrWrap">
+            <!-- qr-code-styling burada render eder -->
+          </div>
+          <div class="drop-hint">Görsel bırak: Logo için bırak • Arka plan için Alt basılı tut</div>
+        </div>
 
         <div class="meta">
-          <span class="pill" id="charCount">0 chars</span>
+          <span class="pill" id="charCount">0 karakter</span>
           <span class="pill" id="byteCount">0 bytes (UTF‑8)</span>
           <span class="pill" id="ecInfo">EC: M</span>
           <span class="pill" id="verInfo">v? (auto)</span>
@@ -267,10 +456,10 @@
         </div>
 
         <details style="margin-top:10px">
-          <summary data-i18n="mobileTest">Mobilde test et (kamera)</summary>
+          <summary>Mobilde test et (kamera)</summary>
           <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap">
-            <button class="btn" id="btnScanStart" data-i18n="startScan">Kamerayı başlat</button>
-            <button class="btn" id="btnScanStop" data-i18n="stopScan">Durdur</button>
+            <button class="btn" id="btnScanStart">Kamerayı başlat</button>
+            <button class="btn" id="btnScanStop">Durdur</button>
             <span class="muted" id="scanStatus">—</span>
           </div>
           <video id="video" playsinline muted style="width:100%;max-width:440px;border-radius:12px;margin-top:8px;border:1px solid var(--border);background:#000"></video>
@@ -282,49 +471,14 @@
 
   <footer class="wrap">
     <div class="muted">
-      • Tüm işlemler tarayıcıda yapılır. Verileriniz ve yüklediğiniz logolar sunucuya gönderilmez. <br/>
+      • Tüm işlemler tarayıcıda yapılır. Verileriniz ve yüklediğiniz görseller sunucuya gönderilmez. <br/>
       • Kamera için güvenli bağlam (https) gerekir — GitHub Pages/Netlify/Vercel uygundur. <br/>
       • Kütüphaneler: qr-code-styling, qrcode-generator; ZXing (kamera fallback).
     </div>
   </footer>
 
   <script>
-    // Metinler
-    const I18N = {
-      tr: {
-        subtitle: "Saf HTML/CSS/JS — canlı önizleme, PNG & SVG indirme",
-        inputs: "Girdi & Ayarlar",
-        textLabel: "Metin",
-        textHint: "Uzun/çok satırlı metin desteklenir.",
-        settings: "Ayarlar",
-        size: "Boyut (px)", margin: "Margin (px)", ecLevel: "Hata Düzeltme",
-        fgColor: "Ön plan rengi", bgColor: "Arka plan rengi", transparentBg: "Şeffaf arka plan",
-        moduleStyle: "Modül stili", finderStyle: "Köşe (finder) stili",
-        logo: "Logo (opsiyonel)", logoScale: "Logo boyutu (% QR genişliği)",
-        logoNote: "Logo için H hata düzeltme önerilir.",
-        copyText: "Kopyala Metin", clear: "Temizle",
-        downloadPng: "İndir PNG", downloadSvg: "İndir SVG",
-        preview: "Önizleme",
-        mobileTest: "Mobilde test et (kamera)", startScan: "Kamerayı başlat", stopScan: "Durdur",
-      },
-      en: {
-        subtitle: "Pure HTML/CSS/JS — live preview, PNG & SVG export",
-        inputs: "Input & Settings",
-        textLabel: "Text",
-        textHint: "Supports long and multi-line text.",
-        settings: "Settings",
-        size: "Size (px)", margin: "Margin (px)", ecLevel: "Error correction",
-        fgColor: "Foreground color", bgColor: "Background color", transparentBg: "Transparent background",
-        moduleStyle: "Module style", finderStyle: "Finder style",
-        logo: "Logo (optional)", logoScale: "Logo size (% of QR width)",
-        logoNote: "H error correction is recommended with logos.",
-        copyText: "Copy Text", clear: "Clear",
-        downloadPng: "Download PNG", downloadSvg: "Download SVG",
-        preview: "Preview",
-        mobileTest: "Test on mobile (camera)", startScan: "Start camera", stopScan: "Stop",
-      }
-    };
-    let currentLang = 'tr';
+    // Kısa seçiciler
     const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
 
     // Elemanlar
@@ -332,158 +486,105 @@
     const sizeInput = $("#size");
     const marginInput = $("#margin");
     const ecSelect = $("#ecLevel");
-    const fgColor = $("#fgColor");
-    const fgHex = $("#fgHex");
-    const bgColor = $("#bgColor");
-    const bgHex = $("#bgHex");
-    const bgTransparent = $("#bgTransparent");
     const moduleStyle = $("#moduleStyle");
-    const finderStyle = $("#finderStyle");
-    const logoFile = $("#logoFile");
-    const logoScale = $("#logoScale");
-    const logoPreview = $("#logoPreview");
-    const warnings = $("#warnings");
 
-    const btnCopy = $("#btnCopy");
-    const btnClear = $("#btnClear");
-    const btnDownloadPNG = $("#btnDownloadPNG");
-    const btnDownloadSVG = $("#btnDownloadSVG");
+    // Veri türü builder
+    const dataType = $("#dataType");
+    const builder = $("#builder");
+    const btnBuild = $("#btnBuild");
+    const bWifi = $("#bWifi"), wifiSsid=$("#wifiSsid"), wifiPass=$("#wifiPass"), wifiEnc=$("#wifiEnc"), wifiHidden=$("#wifiHidden");
+    const bTel = $("#bTel"), telNum=$("#telNum");
+    const bSms = $("#bSms"), smsNum=$("#smsNum"), smsMsg=$("#smsMsg");
+    const bEmail=$("#bEmail"), emailTo=$("#emailTo"), emailSub=$("#emailSub"), emailBody=$("#emailBody");
+    const bGeo=$("#bGeo"), geoLat=$("#geoLat"), geoLng=$("#geoLng");
+    const bVcard=$("#bVcard"), vName=$("#vName"), vTitle=$("#vTitle"), vOrg=$("#vOrg"), vTel=$("#vTel"), vEmail=$("#vEmail"), vUrl=$("#vUrl"), vAddr=$("#vAddr");
 
-    const preview = $("#preview");
+    // Renkler (modüller)
+    const fgMode=$("#fgMode"), fgColor=$("#fgColor"), fgHex=$("#fgHex"), fgColor2=$("#fgColor2"), fgHex2=$("#fgHex2"), fgGradType=$("#fgGradType"), fgGradAngle=$("#fgGradAngle");
 
-    const charCount = $("#charCount");
-    const byteCount = $("#byteCount");
-    const ecInfo = $("#ecInfo");
-    const verInfo = $("#verInfo");
-    const contrastInfo = $("#contrastInfo");
+    // Gözler
+    const eyeOuterType=$("#eyeOuterType"), eyeOuterMode=$("#eyeOuterMode"), eyeOuterColor=$("#eyeOuterColor"), eyeOuterHex=$("#eyeOuterHex"), eyeOuterColor2=$("#eyeOuterColor2"), eyeOuterHex2=$("#eyeOuterHex2"), eyeOuterGradType=$("#eyeOuterGradType"), eyeOuterGradAngle=$("#eyeOuterGradAngle");
+    const eyeInnerType=$("#eyeInnerType"), eyeInnerMode=$("#eyeInnerMode"), eyeInnerColor=$("#eyeInnerColor"), eyeInnerHex=$("#eyeInnerHex"), eyeInnerColor2=$("#eyeInnerColor2"), eyeInnerHex2=$("#eyeInnerHex2"), eyeInnerGradType=$("#eyeInnerGradType"), eyeInnerGradAngle=$("#eyeInnerGradAngle");
 
-    const langTr = $("#langTr"), langEn = $("#langEn");
+    // Arka plan
+    const bgMode=$("#bgMode"), bgColor=$("#bgColor"), bgHex=$("#bgHex"), bgColor2=$("#bgColor2"), bgHex2=$("#bgHex2"), bgGradType=$("#bgGradType"), bgGradAngle=$("#bgGradAngle");
+    const bgImageFile=$("#bgImageFile"), bgFit=$("#bgFit"), bgImageOpacity=$("#bgImageOpacity"), bgImageOpacLabel=$("#bgImageOpacLabel");
+
+    // Logo
+    const logoFile=$("#logoFile"), logoPreview=$("#logoPreview");
+    const logoScale=$("#logoScale"), logoScaleLabel=$("#logoScaleLabel");
+    const logoPad=$("#logoPad"), logoPadLabel=$("#logoPadLabel");
+    const logoShape=$("#logoShape");
+    const logoBg=$("#logoBg"), logoBgHex=$("#logoBgHex"), logoBgAlpha=$("#logoBgAlpha"), logoBgAlphaLabel=$("#logoBgAlphaLabel");
+    const logoBorderW=$("#logoBorderW"), logoBorderWLabel=$("#logoBorderWLabel"), logoBorderColor=$("#logoBorderColor"), logoBorderHex=$("#logoBorderHex");
+    const logoShadow=$("#logoShadow"), hideBgDots=$("#hideBgDots");
+
+    // Export
+    const exportScale=$("#exportScale"), exportName=$("#exportName");
+
+    // İşlemler
+    const btnCopy=$("#btnCopy"), btnClear=$("#btnClear"), btnDownloadPNG=$("#btnDownloadPNG"), btnDownloadSVG=$("#btnDownloadSVG"), btnCopySVG=$("#btnCopySVG");
+
+    // Preview & meta
+    const preview = $("#preview"), qrWrap = $("#qrWrap");
+    const charCount=$("#charCount"), byteCount=$("#byteCount"), ecInfo=$("#ecInfo"), verInfo=$("#verInfo"), contrastInfo=$("#contrastInfo");
+    const warnings=$("#warnings");
 
     // Kamera
-    const btnScanStart = $("#btnScanStart");
-    const btnScanStop = $("#btnScanStop");
-    const videoEl = $("#video");
-    const scanStatus = $("#scanStatus");
-    const scanResult = $("#scanResult");
+    const btnScanStart=$("#btnScanStart"), btnScanStop=$("#btnScanStop"), videoEl=$("#video"), scanStatus=$("#scanStatus"), scanResult=$("#scanResult");
 
-    // Durum
-    let logoDataUrl = null;
-    let stream = null;
-    let scanTimer = null;
-    let detector = null;
-    let zxingReader = null;
-
-    // Tek görünür QR (SVG). PNG indirme için ayrı bir canvas instance (DOM'a eklenmeyecek).
-    const commonOptions = () => ({
-      width: clamp(int(sizeInput.value, 512), 150, 3000),
-      height: clamp(int(sizeInput.value, 512), 150, 3000),
-      margin: clamp(int(marginInput.value, 8), 0, 50),
-      data: textInput.value,
-      qrOptions: { errorCorrectionLevel: ecSelect.value },
-      dotsOptions: { type: moduleStyle.value, color: fgHex.value },
-      cornersSquareOptions: { type: finderStyle.value },
-      cornersDotOptions: { type: finderStyle.value === "dot" ? "dot" : undefined },
-      backgroundOptions: { color: bgTransparent.checked ? "rgba(0,0,0,0)" : bgHex.value },
-      image: logoDataUrl || undefined,
-      imageOptions: { hideBackgroundDots:false, margin:0, imageSize:(int(logoScale.value,20)/100) }
-    });
-
-    const qrSvg = new QRCodeStyling({ ...commonOptions(), type:"svg" });
-    const qrCanvas = new QRCodeStyling({ ...commonOptions(), type:"canvas" });
-    qrSvg.append(preview); // Sadece bir önizleme
+    // Durumlar
+    let rawLogoDataUrl = null;      // yüklenen orijinal logo
+    let processedLogoUrl = null;    // efekt uygulanmış logo
+    let bgImageUrl = null;          // arka plan resmi
+    let stream=null, scanTimer=null, detector=null, zxingReader=null;
+    let currentLang='tr';
 
     // Yardımcılar
     function int(v, d=0){ v= parseInt(v); return Number.isFinite(v) ? v : d; }
     function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
     function debounce(fn, t=250){ let id; return (...a)=>{ clearTimeout(id); id=setTimeout(()=>fn(...a), t); }; }
-    function nowStamp(){
-      const d=new Date(), p = n=> String(n).padStart(2,'0');
-      return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
-    }
+    function nowStamp(){ const d=new Date(), p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`; }
     function utf8Bytes(s){ try{ return new TextEncoder().encode(s).length }catch{ return unescape(encodeURIComponent(s)).length } }
-    function normalizeHex(s){
-      s=(s||'').trim(); if(!s) return '#000000';
-      if(s[0]!=='#') s='#'+s;
-      if(/^#([0-9a-f]{3})$/i.test(s)) return '#'+s.slice(1).split('').map(x=>x+x).join('');
-      if(/^#([0-9a-f]{6})$/i.test(s)) return s.toLowerCase();
-      return '#000000';
-    }
-    function syncColor(inp, hex){
-      hex.value = normalizeHex(inp.value);
-      inp.addEventListener('input', ()=> hex.value = normalizeHex(inp.value));
-      hex.addEventListener('input', ()=> inp.value = normalizeHex(hex.value));
-    }
-    function relLum(hex){
-      const c=normalizeHex(hex).slice(1);
-      const r=parseInt(c.substr(0,2),16)/255, g=parseInt(c.substr(2,2),16)/255, b=parseInt(c.substr(4,2),16)/255;
-      const f=u=> u<=0.03928 ? u/12.92 : Math.pow((u+0.055)/1.055,2.4);
-      return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);
-    }
-    function contrast(hex1, hex2){
-      const [L1,L2]=[relLum(hex1), relLum(hex2)];
-      const [a,b]= L1>L2 ? [L1,L2] : [L2,L1];
-      return (a+0.05)/(b+0.05);
-    }
-    function toast(msg){
-      const el=document.createElement('div');
-      el.className='toast'; el.textContent=msg; document.body.appendChild(el);
-      setTimeout(()=> el.remove(), 1600);
-    }
+    function normalizeHex(s){ s=(s||'').trim(); if(!s) return '#000000'; if(s[0]!=='#') s='#'+s; if(/^#([0-9a-f]{3})$/i.test(s)) return '#'+s.slice(1).split('').map(x=>x+x).join(''); if(/^#([0-9a-f]{6})$/i.test(s)) return s.toLowerCase(); return '#000000'; }
+    function syncColor(inp, hex){ hex.value = normalizeHex(inp.value); inp.addEventListener('input', ()=> hex.value = normalizeHex(inp.value)); hex.addEventListener('input', ()=> inp.value = normalizeHex(hex.value)); }
+    function relLum(hex){ const c=normalizeHex(hex).slice(1); const r=parseInt(c.substr(0,2),16)/255, g=parseInt(c.substr(2,2),16)/255, b=parseInt(c.substr(4,2),16)/255; const f=u=> u<=0.03928 ? u/12.92 : Math.pow((u+0.055)/1.055,2.4); return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b); }
+    function contrast(hex1, hex2){ const [L1,L2]=[relLum(hex1), relLum(hex2)]; const [a,b]= L1>L2 ? [L1,L2] : [L2,L1]; return (a+0.05)/(b+0.05); }
+    function toast(msg){ const el=document.createElement('div'); el.className='toast'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=> el.remove(), 1600); }
     function clearWarnings(){ warnings.innerHTML = ""; }
-    function warn(html){
-      const d=document.createElement('div'); d.className='alert'; d.innerHTML=html; warnings.appendChild(d);
+    function warn(html){ const d=document.createElement('div'); d.className='alert'; d.innerHTML=html; warnings.appendChild(d); }
+    function deg2rad(deg){ return (deg%360) * Math.PI / 180; }
+    function loadImage(url){ return new Promise((res,rej)=>{ const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>res(img); img.onerror=rej; img.src=url; }); }
+
+    // Gradient builder
+    function buildPaint(mode, col1, col2, gradType, angle){
+      if(mode==='gradient'){
+        return { gradient: { type: gradType, rotation: deg2rad(int(angle,0)), colorStops: [{ offset: 0, color: normalizeHex(col1) }, { offset: 1, color: normalizeHex(col2) }] } };
+      }
+      return { color: normalizeHex(col1) };
     }
 
-    // Dil
-    function applyLang(lang){
-      currentLang=lang; document.documentElement.lang=lang;
-      $$(".lang-toggle button").forEach(b=>{
-        const act=b.dataset.lang===lang; b.classList.toggle('active', act); b.setAttribute('aria-pressed', String(act));
-      });
-      document.querySelectorAll("[data-i18n]").forEach(el=>{
-        const k=el.getAttribute('data-i18n'); if(I18N[lang][k]) el.textContent=I18N[lang][k];
-      });
-      updateMeta(); // etiketler güncellensin
+    // Renk eşitlemeleri
+    [ [fgColor,fgHex], [fgColor2,fgHex2], [eyeOuterColor,eyeOuterHex], [eyeOuterColor2,eyeOuterHex2], [eyeInnerColor,eyeInnerHex], [eyeInnerColor2,eyeInnerHex2], [bgColor,bgHex], [bgColor2,bgHex2], [logoBg,logoBgHex], [logoBorderColor,logoBorderHex] ].forEach(([a,b])=> syncColor(a,b));
+
+    // Görünürlük kontrol
+    function toggleGradGroups(){
+      $$(".fgGrad").forEach(el=> el.style.display = (fgMode.value==='gradient') ? '' : 'none');
+      $$(".outerGrad").forEach(el=> el.style.display = (eyeOuterMode.value==='gradient') ? '' : 'none');
+      $$(".innerGrad").forEach(el=> el.style.display = (eyeInnerMode.value==='gradient') ? '' : 'none');
+      $$(".bgGrad").forEach(el=> el.style.display = (bgMode.value==='gradient') ? '' : 'none');
+      $$(".bgSolid").forEach(el=> el.style.display = (bgMode.value==='solid') ? '' : 'none');
     }
-    langTr.addEventListener('click', ()=> applyLang('tr'));
-    langEn.addEventListener('click', ()=> applyLang('en'));
+    [fgMode, eyeOuterMode, eyeInnerMode, bgMode].forEach(el=> el.addEventListener('change', ()=>{ toggleGradGroups(); triggerRender(); }));
 
-    // Renk eşitle
-    syncColor(fgColor, fgHex);
-    syncColor(bgColor, bgHex);
-    bgTransparent.addEventListener('change', ()=>{
-      bgColor.disabled = bgHex.disabled = bgTransparent.checked;
-      triggerRender();
-    });
+    // QR instances
+    const qrSvg = new QRCodeStyling({ type:"svg" });
+    const qrCanvas = new QRCodeStyling({ type:"canvas" });
 
-    // Logo
-    logoFile.addEventListener('change', ()=>{
-      const f=logoFile.files?.[0];
-      if(!f){ logoDataUrl=null; logoPreview.textContent=""; triggerRender(); return; }
-      if(f.size > 3*1024*1024){ warn(`<b>Logo boyutu büyük</b>: ${Math.round(f.size/1024)} KB.`); }
-      const reader=new FileReader();
-      reader.onload=()=>{ logoDataUrl=reader.result; logoPreview.textContent=`${f.name} — ${Math.round(f.size/1024)} KB`; triggerRender(); };
-      reader.readAsDataURL(f);
-    });
+    // Wrapper'a ekle
+    qrSvg.append(qrWrap);
 
-    // Kopyala/Temizle/İndir
-    btnCopy.addEventListener('click', async ()=>{
-      try{ await navigator.clipboard.writeText(textInput.value||""); toast(currentLang==='tr'?'Kopyalandı ✅':'Copied ✅'); }
-      catch{ toast(currentLang==='tr'?'Kopyalama başarısız':'Copy failed'); }
-    });
-    btnClear.addEventListener('click', ()=>{ textInput.value=""; triggerRender(); });
-
-    btnDownloadPNG.addEventListener('click', ()=>{
-      const name=`qr_${nowStamp()}`;
-      // PNG için canvas instance, DOM'a eklenmez (tek QR görünür)
-      qrCanvas.download({ name, extension:"png" });
-    });
-    btnDownloadSVG.addEventListener('click', ()=>{
-      const name=`qr_${nowStamp()}`;
-      qrSvg.download({ name, extension:"svg" });
-    });
-
-    // Kapasite/versiyon
+    // Versiyon tahmini
     function estimateVersion(text, ec){
       try{
         const qr = qrcode(0, ec);
@@ -494,107 +595,436 @@
       }catch(e){ return { ok:false, error:e?.message || String(e) }; }
     }
 
-    // Render
-    const triggerRender = debounce(render, 220);
-    [textInput,sizeInput,marginInput,ecSelect,fgColor,fgHex,bgColor,bgHex,bgTransparent,moduleStyle,finderStyle,logoScale]
-      .forEach(el=>{
-        el.addEventListener('input', triggerRender);
-        el.addEventListener('change', triggerRender);
-      });
-
+    // Meta
     function updateMeta(extra={}){
       const txt = textInput.value||"";
       const bytes = utf8Bytes(txt);
       const ec = ecSelect.value;
-      charCount.textContent = `${txt.length} ${currentLang==='tr'?'karakter':'chars'}`;
+      charCount.textContent = `${txt.length} karakter`;
       byteCount.textContent = `${bytes} bytes (UTF‑8)`;
       ecInfo.textContent = `EC: ${ec}`;
       verInfo.textContent = extra.version ? `v${extra.version}` : `v? (auto)`;
 
-      const fg=fgHex.value, bg=bgTransparent.checked ? "#ffffff" : bgHex.value;
-      const r= contrast(fg, bg);
+      const fg = fgMode.value==='gradient' ? fgHex.value : fgHex.value;
+      const bg = bgMode.value==='transparent' ? "#ffffff" : bgHex.value;
+      const r = contrast(fg, bg);
       const ok = r>=2.0;
-      contrastInfo.textContent = ok ? `contrast ok (${r.toFixed(1)}:1)` :
-                                    (currentLang==='tr'?`düşük kontrast (${r.toFixed(1)}:1)`:`low contrast (${r.toFixed(1)}:1)`);
+      contrastInfo.textContent = ok ? `kontrast ok (${r.toFixed(1)}:1)` : `düşük kontrast (${r.toFixed(1)}:1)`;
       contrastInfo.className = "pill " + (ok ? "ok" : "warn");
+    }
+
+    // Ortak seçenekler
+    function commonOptions(){
+      const W = clamp(int(sizeInput.value, 512), 150, 4096);
+      const H = W;
+      const m = clamp(int(marginInput.value, 8), 0, 100);
+
+      const dots = {
+        type: moduleStyle.value,
+        ...(buildPaint(fgMode.value, fgHex.value, fgHex2.value, fgGradType.value, fgGradAngle.value))
+      };
+      const cornersSquare = {
+        type: eyeOuterType.value,
+        ...(buildPaint(eyeOuterMode.value, eyeOuterHex.value, eyeOuterHex2.value, eyeOuterGradType.value, eyeOuterGradAngle.value))
+      };
+      const cornersDot = {
+        type: eyeInnerType.value,
+        ...(buildPaint(eyeInnerMode.value, eyeInnerHex.value, eyeInnerHex2.value, eyeInnerGradType.value, eyeInnerGradAngle.value))
+      };
+
+      let backgroundOptions = {};
+      if(bgMode.value==='transparent'){
+        backgroundOptions = { color: "rgba(0,0,0,0)" };
+      }else if(bgMode.value==='solid'){
+        backgroundOptions = { color: bgHex.value };
+      }else{
+        backgroundOptions = { gradient: { type: bgGradType.value, rotation: deg2rad(int(bgGradAngle.value,0)), colorStops:[{offset:0,color:bgHex.value},{offset:1,color:bgHex2.value}] } };
+      }
+
+      return {
+        width: W,
+        height: H,
+        margin: m,
+        data: textInput.value || "",
+        qrOptions: { errorCorrectionLevel: ecSelect.value },
+        dotsOptions: dots,
+        cornersSquareOptions: cornersSquare,
+        cornersDotOptions: cornersDot,
+        backgroundOptions,
+        image: processedLogoUrl || undefined,
+        imageOptions: { hideBackgroundDots: !!hideBgDots.checked, margin: 0, imageSize: (int(logoScale.value,20)/100), crossOrigin: "anonymous" }
+      };
+    }
+
+    // Render
+    const triggerRender = debounce(()=>render(), 220);
+
+    async function processLogo(){
+      if(!rawLogoDataUrl){ processedLogoUrl=null; return; }
+      // Ayarlar
+      const shape = logoShape.value; if(shape==='none'){ processedLogoUrl = rawLogoDataUrl; return; }
+      const padPct = int(logoPad.value, 8); // % logo
+      const bgCol = normalizeHex(logoBgHex.value);
+      const bgAlpha = clamp(int(logoBgAlpha.value, 90)/100, 0, 1);
+      const borW = int(logoBorderW.value, 0);
+      const borCol = normalizeHex(logoBorderHex.value);
+      const shadow = !!logoShadow.checked;
+
+      const base = 512; // işleme tuvali
+      const c = document.createElement('canvas'); c.width=c.height=base;
+      const ctx = c.getContext('2d');
+
+      // Temiz arka plan
+      ctx.clearRect(0,0,base,base);
+
+      // Şekil path
+      const pad = Math.round(base * padPct / 100);
+      const inner = base - pad*2;
+      ctx.save();
+      if(shadow){
+        ctx.shadowColor = "rgba(0,0,0,0.35)";
+        ctx.shadowBlur = Math.max(6, Math.round(base*0.02));
+        ctx.shadowOffsetY = Math.round(base*0.01);
+      }
+
+      // Arka plan şeklinin path'ini çiz
+      ctx.beginPath();
+      if(shape==='circle'){
+        const r = inner/2;
+        ctx.arc(pad + r, pad + r, r, 0, Math.PI*2);
+      }else if(shape==='rounded'){
+        const r = Math.round(inner*0.23);
+        if(ctx.roundRect){ ctx.roundRect(pad, pad, inner, inner, r); }
+        else roundedRect(ctx, pad, pad, inner, inner, r);
+      }else if(shape==='squircle'){
+        // Yaklaşık squircle — yüksek radius'lu roundRect
+        const r = Math.round(inner*0.33);
+        if(ctx.roundRect){ ctx.roundRect(pad, pad, inner, inner, r); }
+        else roundedRect(ctx, pad, pad, inner, inner, r);
+      }
+      // Arka plan doldur
+      ctx.fillStyle = hexWithAlpha(bgCol, bgAlpha);
+      ctx.fill();
+
+      // Kenarlık
+      if(borW>0){
+        ctx.lineWidth = borW*2; // yüksek çözünürlük için biraz kalın
+        ctx.strokeStyle = borCol;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // İçeriği clip ile çiz (şeklin içine)
+      ctx.save();
+      ctx.beginPath();
+      if(shape==='circle'){
+        const r = inner/2;
+        ctx.arc(pad + r, pad + r, r, 0, Math.PI*2);
+      }else if(shape==='rounded'){
+        const r = Math.round(inner*0.23);
+        if(ctx.roundRect){ ctx.roundRect(pad, pad, inner, inner, r); }
+        else roundedRect(ctx, pad, pad, inner, inner, r);
+      }else if(shape==='squircle'){
+        const r = Math.round(inner*0.33);
+        if(ctx.roundRect){ ctx.roundRect(pad, pad, inner, inner, r); }
+        else roundedRect(ctx, pad, pad, inner, inner, r);
+      }
+      ctx.clip();
+
+      // Logo görselini fit ile çiz
+      const img = await loadImage(rawLogoDataUrl);
+      const fit = fitContain(img.width, img.height, inner, inner);
+      ctx.drawImage(img, pad + Math.round((inner-fit.w)/2), pad + Math.round((inner-fit.h)/2), fit.w, fit.h);
+      ctx.restore();
+
+      processedLogoUrl = c.toDataURL('image/png');
+    }
+
+    function roundedRect(ctx,x,y,w,h,r){
+      r = Math.min(r, w/2, h/2);
+      ctx.moveTo(x+r, y);
+      ctx.arcTo(x+w, y, x+w, y+h, r);
+      ctx.arcTo(x+w, y+h, x, y+h, r);
+      ctx.arcTo(x, y+h, x, y, r);
+      ctx.arcTo(x, y, x+w, y, r);
+      ctx.closePath();
+    }
+    function hexWithAlpha(hex, alpha){
+      const c = normalizeHex(hex).slice(1);
+      const r=parseInt(c.substr(0,2),16), g=parseInt(c.substr(2,2),16), b=parseInt(c.substr(4,2),16);
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+    function fitContain(sw,sh, tw,th){
+      const sr = sw/sh, tr = tw/th;
+      if(sr > tr){ return { w: tw, h: Math.round(tw/sr) }; }
+      return { w: Math.round(th*sr), h: th };
+    }
+    function drawImageFit(ctx, img, W, H, fitMode){
+      if(fitMode==='stretch'){ ctx.drawImage(img,0,0,W,H); return; }
+      const sr = img.width/img.height, tr = W/H;
+      let w,h,x,y;
+      if(fitMode==='cover'){
+        if(sr > tr){ h=H; w=Math.round(H*sr); x=Math.round((W-w)/2); y=0; }
+        else{ w=W; h=Math.round(W/sr); x=0; y=Math.round((H-h)/2); }
+      }else{ // contain
+        if(sr > tr){ w=W; h=Math.round(W/sr); x=0; y=Math.round((H-h)/2); }
+        else{ h=H; w=Math.round(H*sr); x=Math.round((W-w)/2); y=0; }
+      }
+      ctx.drawImage(img, x,y,w,h);
     }
 
     async function render(){
       clearWarnings();
+      // Logo ve wrapper boyutu
+      const W = clamp(int(sizeInput.value, 512), 150, 4096);
+      qrWrap.style.width = W + "px";
+      qrWrap.style.height = W + "px";
+      qrWrap.style.backgroundSize = bgFit.value==='stretch' ? '100% 100%' : bgFit.value;
+      qrWrap.style.backgroundPosition = "center";
+      qrWrap.style.backgroundRepeat = "no-repeat";
+      qrWrap.style.opacity = 1;
+      // Arka plan resmi (sadece önizleme stili, dışa aktarmada ayrıca işlencek)
+      if(bgImageUrl){
+        qrWrap.style.backgroundImage = `url(${bgImageUrl})`;
+        qrWrap.style.opacity = clamp(int(bgImageOpacity.value,100)/100, 0, 1);
+      }else{
+        qrWrap.style.backgroundImage = "none";
+      }
+
+      // Logo işle
+      await processLogo();
 
       const options = commonOptions();
-      if(logoDataUrl && ecSelect.value!=='H'){
+      if(rawLogoDataUrl && ecSelect.value!=='H'){
         warn(`Logo eklediniz. <b>EC=H</b> önerilir. <a href="#" id="setECH">EC'yi H yap</a>`);
         setTimeout(()=> $("#setECH")?.addEventListener('click', (e)=>{e.preventDefault(); ecSelect.value='H'; triggerRender();}),0);
       }
       const est = estimateVersion(textInput.value, ecSelect.value);
       if(!est.ok){
-        warn(`<b>Veri kapasitesi aşıldı.</b> Hata düzeltmeyi düşürün (Q/M/L) veya metni kısaltın.`);
+        warn(`<b>Veri kapasitesi aşıldı.</b> Hata düzeltmeyi düşürün veya metni kısaltın.`);
       }
+
       await qrSvg.update({ ...options, type:"svg" });
       await qrCanvas.update({ ...options, type:"canvas" });
       updateMeta({ version: est.ok ? est.version : undefined });
     }
 
-    // Başlangıç
-    textInput.value = "https://example.com";
-    fgColor.value = fgHex.value = "#000000";
-    bgColor.value = bgHex.value = "#ffffff";
-    applyLang('tr');
-    render();
+    // Olaylar
+    [
+      textInput,sizeInput,marginInput,ecSelect,moduleStyle,
+      fgMode,fgColor,fgHex,fgColor2,fgHex2,fgGradType,fgGradAngle,
+      eyeOuterType,eyeOuterMode,eyeOuterColor,eyeOuterHex,eyeOuterColor2,eyeOuterHex2,eyeOuterGradType,eyeOuterGradAngle,
+      eyeInnerType,eyeInnerMode,eyeInnerColor,eyeInnerHex,eyeInnerColor2,eyeInnerHex2,eyeInnerGradType,eyeInnerGradAngle,
+      bgMode,bgColor,bgHex,bgColor2,bgHex2,bgGradType,bgGradAngle,bgFit,bgImageOpacity,
+      logoScale,logoPad,logoShape,logoBg,logoBgHex,logoBgAlpha,logoBorderW,logoBorderColor,logoBorderHex,logoShadow,hideBgDots,
+      exportScale,exportName
+    ].forEach(el=>{
+      el.addEventListener('input', ()=>{
+        if(el===logoScale) logoScaleLabel.textContent = `${logoScale.value}%`;
+        if(el===logoPad) logoPadLabel.textContent = `${logoPad.value}%`;
+        if(el===logoBgAlpha) logoBgAlphaLabel.textContent = `${logoBgAlpha.value}%`;
+        if(el===logoBorderW) logoBorderWLabel.textContent = `${logoBorderW.value}px`;
+        if(el===bgImageOpacity) bgImageOpacLabel.textContent = `${bgImageOpacity.value}%`;
+        triggerRender();
+      });
+      el.addEventListener('change', triggerRender);
+    });
+
+    // Dosya yükleme
+    logoFile.addEventListener('change', ()=>{
+      const f=logoFile.files?.[0];
+      if(!f){ rawLogoDataUrl=null; processedLogoUrl=null; logoPreview.textContent=""; triggerRender(); return; }
+      if(f.size > 4*1024*1024){ warn(`<b>Logo boyutu büyük</b>: ${Math.round(f.size/1024)} KB.`); }
+      const reader=new FileReader();
+      reader.onload=()=>{ rawLogoDataUrl=reader.result; logoPreview.textContent=`${f.name} — ${Math.round(f.size/1024)} KB`; triggerRender(); };
+      reader.readAsDataURL(f);
+    });
+    bgImageFile.addEventListener('change', ()=>{
+      const f=bgImageFile.files?.[0];
+      if(!f){ bgImageUrl=null; triggerRender(); return; }
+      const reader=new FileReader();
+      reader.onload=()=>{ bgImageUrl=reader.result; triggerRender(); };
+      reader.readAsDataURL(f);
+    });
+
+    // Drag & drop: Logo / Alt tuşu ile Arka plan
+    ;['dragover','dragleave','drop'].forEach(ev=>{
+      preview.addEventListener(ev, e=>{
+        if(ev==='dragover'){ e.preventDefault(); preview.classList.add('dragover'); }
+        else if(ev==='dragleave'){ preview.classList.remove('dragover'); }
+        else if(ev==='drop'){
+          e.preventDefault(); preview.classList.remove('dragover');
+          const file = e.dataTransfer.files?.[0];
+          if(!file) return;
+          const reader=new FileReader();
+          reader.onload=()=>{
+            if(e.altKey){ bgImageUrl = reader.result; toast("Arka plan resmi eklendi"); }
+            else{ rawLogoDataUrl = reader.result; toast("Logo eklendi"); }
+            triggerRender();
+          };
+          reader.readAsDataURL(file);
+        }
+      }, false);
+    });
+
+    // Kopyala/Temizle/İndir
+    btnCopy.addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(textInput.value||""); toast('Kopyalandı ✅'); }
+      catch{ toast('Kopyalama başarısız'); }
+    });
+    btnClear.addEventListener('click', ()=>{ textInput.value=""; triggerRender(); });
+
+    btnDownloadSVG.addEventListener('click', ()=>{
+      const name = (exportName.value||'qr') + '_' + nowStamp();
+      qrSvg.download({ name, extension:"svg" });
+    });
+    btnCopySVG.addEventListener('click', async ()=>{
+      try{
+        const el = await qrSvg.getRawData(); // SVGElement
+        const xml = new XMLSerializer().serializeToString(el);
+        await navigator.clipboard.writeText(xml);
+        toast('SVG kopyalandı ✅');
+      }catch{ toast('SVG kopyalanamadı'); }
+    });
+
+    btnDownloadPNG.addEventListener('click', async ()=>{
+      const scale = clamp(int(exportScale.value,2), 1, 8);
+      const baseW = clamp(int(sizeInput.value,512), 150, 4096);
+      const W = baseW * scale, H = W;
+
+      // QR canvas'ı istenen boyutta hazırla
+      await qrCanvas.update({ ...commonOptions(), width: W, height: H, type:"canvas" });
+      const qrCanvasEl = await qrCanvas.getRawData(); // HTMLCanvasElement
+
+      // Arka plan resmi varsa kompozit yap
+      const name = (exportName.value||'qr') + '_' + nowStamp();
+      if(bgImageUrl){
+        const out = document.createElement('canvas'); out.width = W; out.height = H;
+        const ctx = out.getContext('2d');
+        // BG çiz
+        try{
+          const img = await loadImage(bgImageUrl);
+          drawImageFit(ctx, img, W, H, bgFit.value);
+          if(int(bgImageOpacity.value,100) < 100){
+            ctx.globalAlpha = clamp(int(bgImageOpacity.value,100)/100, 0, 1);
+            ctx.drawImage(out, 0, 0); // opaklık zaten arka plana uygulandı
+            ctx.globalAlpha = 1;
+          }
+        }catch{}
+        // QR üstüne
+        ctx.drawImage(qrCanvasEl, 0, 0, W, H);
+        // İndir
+        out.toBlob(b=>{
+          const a=document.createElement('a'); a.download = `${name}.png`; a.href=URL.createObjectURL(b); a.click(); URL.revokeObjectURL(a.href);
+        }, 'image/png');
+      }else{
+        // Doğrudan indir
+        const tmp = new QRCodeStyling({ ...commonOptions(), width: W, height: H, type:"canvas" });
+        await tmp.update({ ...commonOptions(), width: W, height: H });
+        tmp.download({ name, extension:"png" });
+      }
+      // Önizlemeyi eski boyuta döndür
+      render();
+    });
 
     // Kısayol
     document.addEventListener('keydown', (e)=>{
       if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); btnDownloadPNG.click(); }
     });
 
-    // Kamera — güvenli bağlam kontrolü + BarcodeDetector veya ZXing fallback
+    // Dil
+    const langTr = $("#langTr"), langEn=$("#langEn");
+    function applyLang(lang){
+      currentLang=lang; document.documentElement.lang=lang;
+      [langTr,langEn].forEach(b=>{ const act=b.dataset.lang===lang; b.classList.toggle('active', act); b.setAttribute('aria-pressed', String(act)); });
+      // Not: Yeni eklenen alanlarda çift dil desteği minimal tutuldu; istersen eklerim.
+      updateMeta();
+    }
+    langTr.addEventListener('click', ()=> applyLang('tr'));
+    langEn.addEventListener('click', ()=> applyLang('en'));
+
+    // Builder görünürlük
+    function showBuilder(){
+      bWifi.style.display = 'none'; bTel.style.display='none'; bSms.style.display='none'; bEmail.style.display='none'; bGeo.style.display='none'; bVcard.style.display='none';
+      builder.style.display = 'none';
+      switch(dataType.value){
+        case 'wifi': builder.style.display='block'; bWifi.style.display='grid'; break;
+        case 'tel': builder.style.display='block'; bTel.style.display='grid'; break;
+        case 'sms': builder.style.display='block'; bSms.style.display='grid'; break;
+        case 'email': builder.style.display='block'; bEmail.style.display='grid'; break;
+        case 'geo': builder.style.display='block'; bGeo.style.display='grid'; break;
+        case 'vcard': builder.style.display='block'; bVcard.style.display='grid'; break;
+        default: builder.style.display='none';
+      }
+    }
+    dataType.addEventListener('change', showBuilder);
+    btnBuild.addEventListener('click', ()=>{
+      let out="";
+      switch(dataType.value){
+        case 'wifi':
+          // WIFI:T:WPA;S:mynetwork;P:mypass;H:false;;
+          out = `WIFI:T:${wifiEnc.value};S:${escapeSemi(wifiSsid.value)};P:${escapeSemi(wifiPass.value)};H:${wifiHidden.value};;`; break;
+        case 'tel': out = `tel:${telNum.value.trim()}`; break;
+        case 'sms': out = `SMSTO:${smsNum.value.trim()}:${smsMsg.value}`; break;
+        case 'email':
+          out = `MATMSG:TO:${emailTo.value};SUB:${escapeSemi(emailSub.value)};BODY:${escapeSemi(emailBody.value)};;`; break;
+        case 'geo': out = `geo:${geoLat.value},${geoLng.value}`; break;
+        case 'vcard':
+          out = `BEGIN:VCARD
+VERSION:3.0
+N:${vName.value}
+FN:${vName.value}
+TITLE:${vTitle.value}
+ORG:${vOrg.value}
+TEL;TYPE=CELL:${vTel.value}
+EMAIL:${vEmail.value}
+URL:${vUrl.value}
+ADR:${vAddr.value}
+END:VCARD`.replace(/\r?\n/g, '\n'); break;
+      }
+      if(out){ textInput.value = out; triggerRender(); toast('Uygulandı ✅'); }
+    });
+    function escapeSemi(s){ return (s||'').replace(/;/g,'\\;'); }
+
+    // Kamera — güvenli bağlam kontrolü + BarcodeDetector veya ZXing
     const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
     btnScanStart.addEventListener('click', startScan);
     btnScanStop.addEventListener('click', stopScan);
 
     async function startScan(){
       if(!isSecure){
-        scanStatus.textContent = currentLang==='tr'
-          ? "Kamera için HTTPS gerekli. Lütfen siteyi https ile açın."
-          : "Camera requires HTTPS. Please open over https.";
+        scanStatus.textContent = "Kamera için HTTPS gerekli. Lütfen siteyi https ile açın.";
         return;
       }
       try{
-        scanStatus.textContent = currentLang==='tr' ? "Kamera başlatılıyor..." : "Starting camera...";
+        scanStatus.textContent = "Kamera başlatılıyor...";
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal:"environment" } }, audio:false });
         videoEl.srcObject = stream; await videoEl.play();
-        scanStatus.textContent = currentLang==='tr' ? "Tarama aktif" : "Scanning";
+        scanStatus.textContent = "Tarama aktif";
 
-        // BarcodeDetector varsa doğrudan video üzerinde tara
         if('BarcodeDetector' in window){
           try{
             detector = new BarcodeDetector({ formats:["qr_code"] });
-            let last = 0, foundOnce = false;
             scanTimer = setInterval(async ()=>{
               if(!stream) return;
               try{
                 const res = await detector.detect(videoEl);
                 if(res && res.length){
-                  if(!foundOnce){ vibrate(30); }
-                  foundOnce = true;
-                  scanResult.textContent = (currentLang==='tr' ? "Bulundu: " : "Found: ") + (res[0].rawValue || "");
+                  vibrate(30);
+                  scanResult.textContent = "Bulundu: " + (res[0].rawValue || "");
                 }
               }catch{}
-            }, 180); // ~5-6 fps yeter
-          }catch{
-            await startZXing(); // fallback
-          }
+            }, 180);
+          }catch{ await startZXing(); }
         }else{
           await startZXing();
         }
       }catch(e){
-        scanStatus.textContent = (currentLang==='tr' ? "Kamera erişimi reddedildi/bulunamadı." : "Camera denied/unavailable.") + " " + (e?.message||"");
+        scanStatus.textContent = "Kamera erişimi reddedildi/bulunamadı. " + (e?.message||"");
       }
     }
-
     async function startZXing(){
-      scanStatus.textContent = (currentLang==='tr' ? "ZXing yükleniyor..." : "Loading ZXing...");
+      scanStatus.textContent = "ZXing yükleniyor...";
       await loadZXing();
       zxingReader = new ZXing.BrowserMultiFormatReader();
       try{
@@ -603,23 +1033,21 @@
         await zxingReader.decodeFromVideoDevice(back?.deviceId ?? null, videoEl, (result, err)=>{
           if(result && result.text){
             vibrate(30);
-            scanResult.textContent = (currentLang==='tr' ? "Bulundu: " : "Found: ") + result.text;
+            scanResult.textContent = "Bulundu: " + result.text;
           }
         });
-        scanStatus.textContent = currentLang==='tr' ? "Tarama aktif (ZXing)" : "Scanning (ZXing)";
+        scanStatus.textContent = "Tarama aktif (ZXing)";
       }catch(e){
-        scanStatus.textContent = (currentLang==='tr' ? "ZXing başlatılamadı: " : "ZXing failed: ") + (e?.message||"");
+        scanStatus.textContent = "ZXing başlatılamadı: " + (e?.message||"");
       }
     }
-
     async function stopScan(){
       if(scanTimer){ clearInterval(scanTimer); scanTimer=null; }
       if(zxingReader){ try{ zxingReader.reset(); }catch{} zxingReader=null; }
       if(stream){ try{ stream.getTracks().forEach(t=>t.stop()); }catch{} stream=null; }
       videoEl.srcObject=null;
-      scanStatus.textContent = currentLang==='tr' ? "Durduruldu" : "Stopped";
+      scanStatus.textContent = "Durduruldu";
     }
-
     function loadZXing(){
       return new Promise((resolve,reject)=>{
         if(window.ZXing){ resolve(); return; }
@@ -631,6 +1059,18 @@
       });
     }
     function vibrate(ms){ if(navigator.vibrate) try{ navigator.vibrate(ms); }catch{} }
+
+    // Başlangıç
+    textInput.value = "https://example.com";
+    applyLang('tr');
+    toggleGradGroups();
+    logoScaleLabel.textContent = `${logoScale.value}%`;
+    logoPadLabel.textContent = `${logoPad.value}%`;
+    logoBgAlphaLabel.textContent = `${logoBgAlpha.value}%`;
+    logoBorderWLabel.textContent = `${logoBorderW.value}px`;
+    bgImageOpacLabel.textContent = `${bgImageOpacity.value}%`;
+    showBuilder();
+    render();
   </script>
 </body>
 </html>
