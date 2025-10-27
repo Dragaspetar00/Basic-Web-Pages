@@ -175,6 +175,77 @@
       textarea{min-height:100px}
       .controls{position:sticky; bottom:10px; background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.25) 100%); padding-top:6px}
     }
+    
+/* ——— Form layout stabilizasyonu ——— */
+
+/* Grid alanlarını akıllı kolonlarla düzenle */
+.row-fields, .row-3, .row-4, .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+@media (max-width: 640px){
+  .row-fields, .row-3, .row-4, .form-grid { grid-template-columns: 1fr; }
+}
+
+/* Taşmaları engelle */
+.field, .field * { min-width: 0; }
+
+/* Tüm inputs/select/textarea grid kolonu içinde tam genişlikte olsun */
+.field input[type="text"],
+.field input[type="number"],
+.field select,
+.field textarea {
+  width: 100%;
+}
+
+/* Color + Hex ikilisi: inline stilin üstüne geçsin */
+.color-pair {
+  display: grid !important; /* inline display:flex'i override eder */
+  grid-template-columns: 48px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+.color-pair input[type="color"]{
+  width: 48px; height: 38px; padding: 0;
+  border-radius: 10px;
+}
+.color-pair input[type="text"]{
+  width: 100%;
+}
+
+/* Range + yan label (yüzde/px yazısı) */
+.range-pair {
+  display: grid !important; /* inline sahipse override et */
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+.range-pair input[type="range"]{ width: 100%; }
+.range-pair .muted{ white-space: nowrap; opacity: .85; }
+
+/* Küçük ekran optimizasyonları */
+@media (max-width: 520px){
+  .color-pair { grid-template-columns: 44px 1fr; }
+  .range-pair { grid-template-columns: 1fr; }
+  .range-pair .muted { justify-self: end; }
+}
+
+/* iOS/Android color input uyumluluğu */
+input[type="color"]{
+  -webkit-appearance: none;
+  appearance: none;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Label ile kontrol arasına nefes */
+.field label { margin-bottom: 2px; }
+
+/* Genel: çok uzun içerikler taşmasın */
+.field input[type="text"], .field input[type="number"]{
+  text-overflow: ellipsis;
+}
   </style>
 </head>
 <body>
@@ -1071,6 +1142,25 @@ END:VCARD`.replace(/\r?\n/g, '\n'); break;
     bgImageOpacLabel.textContent = `${bgImageOpacity.value}%`;
     showBuilder();
     render();
+
+     // Form gruplarını otomatik sınıflandır
+  function enhanceFormLayout(){
+    document.querySelectorAll('.field > div').forEach(div => {
+      const hasColor = div.querySelector('input[type="color"]');
+      const hasHex   = div.querySelector('input[type="text"]');
+      if(hasColor && hasHex) div.classList.add('color-pair');
+
+      const hasRange = div.querySelector('input[type="range"]');
+      const hasInfo  = div.querySelector('.muted');
+      if(hasRange && hasInfo) div.classList.add('range-pair');
+    });
+  }
+  // İlk yüklemede ve dinamik içerik sonrasında çağır
+  document.addEventListener('DOMContentLoaded', enhanceFormLayout);
+  // Sayfanda render/ayar değişimlerinden sonra da tetikleyebilirsin:
+  // örn. triggerRender() sonunda: enhanceFormLayout();
+  // ama genelde bir kere çağırmak yeterli.
+  enhanceFormLayout();
   </script>
 </body>
 </html>
